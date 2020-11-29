@@ -15,21 +15,7 @@
 <meta property="og:description" content="Volt is a free and open source Bootstrap 5 Admin Dashboard featuring 11 example pages, 100 components and 3 plugins with Vanilla JS.">
 <meta property="og:image" content="https://themesberg.s3.us-east-2.amazonaws.com/public/products/volt-bootstrap-5-dashboard/volt-bootstrap-5-dashboard-preview.jpg">
 
-<!-- Twitter -->
-<meta property="twitter:card" content="summary_large_image">
-<meta property="twitter:url" content="https://demo.themesberg.com/volt">
-<meta property="twitter:title" content="@@title">
-<meta property="twitter:description" content="Volt is a free and open source Bootstrap 5 Admin Dashboard featuring 11 example pages, 100 components and 3 plugins with Vanilla JS.">
-<meta property="twitter:image" content="https://themesberg.s3.us-east-2.amazonaws.com/public/products/volt-bootstrap-5-dashboard/volt-bootstrap-5-dashboard-preview.jpg">
-
-<!-- Favicon -->
-<link rel="apple-touch-icon" sizes="120x120" href="@@path/assets/img/favicon/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="@@path/assets/img/favicon/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="@@path/assets/img/favicon/favicon-16x16.png">
-<link rel="manifest" href="@@path/assets/img/favicon/site.webmanifest">
-<link rel="mask-icon" href="@@path/assets/img/favicon/safari-pinned-tab.svg" color="#ffffff">
-<meta name="msapplication-TileColor" content="#ffffff">
-<meta name="theme-color" content="#ffffff">
+{# todo: add this styles packages #}
 
 <!-- Fontawesome -->
 <link type="text/css" href="@@path/vendor/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
@@ -38,6 +24,9 @@
 <link type="text/css" href="@@path/vendor/notyf/notyf.min.css" rel="stylesheet">
 
 <!-- Volt CSS -->
-<link type="text/css" href="@@path/css/volt.css" rel="stylesheet">
+{{ encore_entry_link_tags('app') }}
+
+<!-- Volt JS -->
+{{ encore_entry_script_tags('app') }}
 
 <!-- NOTICE: You can use the _analytics.html partial to include production code specific code & trackers -->

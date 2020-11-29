@@ -7,6 +7,10 @@
 
 // any CSS you import will output into a single css file (app.css in this case)
 import './styles/app.scss';
+import './styles/volt.scss';
+
+// todo: check how to add this @ in front and use this also in VUE when importing something in classes?
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 // Need jQuery? Install it with "yarn add jquery", then uncomment to import it.
 // import $ from 'jquery';
