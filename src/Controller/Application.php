@@ -1,12 +1,77 @@
 <?php
 
-
 namespace App\Controller;
 
+use App\Controller\Core\Repositories;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-class Application
+class Application extends AbstractController
 {
+    /**
+     * @var TranslatorInterface $translator
+     */
+    private TranslatorInterface $translator;
 
-    // todo: add handling the flashbag colors like in the pms, maybe use the same logic on front by in VUE
+    /**
+     * @var Forms $forms
+     */
+    private Forms $forms;
+
+    /**
+     * @var Repositories $repositories
+     */
+    private Repositories $repositories;
+
+    /**
+     * @return Forms
+     */
+    public function getForms(): Forms
+    {
+        return $this->forms;
+    }
+
+    /**
+     * @param Forms $forms
+     */
+    public function setForms(Forms $forms): void
+    {
+        $this->forms = $forms;
+    }
+
+    /**
+     * @param TranslatorInterface $translator
+     */
+    public function setTranslator(TranslatorInterface $translator): void
+    {
+        $this->translator = $translator;
+    }
+
+    /**
+     * Will translate a string using data in `/translations/`
+     *
+     * @param string $string
+     * @return string
+     */
+    public function trans(string $string): string
+    {
+        return $this->translator->trans($string);
+    }
+
+    /**
+     * @return Repositories
+     */
+    public function getRepositories(): Repositories
+    {
+        return $this->repositories;
+    }
+
+    /**
+     * @param Repositories $repositories
+     */
+    public function setRepositories(Repositories $repositories): void
+    {
+        $this->repositories = $repositories;
+    }
 
 }

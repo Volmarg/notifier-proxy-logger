@@ -1,0 +1,55 @@
+{% set FIELD_USERNAME       = constant('App\\Form\\User\\UserRegisterForm::FIELD_NAME_USERNAME') %}
+{% set FIELD_NAME_PASSWORD  = constant('App\\Form\\User\\UserRegisterForm::FIELD_NAME_PASSWORD') %}
+{% set FIELD_NAME_SUBMIT    = constant('App\\Form\\User\\UserRegisterForm::FIELD_NAME_SUBMIT') %}
+
+<div class="text-center text-md-center mb-4 mt-md-0">
+    <h1 class="mb-0 h3">{{ 'pages.register.header' | trans }}</h1>
+    {% if errorMessage is defined and errorMessage is not empty %}
+        <div class="alert alert-danger mt-3">{{ errorMessage }}</div>
+    {% endif %}
+</div>
+
+{{ form_start(userRegisterForm, {
+    attr: {
+        "class" : "mt-4"
+    }
+}) }}
+
+<div class="form-group mb-4">
+    {{ form_label(userRegisterForm[FIELD_USERNAME]) }}
+    <div class="input-group">
+            <span class="input-group-text" id="basic-addon1">
+                <span class="fas fa-envelope"></span>
+            </span>
+        {{ form_widget(userRegisterForm[FIELD_USERNAME], {
+            attr: {
+                "class": 'form-control'
+            }
+        }) }}
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="form-group mb-4">
+        {{ form_label(userRegisterForm[FIELD_NAME_PASSWORD]) }}
+        <div class="input-group">
+                <span class="input-group-text" id="basic-addon2">
+                    <span class="fas fa-unlock-alt"></span>
+                </span>
+            {{ form_widget(userRegisterForm[FIELD_NAME_PASSWORD], {
+                attr: {
+                    "class": 'form-control'
+                }
+            }) }}
+        </div>
+    </div>
+</div>
+
+<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}" >
+
+{{ form_widget(userRegisterForm[FIELD_NAME_SUBMIT], {
+    attr: {
+        "class": 'btn btn-block btn-primary'
+    }
+}) }}
+{{ form_end(userRegisterForm) }}

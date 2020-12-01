@@ -1,0 +1,5 @@
+topbar:
+  menu:
+    nodes:
+      logout:
+        label: Logout

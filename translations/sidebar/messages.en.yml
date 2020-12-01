@@ -1,0 +1,5 @@
+sidebar:
+  menu:
+    nodes:
+      dashboard:
+        label: Dashboard

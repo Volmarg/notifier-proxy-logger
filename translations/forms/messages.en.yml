@@ -1,0 +1,22 @@
+forms:
+  registerForm:
+    username:
+      label: Username
+      placeholder: Your username
+    password:
+      label: Your Password
+      placeholder: Password
+    repeatPassword:
+      label: Your Password
+      placeholder: Password
+    submit:
+      label: Create user
+  loginForm:
+    username:
+      label: Username
+      placeholder: Your username
+    password:
+      label: Password
+      placeholder: Your Password
+    submit:
+      label: Sign in

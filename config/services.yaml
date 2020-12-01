@@ -27,5 +27,45 @@ services:
         resource: '../src/Controller/'
         tags: ['controller.service_arguments']
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    App\Repository\UserRepository:
+        public: true
+
+    repository.user_repository:
+        alias: App\Repository\UserRepository
+
+    App\Controller\Core\Repositories:
+        public: true
+        calls:
+            - setUserRepository: ['@repository.user_repository']
+
+    controller.core.repositories:
+        alias: App\Controller\Core\Repositories
+
+    App\Controller\Forms:
+        public: true
+
+    application.forms:
+        alias: App\Controller\Forms
+
+    App\Controller\System\SecurityController:
+        public: true
+
+    controller.system.security_controller:
+        alias: App\Controller\System\SecurityController
+
+    App\Controller\UserController:
+        public: true
+
+    controller.user_controller:
+        alias: App\Controller\UserController
+
+    App\Controller\Application:
+        calls:
+            - setTranslator: ['@translator']
+            - setForms: ['@application.forms']
+            - setRepositories: ['@controller.core.repositories']
+
+    App\Controller\Core\Controllers:
+        calls:
+            - setSecurityController: ['@controller.system.security_controller']
+            - setUserController: ['@controller.user_controller']

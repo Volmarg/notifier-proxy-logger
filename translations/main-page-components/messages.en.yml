@@ -1,2 +1,3 @@
 mainPageComponents:
   footer: 'Copyright © 2020 - <a href="https://github.com/Volmarg" target="_blank">Volmarg Reiso</a>'
+  projectName: Notifier && Proxy Logger

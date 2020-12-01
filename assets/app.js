@@ -6,11 +6,14 @@
  */
 
 // any CSS you import will output into a single css file (app.css in this case)
+/* CSS */
 import './styles/app.scss';
 import './styles/volt.scss';
-
-// todo: check how to add this @ in front and use this also in VUE when importing something in classes?
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import 'notyf/notyf.min.css';
+
+/* JS */
+// todo: check how to add this @ in front and use this also in VUE when importing something in classes?
 import 'popper.js/dist/umd/popper.min.js'
 import 'bootstrap/dist/js/bootstrap.min.js';
 import 'onscreen/dist/on-screen.umd.js'
@@ -23,8 +26,3 @@ import "chartist/dist/chartist.min.js";
 import "chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js";
 import "vanillajs-datepicker/dist/js/datepicker.min.js";
 import "simplebar/dist/simplebar.min.js";
-
-// Need jQuery? Install it with "yarn add jquery", then uncomment to import it.
-// import $ from 'jquery';
-
-console.log('Hello Webpack Encore! Edit me in assets/app.js');
