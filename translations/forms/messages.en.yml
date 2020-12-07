@@ -20,3 +20,15 @@ forms:
       placeholder: Your Password
     submit:
       label: Sign in
+  sendTestMailForm:
+    receiver:
+      label: Receiver
+      placeholder: E-mail of this message receiver
+    messageBody:
+      label: Body
+      placeholder: The main content of the message
+    messageTitle:
+      label: Title
+      placeholder: The title of the message
+    submit:
+      label: submit

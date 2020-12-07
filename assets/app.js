@@ -26,3 +26,5 @@ import "chartist/dist/chartist.min.js";
 import "chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js";
 import "vanillajs-datepicker/dist/js/datepicker.min.js";
 import "simplebar/dist/simplebar.min.js";
+
+import './vueBootstrap';

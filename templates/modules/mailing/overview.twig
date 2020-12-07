@@ -1,0 +1,28 @@
+{% extends 'base.twig' %}
+
+{% block pageContent %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card card-body bg-white border-light shadow-sm mb-4">
+                <h2 class="h5 mb-4">General information</h2>
+
+                <section>
+                    {{ form_start(sendTestMailForm) }}
+
+                        {{ form_widget(sendTestMailForm[constant('App\\Form\\Modules\\Mailing\\SendTestMailForm::FIELD_NAME_SUBMIT')], {
+                            attr: {
+                                "@onclick": "consoleLogTest()"
+                            }
+                        }) }}
+                    <br/>
+                    <br/>
+                    <br/>
+
+
+                    {{ form_end(sendTestMailForm) }}
+                </section>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

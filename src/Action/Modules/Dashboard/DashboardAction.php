@@ -6,16 +6,17 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+#[Route("/modules/dashboard", name: "dashboard_")]
 class DashboardAction extends AbstractController
 {
 
-    #[Route("/dashboard", name: "dashboard", methods: ["GET"])]
+    #[Route("/overview", name: "overview", methods: ["GET"])]
     /**
      * @return Response
      */
     public function showDashboardPage(): Response
     {
-        return $this->render('base.twig');
+        return $this->render('modules/dashboard/overview.twig');
     }
 
 }

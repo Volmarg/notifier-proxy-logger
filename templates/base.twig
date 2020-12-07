@@ -19,17 +19,27 @@
 </head>
 
 <body>
-    {% include 'base-layout-components/sidebar-menu/sidebar.twig' %}
-<main class="content">
-    {% include 'base-layout-components/topbar-menu/topbar.twig' %}
+{#    {% include 'base-layout-components/sidebar-menu/sidebar.twig' %}#}
+{#<main class="content">#}
+{#    {% include 'base-layout-components/topbar-menu/topbar.twig' %}#}
 
-    <section class="page-content-wrapper">
+{#    <section class="page-content-wrapper">#}
 {#        {% include 'base-layout-components/page-content-wrapper/top-bar.twig' %}#}
-        {% include 'base-layout-components/page-content-wrapper/content.twig' %}
-    </section>
+{#        <section data-page-content-wrapper-content>#}
+{#            {% block pageContent %}#}
+{#            {% endblock %}#}
+{#        </section>#}
+{#    </section>#}
+{#    {% block stuff %}#}
+{#    {% endblock %}#}
 
-    {% include 'base-layout-components/footer.twig' %}
-</main>
+{#    <footer></footer>#}
+{#</main>#}
 
+<div id="app"></div>
+{# todo: split the vue otput - move the vue to the footer and all the other liblaries stay in head in separated file #}
+<section>
+    {{ encore_entry_script_tags('app') }}
+</section>
 </body>
 </html>

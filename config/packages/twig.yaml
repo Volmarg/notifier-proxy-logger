@@ -1,2 +1,3 @@
 twig:
     default_path: '%kernel.project_dir%/templates'
+    form_themes: [ 'forms/themes/volt-bootstrap-theme.twig' ]

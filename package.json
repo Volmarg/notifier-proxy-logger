@@ -1,10 +1,9 @@
 {
     "devDependencies": {
         "@symfony/webpack-encore": "^0.31.0",
-        "core-js": "^3.0.0",
-        "regenerator-runtime": "^0.13.2",
-        "webpack-notifier": "^1.6.0",
+        "@vue/compiler-sfc": "^3.0.4",
         "browser-sync": "^2.26.13",
+        "core-js": "^3.0.0",
         "del": "4.1.1",
         "gulp": "4.0.2",
         "gulp-autoprefixer": "6.1.0",
@@ -20,7 +19,15 @@
         "gulp-sourcemaps": "2.6.5",
         "gulp-uglify": "3.0.2",
         "gulp-wait": "0.0.2",
-        "merge-stream": "2.0.0"
+        "merge-stream": "2.0.0",
+        "regenerator-runtime": "^0.13.2",
+        "ts-loader": "^5.4.5",
+        "typescript": "^4.1.2",
+        "vue": "^3.0.4",
+        "vue-i18n": "^8.22.2",
+        "vue-loader": "^16.1.1",
+        "vue-template-compiler": "^2.6.12",
+        "webpack-notifier": "^1.6.0"
     },
     "license": "UNLICENSED",
     "private": true,

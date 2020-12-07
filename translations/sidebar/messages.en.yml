@@ -3,3 +3,5 @@ sidebar:
     nodes:
       dashboard:
         label: Dashboard
+      mailing:
+        label: Mailing
