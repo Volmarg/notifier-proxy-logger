@@ -155,4 +155,17 @@ class User implements UserInterface
     {
         $this->displayedUsername = $displayedUsername;
     }
+
+    /**
+     * Will return the name that is being used, if the displayed name is set then it's being taken in first place,
+     * otherwise the username is the used name
+     */
+    public function getUsedName(): string
+    {
+        if( !empty($this->displayedUsername) ){
+            return $this->displayedUsername;
+        }
+
+        return $this->username;
+    }
 }

@@ -19,16 +19,4 @@ class MailingAction extends AbstractController
         $this->application = $application;
     }
 
-    #[Route("/overview", name: "overview")]
-    public function renderTemplate()
-    {
-        $sendTestMailForm = $this->application->getForms()->getSendTestMailForm();
-
-        $templateData = [
-            'sendTestMailForm' => $sendTestMailForm->createView(),
-        ];
-
-        return $this->render("modules/mailing/overview.twig", $templateData);
-    }
-
 }

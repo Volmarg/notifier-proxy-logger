@@ -15,29 +15,22 @@
 <html lang="en">
 
 <head>
-    {% include 'base-layout-components/head.twig' %}
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <!-- Primary Meta Tags -->
+    <title>{{ 'mainPageComponents.projectName' | trans }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- CSS -->
+    {{ encore_entry_link_tags('volt-theme') }}
+    {{ encore_entry_link_tags('app') }}
+
+    <!-- JS -->
+    {{ encore_entry_script_tags('volt-theme') }}
+
 </head>
 
 <body>
-{#    {% include 'base-layout-components/sidebar-menu/sidebar.twig' %}#}
-{#<main class="content">#}
-{#    {% include 'base-layout-components/topbar-menu/topbar.twig' %}#}
-
-{#    <section class="page-content-wrapper">#}
-{#        {% include 'base-layout-components/page-content-wrapper/top-bar.twig' %}#}
-{#        <section data-page-content-wrapper-content>#}
-{#            {% block pageContent %}#}
-{#            {% endblock %}#}
-{#        </section>#}
-{#    </section>#}
-{#    {% block stuff %}#}
-{#    {% endblock %}#}
-
-{#    <footer></footer>#}
-{#</main>#}
-
 <div id="app"></div>
-{# todo: split the vue otput - move the vue to the footer and all the other liblaries stay in head in separated file #}
 <section>
     {{ encore_entry_script_tags('app') }}
 </section>

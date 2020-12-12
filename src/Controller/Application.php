@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Controller\Core\Repositories;
+use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -74,4 +75,16 @@ class Application extends AbstractController
         $this->repositories = $repositories;
     }
 
+    /**
+     * Will return logged in user - not just the UserInterface but the actual entity from database with all its data
+     */
+    public function getLoggedInUser(): User
+    {
+        $loggedInBaseUserInterface = $this->getUser();
+        $loggedInBaseUserInterface->getUsername();
+
+        $userEntity = $this->getRepositories()->getUserRepository()->findOneByName($loggedInBaseUserInterface->getUsername());
+
+        return $userEntity;
+    }
 }
