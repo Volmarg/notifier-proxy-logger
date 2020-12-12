@@ -12,45 +12,15 @@
 
 <!-- Script -->
 <script>
-import SymfonyRoutes                               from "../../../../../../core/symfony/SymfonyRoutes";
-import {VUE_APP_DEFAULT_STRING_BEFORE_TRANSLATING} from "../../../../../../env";
-import GetTranslationsForIdsResponseDto            from "../../../../../../core/dto/api/internal/GetTranslationsForIdsResponseDto";
-import LocalStorageService                         from "../../../../../../core/services/LocalStorageService";
-import StringUtils                                 from "../../../../../../core/utils/StringUtils";
+import TranslationsService from "../../../../../../core/services/TranslationsService";
+
+let translationService  = new TranslationsService();
 
 export default {
   data(){
     return {
-      mailingTranslations: VUE_APP_DEFAULT_STRING_BEFORE_TRANSLATING
+      mailingTranslations: translationService.getTranslationForString('sidebar.menu.nodes.mailing.label')
     }
-  },
-  beforeMount() {
-    let localStorageService = new LocalStorageService();
-    let mailingTranslation  = localStorageService.getTranslationForString('sidebar.menu.nodes.mailing.label');
-
-    if( !StringUtils.isEmptyString(mailingTranslation) ){
-      this.mailingTranslations = mailingTranslation;
-    }else{
-
-      let ajaxData = {
-        translationsIds: [
-          'sidebar.menu.nodes.mailing.label'
-        ]
-      };
-
-      this.axios({
-        method: "POST",
-        url   : SymfonyRoutes.GET_TRANSLATIONS_FOR_IDS,
-        params: ajaxData
-      }).then( (response) => {
-
-        let dto                  = GetTranslationsForIdsResponseDto.fromAxiosResponse(response);
-        this.mailingTranslations = dto.translationsJsonForIds['sidebar.menu.nodes.mailing.label'];
-
-        localStorageService.setTranslationForString('sidebar.menu.nodes.mailing.label', this.mailingTranslations);
-      })
-    }
-
   }
 }
 </script>

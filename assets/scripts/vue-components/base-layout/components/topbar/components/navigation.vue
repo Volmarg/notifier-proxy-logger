@@ -19,39 +19,15 @@
 <script>
 import {VUE_APP_DEFAULT_STRING_BEFORE_TRANSLATING}  from "../../../../../env";
 import SymfonyRoutes                                from "../../../../../core/symfony/SymfonyRoutes";
-import GetTranslationsForIdsResponseDto             from "../../../../../core/dto/api/internal/GetTranslationsForIdsResponseDto";
 import LoggedInUserDataDto                          from "../../../../../core/dto/api/internal/LoggedInUserDataDto";
 import LocalStorageService                          from "../../../../../core/services/LocalStorageService";
+import TranslationsService                          from "../../../../../core/services/TranslationsService";
 
 let localStorageService = new LocalStorageService();
+let translationService  = new TranslationsService();
 
 export default {
   methods: {
-    handleTranslations(){
-      if( localStorageService.areTranslationsForStrings(['topbar.menu.nodes.logout.label']) ){
-
-        this.logoutTranslation = localStorageService.getTranslationForString('topbar.menu.nodes.logout.label');
-      }else{
-
-        let ajaxData = {
-          translationsIds: [
-            'topbar.menu.nodes.logout.label'
-          ]
-        };
-
-        this.axios({
-          method: "POST",
-          url   : SymfonyRoutes.GET_TRANSLATIONS_FOR_IDS,
-          params: ajaxData
-        }).then( (response) => {
-          let translationDto     = GetTranslationsForIdsResponseDto.fromAxiosResponse(response);
-          this.logoutTranslation = translationDto.translationsJsonForIds['topbar.menu.nodes.logout.label'];
-
-          localStorageService.setTranslationForString('topbar.menu.nodes.logout.label', this.logoutTranslation);
-        });
-      }
-
-    },
     handleLoggedInUserData(){
 
       if( localStorageService.isLoggedInUserSet() ){
@@ -75,12 +51,11 @@ export default {
   },
   data(){
     return {
-      logoutTranslation     : VUE_APP_DEFAULT_STRING_BEFORE_TRANSLATING,
+      logoutTranslation     : translationService.getTranslationForString('topbar.menu.nodes.logout.label'),
       loggedInUserShownName : VUE_APP_DEFAULT_STRING_BEFORE_TRANSLATING
     };
   },
   beforeMount() {
-    this.handleTranslations();
     this.handleLoggedInUserData();
   }
 }

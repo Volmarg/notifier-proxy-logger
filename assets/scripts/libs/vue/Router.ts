@@ -1,4 +1,5 @@
-import {createRouter, createWebHistory, RouterOptions} from 'vue-router';
+import {createRouter, createWebHistory, RouterOptions}  from 'vue-router';
+import MailingModuleOverviewComponent                   from '../../vue-components/pages/modules/mailing/overview.vue';
 
 /**
  * @description Router used by vue
@@ -13,7 +14,7 @@ export default class Router {
     readonly routes : Array<Object> = [
         {
             path      : '/modules/mailing/overview',
-            component : this.Component1,
+            component : MailingModuleOverviewComponent,
             name      : "modules_mailing_overview"
 
         },

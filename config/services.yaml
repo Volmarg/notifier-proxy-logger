@@ -64,6 +64,7 @@ services:
             - setTranslator: ['@translator']
             - setForms: ['@application.forms']
             - setRepositories: ['@controller.core.repositories']
+            - setLogger: ['@monolog.logger']
 
     App\Controller\Core\Controllers:
         calls:

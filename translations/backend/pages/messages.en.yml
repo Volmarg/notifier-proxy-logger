@@ -1,0 +1,9 @@
+pages:
+  register:
+    header: Register
+  login:
+    header: Login
+  mailing:
+    overview:
+      headers:
+        sendTestMail: Send test mail

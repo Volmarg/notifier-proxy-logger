@@ -12,43 +12,14 @@
 
 <!-- Script -->
 <script>
-import SymfonyRoutes                               from "../../../../../../core/symfony/SymfonyRoutes";
-import GetTranslationsForIdsResponseDto            from "../../../../../../core/dto/api/internal/GetTranslationsForIdsResponseDto";
-import {VUE_APP_DEFAULT_STRING_BEFORE_TRANSLATING} from "../../../../../../env";
-import LocalStorageService                         from "../../../../../../core/services/LocalStorageService";
-import StringUtils                                 from "../../../../../../core/utils/StringUtils";
+import TranslationsService from "../../../../../../core/services/TranslationsService";
+
+let translationService  = new TranslationsService();
 
 export default {
   data(){
     return {
-      dashboardTranslation: VUE_APP_DEFAULT_STRING_BEFORE_TRANSLATING
-    }
-  },
-  beforeMount(){
-    let localStorageService        = new LocalStorageService();
-    let dashboardTranslationString = 'sidebar.menu.nodes.dashboard.label';
-    let dashboardTranslation       = localStorageService.getTranslationForString(dashboardTranslationString);
-
-    if( !StringUtils.isEmptyString(dashboardTranslation) ){
-      this.dashboardTranslation = dashboardTranslation;
-    }else{
-
-      let ajaxData = {
-        translationsIds: [
-          dashboardTranslationString
-        ]
-      }
-
-      this.axios({
-        method: "POST",
-        url: SymfonyRoutes.GET_TRANSLATIONS_FOR_IDS,
-        params: ajaxData
-      }).then( (response) => {
-        let dto                   = GetTranslationsForIdsResponseDto.fromAxiosResponse(response);
-        this.dashboardTranslation = dto.translationsJsonForIds[dashboardTranslationString];
-
-        localStorageService.setTranslationForString(dashboardTranslationString, this.dashboardTranslation);
-      })
+      dashboardTranslation: translationService.getTranslationForString('sidebar.menu.nodes.dashboard.label'),
     }
   }
 }

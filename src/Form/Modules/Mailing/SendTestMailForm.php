@@ -36,25 +36,12 @@ class SendTestMailForm extends AbstractType
     {
         $builder
             ->add(self::FIELD_NAME_RECEIVER, TextType::class, [
-                "attr" => [
-                    "placeholder" => $this->application->trans('forms.sendTestMailForm.receiver.placeholder'),
-                ],
-                "label" => $this->application->trans('forms.sendTestMailForm.receiver.label'),
             ])
             ->add(self::FIELD_NAME_MESSAGE_TITLE, TextType::class, [
-                "attr" => [
-                    "placeholder" => $this->application->trans('forms.sendTestMailForm.messageTitle.placeholder'),
-                ],
-                "label" => $this->application->trans('forms.sendTestMailForm.messageTitle.label'),
             ])
             ->add(self::FIELD_NAME_MESSAGE_BODY, TextareaType::class, [
-                "attr" => [
-                    "placeholder" => $this->application->trans('forms.sendTestMailForm.messageTitle.placeholder'),
-                ],
-                "label" => $this->application->trans('forms.sendTestMailForm.messageTitle.label'),
             ])
             ->add(self::FIELD_NAME_SUBMIT, SubmitType::class, [
-                "label" => $this->application->trans('forms.sendTestMailForm.submit'),
             ]);
     }
 

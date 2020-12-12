@@ -31,4 +31,4 @@ forms:
       label: Title
       placeholder: The title of the message
     submit:
-      label: submit
+      label: Submit
