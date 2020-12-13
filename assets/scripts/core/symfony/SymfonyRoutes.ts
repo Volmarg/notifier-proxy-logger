@@ -8,11 +8,24 @@
  */
 export default class SymfonyRoutes {
 
-    // Translations for ids
-    static readonly KEY_NAME_TRANSLATIONS_IDS = "translationsIds";
-    static readonly GET_TRANSLATIONS_FOR_IDS  = "/api-internal/get-translations-for-ids";
-
-    // Logged in user data
     static readonly GET_LOGGED_IN_USER_DATA = "/api-internal/get-logged-in-user-data";
+    static readonly SEND_TEST_MAIL          = "/modules/mailing/send-test-mail";
+
+    static readonly GET_SCR_TOKEN_PARAM_FORM_NAME = "{formName}";
+    static readonly GET_CSRF_TOKEN                = "/api-internal/get-csrf-token/{formName}";
+
+    /**
+     * @description will use the url with params and replace the params with values
+     */
+    public static buildUrlWithReplacedParams(processedUrl: string, replacedParamsWithValues: object): string
+    {
+        let keys = Object.keys(replacedParamsWithValues);
+        keys.forEach( (key, index) => {
+            let value = replacedParamsWithValues[key];
+            processedUrl = processedUrl.replace(key, value);
+        })
+
+        return processedUrl;
+    }
 
 }

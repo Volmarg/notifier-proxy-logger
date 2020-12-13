@@ -27,6 +27,9 @@ services:
         resource: '../src/Controller/'
         tags: ['controller.service_arguments']
 
+    services.internal.logger_service:
+        alias: App\Services\Internal\LoggerService
+
     App\Repository\UserRepository:
         public: true
 
@@ -64,7 +67,7 @@ services:
             - setTranslator: ['@translator']
             - setForms: ['@application.forms']
             - setRepositories: ['@controller.core.repositories']
-            - setLogger: ['@monolog.logger']
+            - setLoggerService: ['@services.internal.logger_service']
 
     App\Controller\Core\Controllers:
         calls:

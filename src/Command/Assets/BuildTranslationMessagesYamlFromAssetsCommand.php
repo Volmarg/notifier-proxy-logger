@@ -80,7 +80,7 @@ class BuildTranslationMessagesYamlFromAssetsCommand extends Command
             }else{
                 $message = "Translation data array is empty - does Your asset files even exist and are located in correct directory?";
                 $io->warning($message);
-                $this->app->getLogger()->warning($message);
+                $this->app->getLoggerService()->getLogger()->warning($message);
             }
         }
         $io->newLine();
@@ -96,11 +96,11 @@ class BuildTranslationMessagesYamlFromAssetsCommand extends Command
      */
     private function getBackendTranslationFilesData(): ?array
     {
-        $this->app->getLogger()->info("Started getting translation files data");
+        $this->app->getLoggerService()->getLogger()->info("Started getting translation files data");
 
         $translationsAssetsDirectoryExist = file_exists(self::TRANSLATION_BACKEND_FOLDER);
         if( !$translationsAssetsDirectoryExist ){
-            $this->app->getLogger()->critical("Translations assets directory does not exist: ",[
+            $this->app->getLoggerService()->getLogger()->critical("Translations assets directory does not exist: ",[
                 "directory" => self::TRANSLATION_BACKEND_FOLDER,
             ]);
             return null;
@@ -124,7 +124,7 @@ class BuildTranslationMessagesYamlFromAssetsCommand extends Command
                 continue;
             }
 
-            $this->app->getLogger()->info("Found file ({$translationFile}) for language ({$groupName})");
+            $this->app->getLoggerService()->getLogger()->info("Found file ({$translationFile}) for language ({$groupName})");
 
             $translationFileData = Yaml::parseFile($translationFile);
 
@@ -147,7 +147,7 @@ class BuildTranslationMessagesYamlFromAssetsCommand extends Command
      */
     private function buildFrontendTranslationFile(array $translationFilesData): array
     {
-        $this->app->getLogger()->info("Started building output messages file");
+        $this->app->getLoggerService()->getLogger()->info("Started building output messages file");
 
         $outputFilePath          = [];
         $allTranslationFilesData = [];
@@ -160,7 +160,7 @@ class BuildTranslationMessagesYamlFromAssetsCommand extends Command
         $jsonData = json_encode($allTranslationFilesData);
         file_put_contents(self::TRANSLATION_OUTPUT_FILE_PATH, $jsonData);
 
-        $this->app->getLogger()->info("Finished building output messages file");
+        $this->app->getLoggerService()->getLogger()->info("Finished building output messages file");
 
         return $outputFilePath;
     }
@@ -176,7 +176,7 @@ class BuildTranslationMessagesYamlFromAssetsCommand extends Command
         if( JSON_ERROR_NONE !== json_last_error() ){
             $message = "Output json is not valid, please check it!";
             $this->io->error(json_last_error_msg());
-            $this->app->getLogger()->critical(json_last_error_msg());
+            $this->app->getLoggerService()->getLogger()->critical(json_last_error_msg());
         }
 
     }

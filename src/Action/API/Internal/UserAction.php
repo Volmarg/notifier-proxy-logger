@@ -5,7 +5,9 @@ namespace App\Action\API\Internal;
 
 
 use App\Controller\Application;
+use App\DTO\API\Internal\BaseInternalApiResponseDto;
 use App\DTO\API\Internal\LoggedInUserDataDto;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,13 +34,17 @@ class UserAction extends AbstractController
     #[Route("/get-logged-in-user-data", name:"get_logged_in_user_data", methods: [Request::METHOD_GET])]
     public function getLoggedInUserData(): JsonResponse
     {
-        $loggedInUser = $this->app->getLoggedInUser();
+        try{
+            $loggedInUser = $this->app->getLoggedInUser();
 
-        $loggedInUserDataDto = new LoggedInUserDataDto();
-        $loggedInUserDataDto->setCode(Response::HTTP_OK);
-        $loggedInUserDataDto->setSuccess(true);;
-        $loggedInUserDataDto->setAvatar($loggedInUser->getAvatar() ?? "");
-        $loggedInUserDataDto->setShownName($loggedInUser->getUsedName());
+            $loggedInUserDataDto = new LoggedInUserDataDto();
+            $loggedInUserDataDto->prefillBaseFieldsForSuccessResponse();
+            $loggedInUserDataDto->setAvatar($loggedInUser->getAvatar() ?? "");
+            $loggedInUserDataDto->setShownName($loggedInUser->getUsedName());
+        }catch(Exception $e){
+            $this->app->getLoggerService()->logThrowable($e);
+            return BaseInternalApiResponseDto::buildInternalServerErrorResponse()->toJsonResponse();
+        }
 
         return $loggedInUserDataDto->toJsonResponse();
     }

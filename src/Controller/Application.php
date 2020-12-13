@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Controller\Core\Repositories;
 use App\Entity\User;
+use App\Services\Internal\LoggerService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -26,9 +27,9 @@ class Application extends AbstractController
     private Repositories $repositories;
 
     /**
-     * @var LoggerInterface $logger
+     * @var LoggerService $loggerService
      */
-    private LoggerInterface $logger;
+    private LoggerService $loggerService;
 
     /**
      * @return Forms
@@ -95,19 +96,19 @@ class Application extends AbstractController
     }
 
     /**
-     * @return LoggerInterface
+     * @return LoggerService
      */
-    public function getLogger(): LoggerInterface
+    public function getLoggerService(): LoggerService
     {
-        return $this->logger;
+        return $this->loggerService;
     }
 
     /**
-     * @param LoggerInterface $logger
+     * @param LoggerService $loggerService
      */
-    public function setLogger(LoggerInterface $logger): void
+    public function setLoggerService(LoggerService $loggerService): void
     {
-        $this->logger = $logger;
+        $this->loggerService = $loggerService;
     }
 
 }

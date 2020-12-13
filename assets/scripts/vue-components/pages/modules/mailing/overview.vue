@@ -5,7 +5,9 @@
     <div class="col-12 col-xl-8">
       <div class="card card-body bg-white border-light shadow-sm mb-4">
         <h2 class="h5 mb-4"> {{ translationHeaderSendTestMail }}  </h2>
-          <SendTestMailForm/>
+          <section class="">
+            <SendTestMailForm/>
+          </section>
       </div>
     </div>
   </div>

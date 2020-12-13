@@ -95,6 +95,16 @@ class BaseInternalApiResponseDto
     }
 
     /**
+     * Will set the field of this dto to success response so that classes which extend this method will have
+     * the base dto response `set to success`
+     */
+    public function prefillBaseFieldsForSuccessResponse(): void
+    {
+        $this->setCode(Response::HTTP_OK);;
+        $this->setSuccess(true);
+    }
+
+    /**
      * Will build internal server error response
      *
      * @return BaseInternalApiResponseDto
