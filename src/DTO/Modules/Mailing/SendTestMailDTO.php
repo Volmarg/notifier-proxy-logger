@@ -3,6 +3,10 @@
 
 namespace App\DTO\Modules\Mailing;
 
+use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
+
 /**
  * @see SendTestMailForm
  *
@@ -90,6 +94,23 @@ class SendTestMailDTO
     public function setSubmit(string $submit): void
     {
         $this->submit = $submit;
+    }
+
+    /**
+     * Set of rules to validate the dto with the validator
+     *
+     * @param ClassMetadata $metadata
+     */
+    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    {
+        // Receiver
+        $metadata->addPropertyConstraint("receiver", new Email());
+
+        // MessageBody
+        $metadata->addPropertyConstraint('messageBody', new NotBlank());
+
+        // MessageTitle
+        $metadata->addPropertyConstraint('messageTitle', new NotBlank());
     }
 
 }

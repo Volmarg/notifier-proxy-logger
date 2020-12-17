@@ -1,5 +1,6 @@
 import {createRouter, createWebHistory, RouterOptions}  from 'vue-router';
 import MailingModuleOverviewComponent                   from '../../vue-components/pages/modules/mailing/overview.vue';
+import MailingModuleHistoryComponent                    from '../../vue-components/pages/modules/mailing/mailing-history.vue';
 
 /**
  * @description Router used by vue
@@ -17,6 +18,11 @@ export default class Router {
             component : MailingModuleOverviewComponent,
             name      : "modules_mailing_overview"
 
+        },
+        {
+            path      : "/modules/mailing/history",
+            component : MailingModuleHistoryComponent,
+            name      : "modules_mailing_history"
         },
         {
             path      : '/modules/dashboard/overview',

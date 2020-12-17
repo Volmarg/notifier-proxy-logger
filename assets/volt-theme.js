@@ -11,6 +11,7 @@ import './styles/app.scss';
 import './styles/volt.scss';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'notyf/notyf.min.css';
+import './styles/libs/notyf.scss';
 
 /* JS */
 import 'popper.js/dist/umd/popper.min.js'

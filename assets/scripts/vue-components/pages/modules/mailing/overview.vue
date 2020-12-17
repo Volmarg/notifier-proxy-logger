@@ -12,7 +12,6 @@
     </div>
   </div>
 
-
 </template>
 
 <!-- Script -->
@@ -20,7 +19,7 @@
 import SendTestMailForm    from '../../../form/modules/mailing/send-test-mail-form';
 import TranslationsService from "../../../../core/services/TranslationsService";
 
-let translationService  = new TranslationsService();
+let translationService = new TranslationsService();
 
 export default {
   components: {

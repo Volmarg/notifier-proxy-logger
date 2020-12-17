@@ -32,11 +32,25 @@ final class Version20201130043911 extends AbstractMigration
                 PRIMARY KEY(id)
               ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
           ');
+
+        $this->addSql('
+                CREATE TABLE IF NOT EXISTS mail (
+                id INT AUTO_INCREMENT NOT NULL, 
+                from_email VARCHAR(255) NOT NULL, 
+                subject VARCHAR(255) NOT NULL, 
+                body LONGTEXT NOT NULL, 
+                status VARCHAR(100) NOT NULL, 
+                created DATETIME NOT NULL, 
+                source VARCHAR(50) NOT NULL, 
+                to_emails JSON NOT NULL, 
+                PRIMARY KEY(id)
+            ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
+        ');
+
     }
 
     public function down(Schema $schema) : void
     {
-        // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('DROP TABLE `user`');
+        // no going back
     }
 }

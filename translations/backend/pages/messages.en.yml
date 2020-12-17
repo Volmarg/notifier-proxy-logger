@@ -7,3 +7,7 @@ pages:
     overview:
       headers:
         sendTestMail: Send test mail
+    sendTestMail:
+      messages:
+        success: "Test mail has been sent"
+        fail: "Could not send test mail"

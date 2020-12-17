@@ -49,13 +49,16 @@
 
 <!-- Script -->
 <script>
-import TranslationsService     from "../../../../core/services/TranslationsService";
-import SymfonyRoutes           from "../../../../core/symfony/SymfonyRoutes";
-import SymfonyForms            from "../../../../core/symfony/SymfonyForms";
-import CsrfTokenResponseDto    from "../../../../core/dto/api/internal/CsrfTokenResponseDto";
-import CsrfTokenInputComponent from "../../components/csrf-token-input";
+import TranslationsService        from "../../../../core/services/TranslationsService";
+import SymfonyRoutes              from "../../../../core/symfony/SymfonyRoutes";
+import SymfonyForms               from "../../../../core/symfony/SymfonyForms";
+import CsrfTokenResponseDto       from "../../../../core/dto/api/internal/CsrfTokenResponseDto";
+import CsrfTokenInputComponent    from "../../components/csrf-token-input";
+import Notification               from '../../../../libs/mdb5/Notification';
+import BaseInternalApiResponseDto from "../../../../core/dto/api/internal/BaseInternalApiResponseDto";
 
-let translationService  = new TranslationsService();
+let translationService = new TranslationsService();
+let notification       = new Notification();
 
 export default {
   data(){
@@ -92,12 +95,23 @@ export default {
         let csrfTokenResponseDto = CsrfTokenResponseDto.fromAxiosResponse(response);
         this.csrfToken           = csrfTokenResponseDto.csrToken;
 
+        if( !csrfTokenResponseDto.success ){
+          notification.showRedNotification(csrfTokenResponseDto.message);
+          return;
+        }
+
         this.axios({
           method : "POST",
           url    : SymfonyRoutes.SEND_TEST_MAIL,
           data   : ajaxFormData,
         }).then( (response) => {
-          // handle with some popover
+
+          let baseApiResponseDto = BaseInternalApiResponseDto.fromAxiosResponse(response);
+          if( baseApiResponseDto.success ){
+            notification.showGreenNotification(baseApiResponseDto.message);
+          }else {
+            notification.showRedNotification(baseApiResponseDto.message);
+          }
         })
       });
     },

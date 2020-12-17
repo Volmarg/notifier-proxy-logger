@@ -105,6 +105,16 @@ class BaseInternalApiResponseDto
     }
 
     /**
+     * Will set the field of this dto to bad request response so that classes which extend this method will have
+     * the base dto response `set to bad request`
+     */
+    public function prefillBaseFieldsForBadRequestResponse(): void
+    {
+        $this->setCode(Response::HTTP_BAD_REQUEST);;
+        $this->setSuccess(false);
+    }
+
+    /**
      * Will build internal server error response
      *
      * @return BaseInternalApiResponseDto
@@ -114,7 +124,20 @@ class BaseInternalApiResponseDto
         $dto = new BaseInternalApiResponseDto();
         $dto->setCode(Response::HTTP_INTERNAL_SERVER_ERROR);
         $dto->setSuccess(false);
-        $dto->setMessage("Internal Server error"); //todo: add translation
+
+        return $dto;
+    }
+
+    /**
+     * Will build internal server error response
+     *
+     * @return BaseInternalApiResponseDto
+     */
+    public static function buildBadRequestErrorResponse(): BaseInternalApiResponseDto
+    {
+        $dto = new BaseInternalApiResponseDto();
+        $dto->setCode(Response::HTTP_BAD_REQUEST);
+        $dto->setSuccess(false);
 
         return $dto;
     }
