@@ -4,6 +4,8 @@ namespace App\Action\Modules\Mailing;
 
 use App\Controller\Application;
 use App\DTO\API\Internal\BaseInternalApiResponseDto;
+use App\DTO\API\Internal\GetAllEmailsResponseDto;
+use App\DTO\Modules\Mailing\MailDTO;
 use App\DTO\Modules\Mailing\SendTestMailDTO;
 use App\Services\Internal\FormService;
 use Exception;
@@ -87,4 +89,42 @@ class MailingAction extends AbstractController
         }
     }
 
+    /**
+     * Will return all emails
+     * @return JsonResponse
+     */
+    #[Route("/get-all-emails", name: "get_all_emails", methods: ["GET"])]
+    public function getAllEmails(): JsonResponse
+    {
+        try{
+            $mails = $this->application->getRepositories()->getMailRepository()->getAllEmails();
+
+            $arrayOfDtosJsons = [];
+            foreach($mails as $mail){
+                $mailDto = new MailDTO();
+                $mailDto->setBody($mail->getBody());
+                $mailDto->setSubject($mail->getSubject());
+                $mailDto->setCreated($mail->getCreated()->format("Y-m-d H:i:s"));
+                $mailDto->setToEmails($mail->getToEmails());
+                $mailDto->setStatus($mail->getStatus());
+
+                $arrayOfDtosJsons[] = $mailDto->toJson();
+            }
+
+            $responseDto = new GetAllEmailsResponseDto();
+            $responseDto->prefillBaseFieldsForSuccessResponse();
+            $responseDto->setEmailsJsons($arrayOfDtosJsons);
+
+            return $responseDto->toJsonResponse();
+        }catch(Exception $e){
+            $this->application->getLoggerService()->logThrowable($e);
+
+            $message = $this->application->trans('pages.mailing.history.messages.errors.couldNotGetAllSentEmails');
+
+            $baseResponseDto = BaseInternalApiResponseDto::buildInternalServerErrorResponse();
+            $baseResponseDto->setMessage($message);
+
+            return $baseResponseDto->toJsonResponse();
+        }
+    }
 }

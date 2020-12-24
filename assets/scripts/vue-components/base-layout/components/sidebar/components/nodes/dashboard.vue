@@ -1,6 +1,6 @@
 <!-- Template -->
 <template>
-  <li class="nav-item">
+  <li class="nav-item" :class="{'active' : ( this.$route.name === 'modules_dashboard_overview' )}">
     <router-link :to="{name: 'modules_dashboard_overview'}" class="nav-link">
         <span class="sidebar-icon">
             <span class="fas fa-chart-pie"></span>

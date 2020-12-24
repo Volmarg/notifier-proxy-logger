@@ -2,7 +2,7 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Mail;
+use App\Entity\Modules\Mailing\Mail;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;

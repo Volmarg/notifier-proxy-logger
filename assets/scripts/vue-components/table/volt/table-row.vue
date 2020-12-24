@@ -1,20 +1,23 @@
 <!-- Template -->
 <template>
   <tr class="volt-table-row">
-    <td class="border-0">
-      <a href="#" class="d-flex align-items-center">
-        <div><span class="h6">United States</span></div>
-      </a>
-    </td>
-    <td class="border-0 font-weight-bold">106</td>
-    <td class="border-0 text-danger">
-      <span class="fas fa-angle-down"></span>
-      <span class="font-weight-bold">5</span>
-    </td>
+    <TableCell v-for="(value, key, index) in rowData" :key="key" :id="index" :cell-value="value"/>
   </tr>
 </template>
 
 <!-- Script -->
+<script>
+import TableCell from './table-cell';
+
+export default {
+  props: [
+      'rowData'
+  ],
+  components: {
+    TableCell
+  }
+}
+</script>
 
 <!-- Style -->
 <style>

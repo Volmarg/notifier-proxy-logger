@@ -5,3 +5,7 @@ sidebar:
         label: Dashboard
       mailing:
         label: Mailing
+        history:
+          label: History
+        testSending:
+          label: Test sending

@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Modules\Mailing;
 
-use App\Repository\MailRepository;
+use App\Entity\EntityInterface;
+use App\Repository\Modules\Mailing\MailRepository;
 use App\Validation\Constraint\ArrayOfEmailsConstraint;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
@@ -16,6 +17,8 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
  */
 class Mail implements EntityInterface
 {
+    const FIELD_NAME_STATUS = "status";
+
     const STATUS_SENT    = "SENT";
     const STATUS_PENDING = "PENDING";
     const STATUS_ERROR   = "ERROR";

@@ -11,3 +11,25 @@ pages:
       messages:
         success: "Test mail has been sent"
         fail: "Could not send test mail"
+    history:
+      labels:
+        main: Sent Emails - History
+      table:
+        headers:
+          from:
+            label: From
+          subject:
+            label: Subject
+          body:
+            label: Body
+          status:
+            label: Status
+          created:
+            label: Created
+          source:
+            label: Source
+          receivers:
+            label: Receivers
+      messages:
+        errors:
+          couldNotGetAllSentEmails: Could not get all sent Emails

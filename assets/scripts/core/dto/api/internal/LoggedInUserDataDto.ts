@@ -24,7 +24,7 @@ export default class LoggedInUserDataDto extends BaseInternalApiResponseDto{
     }
 
     /**
-     * @description returns current dto as object
+     * @description returns current dto as string
      */
     public toJson(): string
     {

@@ -8,7 +8,9 @@ import JsonPath                                     from 'jsonpath';
 export default class TranslationsService {
 
     /**
-     * @description will return translation file content in form of json
+     * @description will return translation for given string from translation files
+     *              function searches for translations in form of `zzz.xxx.ccc.dd` in entire file
+     *              returns only the first match, so duplications should be ignored and should not raise any error
      */
     public getTranslationForString(searchedTranslationString: string): string
     {
@@ -20,5 +22,19 @@ export default class TranslationsService {
         }
 
         return foundValue;
+    }
+
+    /**
+     * @see getTranslationForString - does the same but for multiple strings
+     */
+    public getTranslationsForStrings(searchedTranslationStrings: Array<string>): Array<string>
+    {
+        let arrayOfTranslations = [];
+        searchedTranslationStrings.forEach( (searchedTranslationString, index) => {
+            let foundTranslation = this.getTranslationForString(searchedTranslationString);
+            arrayOfTranslations.push(foundTranslation);
+        })
+
+        return arrayOfTranslations;
     }
 }

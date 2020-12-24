@@ -33,13 +33,20 @@ services:
     App\Repository\UserRepository:
         public: true
 
+    App\Repository\Modules\Mailing\MailRepository:
+        public: true
+
     repository.user_repository:
         alias: App\Repository\UserRepository
+
+    repository.mail_repository:
+        alias: App\Repository\Modules\Mailing\MailRepository
 
     App\Controller\Core\Repositories:
         public: true
         calls:
             - setUserRepository: ['@repository.user_repository']
+            - setMailRepository: ['@repository.mail_repository']
 
     controller.core.repositories:
         alias: App\Controller\Core\Repositories
@@ -62,6 +69,9 @@ services:
     controller.user_controller:
         alias: App\Controller\UserController
 
+    controller.modules_mailing_mail_controller:
+        alias: App\Controller\Modules\Mailing\MailController
+
     App\Controller\Application:
         calls:
             - setTranslator: ['@translator']
@@ -73,3 +83,4 @@ services:
         calls:
             - setSecurityController: ['@controller.system.security_controller']
             - setUserController: ['@controller.user_controller']
+            - setMailingController: ['@controller.modules_mailing_mail_controller']

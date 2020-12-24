@@ -15,19 +15,19 @@
 
     <div class="multi-level collapse show" role="list" id="submenu-app" aria-expanded="false" style="">
       <ul class="flex-column nav">
-        <li class="nav-item active">
+        <li class="nav-item" :class="{'active' : ( this.$route.name === 'modules_mailing_overview' )}">
           <router-link :to="{ name: 'modules_mailing_overview' }" class="nav-link">
-            <span>Test sending</span> <!-- todo: add translation -->
+            <span>{{ this.testSendingTranslation }}</span>
           </router-link>
+        </li>
+        <li class="nav-item" :class="{'active': ( this.$route.name === 'modules_mailing_history' )}">
           <router-link :to="{name: 'modules_mailing_history'}" class="nav-link">
-            <span>History</span> <!-- todo: add label -->
+            <span>{{ this.historyTranslation }}</span>
           </router-link>
         </li>
       </ul>
     </div>
   </li>
-
-
 </template>
 
 <!-- Script -->
@@ -39,7 +39,27 @@ let translationService = new TranslationsService();
 export default {
   data() {
     return {
-      mailingTranslations: translationService.getTranslationForString('sidebar.menu.nodes.mailing.label')
+      menuLinkClasses: {
+        "active" : this.isActiveLink
+      },
+      isActiveLink : false,
+    }
+  },
+  computed: {
+    mailingTranslations : {
+      get: function(){
+        return translationService.getTranslationForString('sidebar.menu.nodes.mailing.label');
+      }
+    },
+    testSendingTranslation : {
+      get: function() {
+        return translationService.getTranslationForString('sidebar.menu.nodes.mailing.testSending.label');
+      }
+    },
+    historyTranslation : {
+      get: function(){
+        return translationService.getTranslationForString('sidebar.menu.nodes.mailing.history.label');
+      }
     }
   }
 }

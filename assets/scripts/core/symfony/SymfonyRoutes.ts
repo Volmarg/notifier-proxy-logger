@@ -14,6 +14,8 @@ export default class SymfonyRoutes {
     static readonly GET_SCR_TOKEN_PARAM_FORM_NAME = "{formName}";
     static readonly GET_CSRF_TOKEN                = "/api-internal/get-csrf-token/{formName}";
 
+    static readonly GET_ALL_EMAILS = "/modules/mailing/get-all-emails";
+
     /**
      * @description will use the url with params and replace the params with values
      */

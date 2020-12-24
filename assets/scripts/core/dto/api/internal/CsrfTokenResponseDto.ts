@@ -16,12 +16,12 @@ export default class CsrfTokenResponseDto extends BaseInternalApiResponseDto
     }
 
     /**
-     * @description returns current dto as object
+     * @description returns current dto as string
      */
     public toJson(): string
     {
         let object = {
-            avatar    : this.csrToken,
+            csrfToken : this.csrToken,
             success   : this.success,
             code      : this.code,
             message   : this.message
