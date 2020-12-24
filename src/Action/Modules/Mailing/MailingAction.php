@@ -3,6 +3,7 @@
 namespace App\Action\Modules\Mailing;
 
 use App\Controller\Application;
+use App\Controller\Core\Controllers;
 use App\DTO\API\Internal\BaseInternalApiResponseDto;
 use App\DTO\API\Internal\GetAllEmailsResponseDto;
 use App\DTO\Modules\Mailing\MailDTO;
@@ -35,8 +36,14 @@ class MailingAction extends AbstractController
      */
     private FormService $formService;
 
-    public function __construct(Application $application, NotifierInterface $notifier, FormService $formService)
+    /**
+     * @var Controllers $controllers
+     */
+    private Controllers $controllers;
+
+    public function __construct(Application $application, NotifierInterface $notifier, FormService $formService, Controllers $controllers)
     {
+        $this->controllers = $controllers;
         $this->application = $application;
         $this->formService = $formService;
         $this->notifier    = $notifier;
@@ -97,7 +104,7 @@ class MailingAction extends AbstractController
     public function getAllEmails(): JsonResponse
     {
         try{
-            $mails = $this->application->getRepositories()->getMailRepository()->getAllEmails();
+            $mails = $this->controllers->getMailingController()->getAllEmails();
 
             $arrayOfDtosJsons = [];
             foreach($mails as $mail){
