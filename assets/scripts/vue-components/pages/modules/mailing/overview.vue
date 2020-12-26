@@ -6,7 +6,7 @@
       <div class="card card-body bg-white border-light shadow-sm mb-4">
         <h2 class="h5 mb-4"> {{ translationHeaderSendTestMail }}  </h2>
           <section class="">
-            <SendTestMailForm/>
+            <send-test-mail/>
           </section>
       </div>
     </div>
@@ -23,7 +23,7 @@ let translationService = new TranslationsService();
 
 export default {
   components: {
-    SendTestMailForm,
+    "send-test-mail": SendTestMailForm,
   },
   data(){
     return {

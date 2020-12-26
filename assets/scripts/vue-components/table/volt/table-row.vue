@@ -1,7 +1,7 @@
 <!-- Template -->
 <template>
   <tr class="volt-table-row">
-    <TableCell v-for="(value, key, index) in rowData" :key="index" :cell-value="value"/>
+    <table-cell v-for="(value, key, index) in rowData" :key="index" :cell-value="value"/>
   </tr>
 </template>
 
@@ -17,7 +17,7 @@ export default {
     }
   },
   components: {
-    TableCell
+    "table-cell": TableCell
   }
 }
 </script>
