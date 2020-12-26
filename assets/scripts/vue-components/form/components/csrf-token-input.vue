@@ -6,8 +6,11 @@
 <!-- Script -->
 <script>
 export default {
-  props: [
-    "csrfToken"
-  ]
+  props: {
+    "csrfToken": {
+      type     : String,
+      required : true,
+    }
+  }
 }
 </script>

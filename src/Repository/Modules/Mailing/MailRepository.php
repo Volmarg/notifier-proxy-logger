@@ -4,6 +4,7 @@ namespace App\Repository\Modules\Mailing;
 
 use App\Entity\Modules\Mailing\Mail;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -30,4 +31,22 @@ class MailRepository extends ServiceEntityRepository
         return $entities;
     }
 
+    /**
+     * @param int $countOfReturnedEmails
+     * @return Mail[]
+     */
+    public function getLastEmails(int $countOfReturnedEmails): array
+    {
+        $queryBuilder = $this->_em->createQueryBuilder();
+
+        $queryBuilder->select("m")
+            ->from(Mail::class, "m")
+            ->orderBy("m.created", Criteria::DESC)
+            ->setMaxResults($countOfReturnedEmails);
+
+        $query   = $queryBuilder->getQuery();
+        $results = $query->execute();
+
+        return $results;
+    }
 }

@@ -1,9 +1,9 @@
 import BaseInternalApiResponseDto from "./BaseInternalApiResponseDto";
 
 /**
- * @description Returns the dto representation from the backed response `getAllEmails`
+ * @description Returns the dto representation from the backed response `getLastProcessedEmails`
  */
-export default class GetAllEmailsResponseDto extends BaseInternalApiResponseDto
+export default class GetLastProcessedEmailsResponseDto extends BaseInternalApiResponseDto
 {
     private _emailsJsons = "{}";
 
@@ -14,7 +14,6 @@ export default class GetAllEmailsResponseDto extends BaseInternalApiResponseDto
     set emailsJsons(value: string) {
         this._emailsJsons = value;
     }
-
 
     /**
      * @description returns current dto as string
@@ -32,9 +31,9 @@ export default class GetAllEmailsResponseDto extends BaseInternalApiResponseDto
     }
 
     /**
-     * @description Create GetAllEmailsResponseDto from json
+     * @description Create GetLastProcessedEmailsResponseDto from json
      */
-    public static fromJson(json: string): GetAllEmailsResponseDto
+    public static fromJson(json: string): GetLastProcessedEmailsResponseDto
     {
         let baseDto = super.fromJson(json);
 
@@ -42,12 +41,12 @@ export default class GetAllEmailsResponseDto extends BaseInternalApiResponseDto
             var object = JSON.parse(json);
         }catch(Exception){
             throw{
-                "message"   : "Could not parse json to object for GetAllEmailsResponseDto",
+                "message"   : "Could not parse json to object for GetLastProcessedEmailsResponseDto",
                 "exception" : Exception
             }
         }
 
-        let allEmailsResponseDto         = new GetAllEmailsResponseDto();
+        let allEmailsResponseDto         = new GetLastProcessedEmailsResponseDto();
         allEmailsResponseDto.success     = baseDto.success;
         allEmailsResponseDto.code        = baseDto.code;
         allEmailsResponseDto.message     = baseDto.message;
@@ -57,9 +56,9 @@ export default class GetAllEmailsResponseDto extends BaseInternalApiResponseDto
     }
 
     /**
-     * @description build GetAllEmailsResponseDto from axios response object
+     * @description build GetLastProcessedEmailsResponseDto from axios response object
      */
-    public static fromAxiosResponse(axiosResponse: object): GetAllEmailsResponseDto
+    public static fromAxiosResponse(axiosResponse: object): GetLastProcessedEmailsResponseDto
     {
         let json = JSON.stringify(axiosResponse.data);
         let dto  = this.fromJson(json);

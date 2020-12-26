@@ -9,8 +9,11 @@
 <!-- Script -->
 <script>
 export default {
-  props: [
-      'cellValue'
-  ]
+  props: {
+    "cellValue": {
+      types    : [String, Number],
+      required : true
+    }
+  }
 }
 </script>

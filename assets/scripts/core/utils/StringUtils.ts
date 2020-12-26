@@ -27,4 +27,17 @@ export default class StringUtils {
         return firstString === secondString;
     }
 
+    /**
+     * @description will check if given string is longer than provided maxCharactersCount
+     *              - if yes then the string length will be reduced and dots are added on the end
+     */
+    public static substringAndAddDots(string: string, maxCharactersCount: number): string
+    {
+        if( string.length > maxCharactersCount ){
+            string = string.substr(0, maxCharactersCount) + '...';
+        }
+
+        return string;
+    }
+
 }

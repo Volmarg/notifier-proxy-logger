@@ -1,13 +1,12 @@
 import {createRouter, createWebHistory, RouterOptions}  from 'vue-router';
 import MailingModuleOverviewComponent                   from '../../vue-components/pages/modules/mailing/overview.vue';
 import MailingModuleHistoryComponent                    from '../../vue-components/pages/modules/mailing/mailing-history.vue';
+import DashboardOverviewComponent                       from '../../vue-components/pages/modules/dashboard/overview.vue';
 
 /**
  * @description Router used by vue
  */
 export default class Router {
-    readonly Component1 = { template: '<div>Route</div>' };
-    readonly Component2 = { template: '<div>Route2</div>' };
 
     /**
      * @description Definitions of vue routes
@@ -26,7 +25,7 @@ export default class Router {
         },
         {
             path      : '/modules/dashboard/overview',
-            component : this.Component2,
+            component : DashboardOverviewComponent,
             name      : "modules_dashboard_overview"
         }
     ];
@@ -40,7 +39,7 @@ export default class Router {
             history : createWebHistory(),
         } as RouterOptions;
 
-        var router = createRouter(vueRouterOptions)
+        let router = createRouter(vueRouterOptions)
 
         //@ts-ignore
         return router;

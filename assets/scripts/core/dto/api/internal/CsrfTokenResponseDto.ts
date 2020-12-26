@@ -41,7 +41,7 @@ export default class CsrfTokenResponseDto extends BaseInternalApiResponseDto
             var object = JSON.parse(json);
         }catch(Exception){
             throw{
-                "message"   : "Could not parse json to object for LoggedInUserDataDto",
+                "message"   : "Could not parse json to object for CsrfTokenResponseDto",
                 "exception" : Exception
             }
         }

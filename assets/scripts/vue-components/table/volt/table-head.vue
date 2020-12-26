@@ -2,7 +2,7 @@
 <template>
   <thead class="thead-light">
   <tr>
-    <th v-for="header in tableHeaders" class="border-0">{{ header }}</th>
+    <th v-for="(header, index) in tableHeaders" :key="index" class="border-0">{{ header }}</th>
   </tr>
   </thead>
 </template>
@@ -10,8 +10,11 @@
 <!-- Script -->
 <script>
 export default {
-  props: [
-      'tableHeaders'
-  ]
+  props: {
+    "tableHeaders": {
+      type     : Array,
+      required : true
+    }
+  }
 }
 </script>

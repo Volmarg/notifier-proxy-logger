@@ -33,3 +33,9 @@ pages:
       messages:
         errors:
           couldNotGetAllSentEmails: Could not get all sent Emails
+  dashboard:
+    overview:
+      widgets:
+        lastProcessedEmails:
+          header:
+            label: Last processed Emails

@@ -3,6 +3,9 @@
  */
 export default class MailDto
 {
+    static readonly STATUS_SENT    = "SENT";
+    static readonly STATUS_PENDING = "PENDING";
+    static readonly STATUS_ERROR   = "ERROR";
 
     private _fromEmail: string        = "";
     private _subject:   string        = "";
@@ -73,7 +76,7 @@ export default class MailDto
      *
      * @param json
      */
-    public fromJson(json: string): MailDto
+    public static fromJson(json: string): MailDto
     {
         let object = JSON.parse(json);
         let dto    = new MailDto();

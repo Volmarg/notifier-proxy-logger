@@ -1,18 +1,19 @@
 <!-- Template -->
 <template>
+  <semipolar-spinner v-show="isSpinnerVisible"/>
 
   <div class="row">
     <div class="col-12 col-xl-12">
       <div class="card card-body bg-white border-light shadow-sm mb-4">
         <h2 class="h5 mb-4"> {{ sentEmailsLabel }}  </h2>
           <section class="">
-            <VoltTable>
-              <VoltTableHead :table-headers="tableHeaders">
-              </VoltTableHead>
-              <VoltTableBody v-for="mail in tableData">
-                <VoltTableRow :row-data="mail"/>
-              </VoltTableBody>
-            </VoltTable>
+            <volt-table>
+              <volt-table-head :table-headers="tableHeaders">
+              </volt-table-head>
+              <volt-table-body v-for="(mail, index) in tableData" :key="index">
+                <volt-table-row :row-data="mail"/>
+              </volt-table-body>
+            </volt-table>
           </section>
       </div>
     </div>
@@ -22,12 +23,15 @@
 
 <!-- Script -->
 <script>
-import VoltTable               from '../../../table/volt/table';
-import VoltTableHead           from '../../../table/volt/table-head';
-import VoltTableBody           from '../../../table/volt/table-body';
-import VoltTableRow            from '../../../table/volt/table-row';
+import VoltTable                 from '../../../table/volt/table';
+import VoltTableHead             from '../../../table/volt/table-head';
+import VoltTableBody             from '../../../table/volt/table-body';
+import VoltTableRow              from '../../../table/volt/table-row';
+import SemipolarSpinnerComponent from '../../../../vue-components/libs/epic-spinners/semipolar-spinner';
+
 import TranslationsService     from "../../../../core/services/TranslationsService";
 import SymfonyRoutes           from "../../../../core/symfony/SymfonyRoutes";
+import StringUtils             from "../../../../core/utils/StringUtils";
 import GetAllEmailsResponseDto from "../../../../core/dto/api/internal/GetAllEmailsResponseDto";
 import MailDto                 from "../../../../core/dto/modules/mailing/MailDto";
 
@@ -35,17 +39,19 @@ let translationService = new TranslationsService();
 
 export default {
   components: {
-    VoltTableBody,
-    VoltTableHead,
-    VoltTableRow,
-    VoltTable
+    "volt-table-body"   : VoltTableBody,
+    "volt-table-head"   : VoltTableHead,
+    "volt-table-row"    : VoltTableRow,
+    "volt-table"        : VoltTable,
+    "semipolar-spinner" : SemipolarSpinnerComponent
   },
   beforeMount(){
     this.retrieveAllEmails();
   },
   data(){
     return {
-      allEmails: [],
+      allEmails        : [],
+      isSpinnerVisible : true,
     }
   },
   methods: {
@@ -57,12 +63,12 @@ export default {
 
         for(let index in emailsJsons){
           let json    = emailsJsons[index];
-          let mailDto = (new MailDto()).fromJson(json);
+          let mailDto = MailDto.fromJson(json);
           allEmailsDtos.push(mailDto)
         }
 
-        this.allMails  = allEmailsDtos;
-        this.tableData = allEmailsDtos;
+        this.allMails         = allEmailsDtos;
+        this.isSpinnerVisible = false;
       })
     }
   },
@@ -93,9 +99,11 @@ export default {
     },
     tableData: {
       get: function(){
-        let filteredTableData = [];
+        let filteredTableData      = [];
+        let bodyMaxCharactersCount = 20;
+
         this.allEmails.forEach( (value, index) => {
-          value.body = value.body.substr(0, 20) + '...';
+          value.body = StringUtils.substringAndAddDots(value.body, bodyMaxCharactersCount);
           filteredTableData.push(value);
         })
 

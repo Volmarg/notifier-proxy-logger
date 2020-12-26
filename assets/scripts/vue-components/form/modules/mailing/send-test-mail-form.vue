@@ -2,7 +2,7 @@
 <template>
   <form @submit.prevent="submitTestMailForm" v-bind:action="formActionUrl" ref="form" method="POST">
     <div class="row">
-      <div class="col-md-6 mb-3">
+      <div class="col-md-10 mb-3">
         <div>
           <label for="test_message_receiver">{{ receiverLabelTranslation }}</label>
           <input class="form-control" id="test_message_receiver" type="email" required=""
@@ -14,7 +14,7 @@
     </div>
 
     <div class="row">
-      <div class="col-md-6 mb-3">
+      <div class="col-md-10 mb-3">
         <div>
           <label for="test_message_title">{{ messageTitleLabelTranslation }}</label>
           <input class="form-control" id="test_message_title" type="text" required=""
@@ -26,7 +26,7 @@
     </div>
 
     <div class="row">
-      <div class="col-md-6 mb-3">
+      <div class="col-md-10 mb-3">
         <div class="form-group">
           <label for="test_message_body">{{ messageBodyLabelTranslation }}</label>
           <textarea id="test_message_body"  class="form-control" required=""
@@ -120,7 +120,7 @@ export default {
      */
     getCsrfToken(){
       let urlReplacementParams = {
-        [SymfonyRoutes.GET_SCR_TOKEN_PARAM_FORM_NAME]: SymfonyForms.SEND_TEST_MAIL_FORM_BLOCK_NAME
+        [SymfonyRoutes.GET_CSRF_TOKEN_PARAM_FORM_NAME]: SymfonyForms.SEND_TEST_MAIL_FORM_BLOCK_NAME
       }
 
       let url = SymfonyRoutes.buildUrlWithReplacedParams(SymfonyRoutes.GET_CSRF_TOKEN, urlReplacementParams);

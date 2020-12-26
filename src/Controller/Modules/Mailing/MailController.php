@@ -3,6 +3,7 @@
 namespace App\Controller\Modules\Mailing;
 
 use App\Controller\Application;
+use App\Entity\Modules\Mailing\Mail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class MailController extends AbstractController
@@ -21,10 +22,19 @@ class MailController extends AbstractController
     /**
      * Will return all Emails
      *
-     * @return array
+     * @return Mail[]
      */
     public function getAllEmails(): array
     {
         return $this->app->getRepositories()->getMailRepository()->getAllEmails();
+    }
+
+    /**
+     * @param int $countOfReturnedEmails
+     * @return Mail[]
+     */
+    public function getLastEmails(int $countOfReturnedEmails): array
+    {
+        return $this->app->getRepositories()->getMailRepository()->getLastEmails($countOfReturnedEmails);
     }
 }
