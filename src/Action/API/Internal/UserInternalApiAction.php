@@ -5,7 +5,7 @@ namespace App\Action\API\Internal;
 
 
 use App\Controller\Application;
-use App\DTO\API\Internal\BaseInternalApiResponseDto;
+use App\DTO\API\BaseApiResponseDto;
 use App\DTO\API\Internal\LoggedInUserDataDto;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route("/api-internal", name: "api_internal_")]
-class UserAction extends AbstractController
+class UserInternalApiAction extends AbstractController
 {
     /**
      * @var Application $app
@@ -43,7 +43,7 @@ class UserAction extends AbstractController
             $loggedInUserDataDto->setShownName($loggedInUser->getUsedName());
         }catch(Exception $e){
             $this->app->getLoggerService()->logThrowable($e);
-            return BaseInternalApiResponseDto::buildInternalServerErrorResponse()->toJsonResponse();
+            return BaseApiResponseDto::buildInternalServerErrorResponse()->toJsonResponse();
         }
 
         return $loggedInUserDataDto->toJsonResponse();

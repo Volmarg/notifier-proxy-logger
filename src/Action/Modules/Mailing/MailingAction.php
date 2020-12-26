@@ -4,7 +4,7 @@ namespace App\Action\Modules\Mailing;
 
 use App\Controller\Application;
 use App\Controller\Core\Controllers;
-use App\DTO\API\Internal\BaseInternalApiResponseDto;
+use App\DTO\API\BaseApiResponseDto;
 use App\DTO\API\Internal\GetAllEmailsResponseDto;
 use App\DTO\Modules\Mailing\MailDTO;
 use App\DTO\Modules\Mailing\SendTestMailDTO;
@@ -61,7 +61,7 @@ class MailingAction extends AbstractController
             $testMailForm = $this->application->getForms()->getSendTestMailForm();
             $message      = $this->application->trans('pages.mailing.sendTestMail.messages.success');
 
-            $baseResponseDto = new BaseInternalApiResponseDto();
+            $baseResponseDto = new BaseApiResponseDto();
             $baseResponseDto->prefillBaseFieldsForSuccessResponse();
 
             $testMailForm = $this->formService->handlePostFormForAxiosCall($testMailForm, $request);
@@ -89,7 +89,7 @@ class MailingAction extends AbstractController
 
             $message = $this->application->trans('pages.mailing.sendTestMail.messages.fail');
 
-            $baseResponseDto = BaseInternalApiResponseDto::buildInternalServerErrorResponse();
+            $baseResponseDto = BaseApiResponseDto::buildInternalServerErrorResponse();
             $baseResponseDto->setMessage($message);
 
             return $baseResponseDto->toJsonResponse();
@@ -128,7 +128,7 @@ class MailingAction extends AbstractController
 
             $message = $this->application->trans('pages.mailing.history.messages.errors.couldNotGetAllSentEmails');
 
-            $baseResponseDto = BaseInternalApiResponseDto::buildInternalServerErrorResponse();
+            $baseResponseDto = BaseApiResponseDto::buildInternalServerErrorResponse();
             $baseResponseDto->setMessage($message);
 
             return $baseResponseDto->toJsonResponse();

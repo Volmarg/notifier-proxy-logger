@@ -35,14 +35,14 @@ class MailDTO extends AbstractDTO
     private string $body = "";
 
     /**
-     * @var string $status
+     * @var string|null $status
      */
-    private string $status = "";
+    private ?string $status = "";
 
     /**
-     * @var string $created
+     * @var string|null $created
      */
-    private string $created = "";
+    private ?string $created = "";
 
     /**
      * @var string $source
@@ -103,33 +103,33 @@ class MailDTO extends AbstractDTO
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getStatus(): string
+    public function getStatus(): ?string
     {
         return $this->status;
     }
 
     /**
-     * @param string $status
+     * @param string|null $status
      */
-    public function setStatus(string $status): void
+    public function setStatus(?string $status): void
     {
         $this->status = $status;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getCreated(): string
+    public function getCreated(): ?string
     {
         return $this->created;
     }
 
     /**
-     * @param string $created
+     * @param string|null $created
      */
-    public function setCreated(string $created): void
+    public function setCreated(?string $created): void
     {
         $this->created = $created;
     }
@@ -193,5 +193,35 @@ class MailDTO extends AbstractDTO
             self::KEY_SOURCE     => $this->getSource(),
             self::KEY_TO_EMAILS  => $this->getToEmails(),
         ];
+    }
+
+    /**
+     * Will create dto from json
+     *
+     * @param string $json
+     * @return MailDTO
+     */
+    public static function fromJson(string $json): MailDTO
+    {
+        $dataArray = json_decode($json, true);
+
+        $fromEmail = self::checkAndGetKey($dataArray, self::KEY_FROM_EMAIL, null);
+        $subject   = self::checkAndGetKey($dataArray, self::KEY_SUBJECT, null);
+        $body      = self::checkAndGetKey($dataArray, self::KEY_BODY, null);
+        $status    = self::checkAndGetKey($dataArray, self::KEY_STATUS, null);
+        $created   = self::checkAndGetKey($dataArray, self::KEY_CREATED, null);
+        $source    = self::checkAndGetKey($dataArray, self::KEY_SOURCE, null);
+        $toEmails  = self::checkAndGetKey($dataArray, self::KEY_TO_EMAILS, null);
+
+        $dto = new MailDTO();
+        $dto->setFromEmail($fromEmail);
+        $dto->setSubject($subject);
+        $dto->setBody($body);
+        $dto->setStatus($status);
+        $dto->setCreated($created);
+        $dto->setSource($source);
+        $dto->setToEmails($toEmails);
+
+        return $dto;
     }
 }

@@ -37,12 +37,14 @@ class LoggerService
      * Will create critical log entry for Thrown Exception
      *
      * @param Throwable $e
+     * @param array $context
      */
-    public function logThrowable(Throwable $e): void
+    public function logThrowable(Throwable $e, array $context = []): void
     {
         $this->logger->critical("Exception was thrown", [
             "message" => $e->getMessage(),
             "trace"   => $e->getTrace(),
+            "context" => $context,
         ]);
     }
 

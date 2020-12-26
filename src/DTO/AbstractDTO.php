@@ -2,33 +2,25 @@
 
 namespace App\DTO;
 
-use Exception;
-
-class AbstractDTO{
+class AbstractDTO {
 
     /**
      * This function will check if the key in array exists
      * If key exists then it's value will be taken
-     * If does not exist - throw exception
+     * If does not exist - returns default value
      * @param array $array
      * @param string $key
-     * @param bool $asString
-     * @return string
-     * @throws Exception
+     * @param mixed|null $defaultValue
+     * @return mixed
      */
-    public static function checkAndGetKey(array $array, string $key, bool $asString = true) {
-
+    public static function checkAndGetKey(array $array, string $key, mixed $defaultValue = null): mixed
+    {
         if( array_key_exists($key, $array) ){
             $value = $array[$key];
-        }else{
-            throw new Exception("{$key} was not found in array made from json in class: " . __CLASS__);
+            return $value;
         }
 
-        if( $asString && is_array($value)){
-            $value = json_encode($value);
-        }
-
-        return $value;
+        return $defaultValue;
     }
 
 }

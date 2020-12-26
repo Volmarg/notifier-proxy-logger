@@ -4,7 +4,9 @@
 namespace App\DTO\API\Internal;
 
 
-class GetAllEmailsResponseDto extends BaseInternalApiResponseDto
+use App\DTO\API\BaseApiResponseDto;
+
+class GetAllEmailsResponseDto extends BaseApiResponseDto
 {
 
     const KEY_EMAILS_JSONS = "emailsJsons";

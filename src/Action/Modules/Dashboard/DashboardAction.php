@@ -4,7 +4,7 @@ namespace App\Action\Modules\Dashboard;
 
 use App\Controller\Application;
 use App\Controller\Core\Controllers;
-use App\DTO\API\Internal\BaseInternalApiResponseDto;
+use App\DTO\API\BaseApiResponseDto;
 use App\DTO\API\Internal\GetLastProcessedEmailsResponseDto;
 use App\DTO\Modules\Mailing\MailDTO;
 use Exception;
@@ -63,7 +63,7 @@ class DashboardAction extends AbstractController
 
             $message = $this->app->trans('pages.mailing.history.messages.errors.couldNotGetAllSentEmails');
 
-            $baseResponseDto = BaseInternalApiResponseDto::buildInternalServerErrorResponse();
+            $baseResponseDto = BaseApiResponseDto::buildInternalServerErrorResponse();
             $baseResponseDto->setMessage($message);
 
             return $baseResponseDto->toJsonResponse();

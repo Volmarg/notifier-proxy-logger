@@ -5,6 +5,8 @@ namespace App\Repository\Modules\Mailing;
 use App\Entity\Modules\Mailing\Mail;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -32,6 +34,8 @@ class MailRepository extends ServiceEntityRepository
     }
 
     /**
+     * Will return the last processed Emails ordered by the creation date, reduced to the given count
+     *
      * @param int $countOfReturnedEmails
      * @return Mail[]
      */
@@ -49,4 +53,21 @@ class MailRepository extends ServiceEntityRepository
 
         return $results;
     }
+
+    /**
+     * Will save the entity state, creates new DB entry if no such entity exists or updates state of the existing one
+     *
+     * @param Mail $mail
+     * @return Mail
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function saveEntity(Mail $mail): Mail
+    {
+        $this->_em->persist($mail);
+        $this->_em->flush();
+
+        return $mail;
+    }
+
 }

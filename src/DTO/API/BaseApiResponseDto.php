@@ -1,19 +1,19 @@
 <?php
 
 
-namespace App\DTO\API\Internal;
+namespace App\DTO\API;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Base ResponseDTO used for each response in the internal API calls
- * Each internal api dto should extend from this class as the fronted will try to build same dto on its side
+ * Base ResponseDTO used for each response in the API calls
+ * Each api dto should extend from this class as the fronted will try to build same dto on its side
  *
  * Class BaseInternalApiResponseDto
  * @package App\DTO\API\Internal
  */
-class BaseInternalApiResponseDto
+class BaseApiResponseDto
 {
     const KEY_CODE    = "code";
     const KEY_MESSAGE = "message";
@@ -117,11 +117,11 @@ class BaseInternalApiResponseDto
     /**
      * Will build internal server error response
      *
-     * @return BaseInternalApiResponseDto
+     * @return BaseApiResponseDto
      */
-    public static function buildInternalServerErrorResponse(): BaseInternalApiResponseDto
+    public static function buildInternalServerErrorResponse(): BaseApiResponseDto
     {
-        $dto = new BaseInternalApiResponseDto();
+        $dto = new BaseApiResponseDto();
         $dto->setCode(Response::HTTP_INTERNAL_SERVER_ERROR);
         $dto->setSuccess(false);
 
@@ -131,11 +131,11 @@ class BaseInternalApiResponseDto
     /**
      * Will build internal server error response
      *
-     * @return BaseInternalApiResponseDto
+     * @return BaseApiResponseDto
      */
-    public static function buildBadRequestErrorResponse(): BaseInternalApiResponseDto
+    public static function buildBadRequestErrorResponse(): BaseApiResponseDto
     {
-        $dto = new BaseInternalApiResponseDto();
+        $dto = new BaseApiResponseDto();
         $dto->setCode(Response::HTTP_BAD_REQUEST);
         $dto->setSuccess(false);
 

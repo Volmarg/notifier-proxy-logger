@@ -5,7 +5,7 @@ namespace App\Action\API\Internal;
 
 
 use App\Controller\Application;
-use App\DTO\API\Internal\BaseInternalApiResponseDto;
+use App\DTO\API\BaseApiResponseDto;
 use App\DTO\API\Internal\CsrfTokenResponseDto;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 #[Route("/api-internal", name: "api_internal_")]
-class FormAction extends AbstractController
+class FormInternalApiAction extends AbstractController
 {
 
     /**
@@ -52,7 +52,7 @@ class FormAction extends AbstractController
             return $dto->toJsonResponse();
         }catch(Exception $e){
             $this->app->getLoggerService()->logThrowable($e);
-            return BaseInternalApiResponseDto::buildInternalServerErrorResponse()->toJsonResponse();
+            return BaseApiResponseDto::buildInternalServerErrorResponse()->toJsonResponse();
         }
 
     }

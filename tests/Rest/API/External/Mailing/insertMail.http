@@ -1,0 +1,13 @@
+POST http://127.0.0.1:8001/api/external/mailing/insert-mail?XDEBUG_SESSION_START=PHPSTORM
+Content-Type: application/json
+
+{
+  "fromEmail": "test@test.pl",
+  "subject": "Schedule for Doctor",
+  "body": "A body",
+  "source": "REST TEST",
+  "toEmails": [
+    "mail1@gmail.com",
+    "mail2@gmail.com"
+  ]
+}

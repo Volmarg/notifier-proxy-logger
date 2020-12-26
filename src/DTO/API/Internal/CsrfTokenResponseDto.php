@@ -3,6 +3,8 @@
 
 namespace App\DTO\API\Internal;
 
+use App\DTO\API\BaseApiResponseDto;
+
 /**
  * This dto transfers the generated csrf token to the frontend
  * With this the forms submitted via VUE are valid and can be handled by internal symfony logic
@@ -10,7 +12,7 @@ namespace App\DTO\API\Internal;
  * Class CsrfTokenResponseDto
  * @package App\DTO\API\Internal
  */
-class CsrfTokenResponseDto extends BaseInternalApiResponseDto
+class CsrfTokenResponseDto extends BaseApiResponseDto
 {
 
     const KEY_CSRF_TOKEN = "csrToken";

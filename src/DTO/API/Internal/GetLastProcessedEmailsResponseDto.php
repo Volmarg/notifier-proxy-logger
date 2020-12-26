@@ -3,11 +3,13 @@
 
 namespace App\DTO\API\Internal;
 
+use App\DTO\API\BaseApiResponseDto;
+
 /**
  * Class GetLastProcessedEmailsResponseDto
  * @package App\DTO\API\Internal
  */
-class GetLastProcessedEmailsResponseDto extends BaseInternalApiResponseDto
+class GetLastProcessedEmailsResponseDto extends BaseApiResponseDto
 {
     const KEY_EMAILS_JSONS = "emailsJsons";
 
