@@ -1,11 +1,19 @@
 <!-- Template -->
 <template>
-  <card-with-title :card-title="widgetTitleTranslation" :is-spinner-visible="isSpinnerVisible">
+  <card-with-title
+      :card-title="widgetTitleTranslation"
+      :is-spinner-visible="isSpinnerVisible"
+  >
     <template #card-body>
       <div v-if="[lastProcessedEmails.length]">
 
         <!-- todo: check why the if required [], and the ones below don't -->
-        <row-fontawesome-icon-with-text v-for="(mailDto, index) in lastProcessedEmails" :key="index">
+        <row-fontawesome-icon-with-text
+            v-for="(mailDto, index) in lastProcessedEmails"
+            :key="index"
+            :class="{'soft-border-bottom': true}"
+            :tippy-root-wrapper-body-content="buildRowFontawesomeTippyBodyContentForMail(mailDto)"
+        >
 
           <template #icon>
             <i class="font-weight-bold">
@@ -76,7 +84,16 @@ export default {
     },
     widgetTitleTranslation: function(){
       return translationService.getTranslationForString('pages.dashboard.overview.widgets.lastProcessedEmails.header.label');
-    }
+    },
+    rowFontawesomeTippyBodyContentTranslationContentString: function(){
+      return translationService.getTranslationForString('pages.dashboard.overview.widgets.lastProcessedEmails.tippy.bodyContent.content');
+    },
+    rowFontawesomeTippyBodyContentTranslationFromString: function(){
+      return translationService.getTranslationForString('pages.dashboard.overview.widgets.lastProcessedEmails.tippy.bodyContent.from');
+    },
+    rowFontawesomeTippyBodyContentTranslationToString: function(){
+      return translationService.getTranslationForString('pages.dashboard.overview.widgets.lastProcessedEmails.tippy.bodyContent.to');
+    },
   },
   methods: {
     /**
@@ -93,7 +110,7 @@ export default {
         let getLastProcessedEmailsResponseDto = GetLastProcessedEmailsResponseDto.fromAxiosResponse(response);
         let emailsJsons                       = getLastProcessedEmailsResponseDto.emailsJsons;
         let emailsDtos                        = [];
-        let subjectMaxCharactersCount         = 10;
+        let subjectMaxCharactersCount         = 20;
 
         for(let index in emailsJsons){
           let mailJson = emailsJsons[index];
@@ -106,6 +123,29 @@ export default {
         this.lastProcessedEmails = emailsDtos;
         this.isSpinnerVisible    = false;
       })
+    },
+    /**
+     * @description will build the content of the tippy body - visible upon hovering over the row  in widget
+     *
+     * @param mailDto {MailDto}
+     * @returns {string}
+     */
+    buildRowFontawesomeTippyBodyContentForMail(mailDto){
+      let content = `
+        <b>${this.rowFontawesomeTippyBodyContentTranslationContentString}:</b>
+        <br/>
+        ${mailDto.body}
+        <br/><br/>
+        <b>${this.rowFontawesomeTippyBodyContentTranslationFromString}:</b>
+        <br/>
+        ${mailDto.fromEmail}
+        <br/><br/>
+        <b>${this.rowFontawesomeTippyBodyContentTranslationToString}:</b>
+        <br/>
+        ${mailDto.toEmails}
+      `;
+
+      return content;
     }
   },
   beforeMount(){

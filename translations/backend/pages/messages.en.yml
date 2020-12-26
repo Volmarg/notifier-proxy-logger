@@ -39,3 +39,8 @@ pages:
         lastProcessedEmails:
           header:
             label: Last processed Emails
+          tippy:
+            bodyContent:
+              from: From
+              to: To
+              content: Content

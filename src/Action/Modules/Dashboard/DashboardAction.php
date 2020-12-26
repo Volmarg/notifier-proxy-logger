@@ -51,6 +51,8 @@ class DashboardAction extends AbstractController
                 $mailDto->setStatus($mail->getStatus());
                 $mailDto->setSubject($mail->getSubject());
                 $mailDto->setCreated($mail->getCreated()->format("Y-m-d H:i:s"));
+                $mailDto->setFromEmail($mail->getFromEmail());;
+                $mailDto->setToEmails($mail->getToEmails());
 
                 $emailsJsons[] = $mailDto->toJson();
             }

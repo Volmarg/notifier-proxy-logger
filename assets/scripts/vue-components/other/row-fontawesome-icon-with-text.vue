@@ -1,6 +1,9 @@
 <!-- Template -->
 <template>
-  <div class="row align-items-center mb-2">
+  <div class="row align-items-center mb-2"
+       ref="rowFontawesomeRootElement"
+       :data-tippy-content="tippyRootWrapperBodyContent"
+      >
     <div class="col-auto">
       <span class="icon icon-md text-purple icon-size">
         <slot name="icon"></slot>
@@ -26,8 +29,26 @@
 
 <!-- Script -->
 <script>
-export default {
+import Tippy from '../../libs/tippy/Tippy';
 
+let tippy = new Tippy();
+
+export default {
+  props: {
+    "tippyRootWrapperBodyContent": {
+      type     : String,
+      required : false,
+      default  : ""
+    }
+  },
+  methods: {
+    applyTippyToWidgetRows(){
+      tippy.applyForElement(this.$refs.rowFontawesomeRootElement);
+    }
+  },
+  mounted(){
+    this.applyTippyToWidgetRows();
+  }
 }
 </script>
 
@@ -38,7 +59,7 @@ export default {
 }
 
 .title {
-  min-width: 100px;
+  min-width: 148px;
   text-transform: capitalize;
 }
 </style>
