@@ -12,7 +12,7 @@
               </volt-table-head>
               <volt-table-body v-if="tableData.length">
                 <template v-for="(mail, index) in tableData" :key="index">
-                  <volt-table-row :row-data="mail" :tippy-row-body-content="buildRowTippyBodyContentForMail(mail)"/>
+                  <volt-table-row :row-data="mail" :tippy-row-body-content="buildRowTippyBodyContentForMail(allEmails[index])"/>
                 </template>
               </volt-table-body>
             </volt-table>
@@ -53,6 +53,7 @@ export default {
   data(){
     return {
       allEmails        : [],
+      tableData        : [],
       isSpinnerVisible : true,
     }
   },
@@ -62,17 +63,27 @@ export default {
      */
     retrieveAllEmails(){
       this.axios.get(SymfonyRoutes.GET_ALL_EMAILS).then( (response) => {
-        let allEmailsResponseDtp = GetAllEmailsResponseDto.fromAxiosResponse(response);
-        let allEmailsDtos        = [];
-        let emailsJsons          = allEmailsResponseDtp.emailsJsons;
+        let allEmailsResponseDtos = GetAllEmailsResponseDto.fromAxiosResponse(response);
+        let allEmailsDtos         = [];
+        let tableDataDtos         = [];
+        let emailsJsons           = allEmailsResponseDtos.emailsJsons;
 
         for(let index in emailsJsons){
-          let json    = emailsJsons[index];
-          let mailDto = MailDto.fromJson(json);
-          allEmailsDtos.push(mailDto)
+          let json = emailsJsons[index];
+
+          /** @description duplication required due to overwriting original object upon changing it's value */
+          let mailDtoForAllEmails = MailDto.fromJson(json);
+          let mailDtoForTableData = MailDto.fromJson(json);
+
+          /** @description these columns have to be skipped */
+          mailDtoForTableData.body = "";
+
+          allEmailsDtos.push(mailDtoForAllEmails)
+          tableDataDtos.push(mailDtoForTableData)
         }
 
-        this.allMails         = allEmailsDtos;
+        this.allMails  = allEmailsDtos;
+        this.tableData = this.filterMailsDataForDisplayingInTable(tableDataDtos);
         this.isSpinnerVisible = false;
       })
     },
@@ -87,14 +98,24 @@ export default {
         ${mail.body}
       `;
       return content;
-    }
+    },
+    filterMailsDataForDisplayingInTable(mailsDtos){
+        let filteredTableData      = [];
+        let bodyMaxCharactersCount = 20;
+
+        mailsDtos.forEach( (mail, index) => {
+          mail.body = StringUtils.substringAndAddDots(mail.body, bodyMaxCharactersCount);
+          filteredTableData.push(mail);
+        })
+
+        return filteredTableData;
+      },
   },
   computed: {
     tableHeaders: {
       get: function () {
         return translationService.getTranslationsForStrings([
             'pages.mailing.history.table.headers.subject.label',
-            'pages.mailing.history.table.headers.body.label',
             'pages.mailing.history.table.headers.status.label',
             'pages.mailing.history.table.headers.created.label',
             'pages.mailing.history.table.headers.receivers.label'
@@ -113,19 +134,6 @@ export default {
       set: function (emails) {
         this.allEmails = emails;
       }
-    },
-    tableData: {
-      get: function(){
-        let filteredTableData      = [];
-        let bodyMaxCharactersCount = 20;
-
-        this.allEmails.forEach( (value, index) => {
-          value.body = StringUtils.substringAndAddDots(value.body, bodyMaxCharactersCount);
-          filteredTableData.push(value);
-        })
-
-        return filteredTableData;
-      },
     },
     tippyBodyContentTranslationBodyString: function(){
       return translationService.getTranslationForString('pages.dashboard.overview.widgets.lastProcessedEmails.tippy.bodyContent.content');
