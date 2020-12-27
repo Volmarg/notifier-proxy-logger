@@ -10,8 +10,10 @@
             <volt-table>
               <volt-table-head :table-headers="tableHeaders">
               </volt-table-head>
-              <volt-table-body v-for="(mail, index) in tableData" :key="index">
-                <volt-table-row :row-data="mail"/>
+              <volt-table-body v-if="tableData.length">
+                <template v-for="(mail, index) in tableData" :key="index">
+                  <volt-table-row :row-data="mail"/>
+                </template>
               </volt-table-body>
             </volt-table>
           </section>

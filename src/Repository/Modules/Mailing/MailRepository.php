@@ -29,7 +29,15 @@ class MailRepository extends ServiceEntityRepository
      */
     public function getAllEmails(): array
     {
-        $entities = $this->findAll();
+        $queryBuilder = $this->_em->createQueryBuilder();
+
+        $queryBuilder->select("m")
+            ->from(Mail::class, "m")
+            ->orderBy("m.created", Criteria::DESC);
+
+        $query    = $queryBuilder->getQuery();
+        $entities = $query->execute();
+
         return $entities;
     }
 

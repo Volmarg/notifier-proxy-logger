@@ -9,6 +9,7 @@ import 'tippy.js/themes/light.css';
 
 /**
  * @description this class handles displaying popups upon interacting with DOM elements
+ * @link https://atomiks.github.io/tippyjs/
  */
 export default class Tippy {
 
