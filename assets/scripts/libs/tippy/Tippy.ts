@@ -33,7 +33,11 @@ export default class Tippy {
             placement = Tippy.DEFAULT_PLACEMENT;
         }
 
-        if( !StringUtils.isEmptyString(content) ){
+        if(
+                !StringUtils.isEmptyString(content)
+            // @ts-ignore
+            &&  !domElement._tippy
+        ){
             tippy(domElement, {
                 allowHTML : true,
                 theme     : 'light',

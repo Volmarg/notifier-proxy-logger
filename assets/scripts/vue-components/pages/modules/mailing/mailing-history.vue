@@ -12,7 +12,7 @@
               </volt-table-head>
               <volt-table-body v-if="tableData.length">
                 <template v-for="(mail, index) in tableData" :key="index">
-                  <volt-table-row :row-data="mail"/>
+                  <volt-table-row :row-data="mail" :tippy-row-body-content="buildRowTippyBodyContentForMail(mail)"/>
                 </template>
               </volt-table-body>
             </volt-table>
@@ -57,6 +57,9 @@ export default {
     }
   },
   methods: {
+    /**
+     * @description retrieve all Mails for further processing like for example display in table
+     */
     retrieveAllEmails(){
       this.axios.get(SymfonyRoutes.GET_ALL_EMAILS).then( (response) => {
         let allEmailsResponseDtp = GetAllEmailsResponseDto.fromAxiosResponse(response);
@@ -72,6 +75,18 @@ export default {
         this.allMails         = allEmailsDtos;
         this.isSpinnerVisible = false;
       })
+    },
+    /**
+     * @description build the content for Tippy.js - visible upon hovering over the row in history table
+     * @param mail {MailDto}
+     */
+    buildRowTippyBodyContentForMail(mail){
+      let content = `
+        <b>${this.tippyBodyContentTranslationBodyString}:</b>
+        <br/>
+        ${mail.body}
+      `;
+      return content;
     }
   },
   computed: {
@@ -111,7 +126,10 @@ export default {
 
         return filteredTableData;
       },
-    }
+    },
+    tippyBodyContentTranslationBodyString: function(){
+      return translationService.getTranslationForString('pages.dashboard.overview.widgets.lastProcessedEmails.tippy.bodyContent.content');
+    },
   }
 }
 </script>

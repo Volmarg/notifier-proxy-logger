@@ -1,23 +1,32 @@
 <!-- Template -->
 <template>
-  <tr class="volt-table-row">
+  <tr class="volt-table-row" :data-tippy-content="tippyRowBodyContent" ref="tableRow">
     <table-cell v-for="(value, key, index) in rowData" :key="index" :cell-value="value"/>
   </tr>
 </template>
 
 <!-- Script -->
 <script>
-import TableCell from './table-cell';
+import TableCellComponent from './table-cell';
 
+/**
+ * @description tippy js is handled in the DataTables.ts file, as  the logic for tippy MUST be
+ *              applied alongside with DataTables
+ */
 export default {
   props: {
     "rowData": {
       type     : Object,
       required : true
+    },
+    "tippyRowBodyContent": {
+      type     : String,
+      required : false,
+      default  : ""
     }
   },
   components: {
-    "table-cell": TableCell
+    "table-cell": TableCellComponent
   }
 }
 </script>
