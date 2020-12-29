@@ -1,0 +1,66 @@
+<!-- Template -->
+<template>
+  <li class="nav-item">
+    <span class="nav-link d-flex justify-content-between align-items-center collapsed" data-toggle="collapse" data-target="#submenu-app" aria-expanded="false">
+      <span>
+        <span class="sidebar-icon">
+          <span class="fab fa-discord"></span>
+        </span>
+        {{ discordMenuLabelTranslation }}
+      </span>
+      <span class="link-arrow">
+        <span class="fas fa-chevron-right"></span>
+      </span>
+    </span>
+
+    <div class="multi-level collapse" role="list" id="submenu-app" aria-expanded="false" style="">
+      <ul class="flex-column nav">
+<!--        <li class="nav-item" :class="{'active' : ( this.$route.name === 'modules_mailing_overview' )}">-->
+<!--          <router-link :to="{ name: 'modules_mailing_overview' }" class="nav-link">-->
+<!--            <span>{{ discordSubmenuTestSendingLabelTranslation }}</span>-->
+<!--          </router-link>-->
+<!--        </li>-->
+        <li class="nav-item" :class="{'active' : ( this.$route.name === 'modules_discord_webhooks_manage' )}">
+          <router-link :to="{ name: 'modules_discord_webhooks_manage'}" class="nav-link">
+            <span>{{ discordSubmenuManageWebhooksLabelTranslation }}</span>
+          </router-link>
+        </li>
+      </ul>
+    </div>
+  </li>
+</template>
+
+<!-- Script -->
+<script>
+import TranslationsService from "../../../../../../core/services/TranslationsService";
+
+let translationService = new TranslationsService();
+
+export default {
+  data() {
+    return {
+      menuLinkClasses: {
+        "active" : this.isActiveLink
+      },
+      isActiveLink : false,
+    }
+  },
+  computed: {
+    discordMenuLabelTranslation : {
+      get: function(){
+        return translationService.getTranslationForString('sidebar.menu.nodes.discord.label');
+      }
+    },
+    discordSubmenuTestSendingLabelTranslation : {
+      get: function() {
+        return translationService.getTranslationForString('sidebar.menu.nodes.discord.testSending.label');
+      }
+    },
+    discordSubmenuManageWebhooksLabelTranslation : {
+      get: function() {
+        return translationService.getTranslationForString('sidebar.menu.nodes.discord.manageWebhooks.label');
+      }
+    }
+  }
+}
+</script>

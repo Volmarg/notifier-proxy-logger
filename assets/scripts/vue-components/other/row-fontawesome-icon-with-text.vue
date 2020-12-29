@@ -12,7 +12,7 @@
     <div class="col">
       <div class="progress-wrapper">
         <div class="progress-info mb-0">
-          <div class="h6 mb-0">
+          <div class="mb-0">
             <span class="d-inline-block title">
               <slot name="title"></slot>
             </span>

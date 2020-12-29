@@ -37,6 +37,11 @@ export default class SymfonyRoutes {
     static readonly GET_LAST_PROCESSED_EMAILS_PARAM_EMAILS_COUNT = "{emailsCount}";
 
     /**
+     * @description returns all defined webhooks used for sending messages in discord
+     */
+    static readonly GET_ALL_DISCORD_WEBHOOKS = "/modules/discord/get-all-webhooks";
+
+    /**
      * @description will use the url with params and replace the params with values
      */
     public static buildUrlWithReplacedParams(processedUrl: string, replacedParamsWithValues: object): string

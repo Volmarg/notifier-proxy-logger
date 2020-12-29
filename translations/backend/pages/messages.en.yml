@@ -33,6 +33,23 @@ pages:
       messages:
         errors:
           couldNotGetAllSentEmails: Could not get all sent Emails
+  discord:
+    getAllWebhooks:
+      messages:
+        success: All webhooks have been retrieved
+        fail: Could not retrieve webhooks
+      headers:
+        main: Discord webhooks
+      allWebhooksTable:
+        headers:
+          username: Username
+          description: Description
+          webhookUrl: Webhook url
+          webhookName: Webhook name
+        singleRow:
+          tippy:
+            description: Description
+            username: Username
   dashboard:
     overview:
       widgets:

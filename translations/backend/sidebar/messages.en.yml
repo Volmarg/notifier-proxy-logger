@@ -9,3 +9,9 @@ sidebar:
           label: History
         testSending:
           label: Test sending
+      discord:
+        label: Discord
+        testSending:
+          label: Test sending
+        manageWebhooks:
+          label: Manage webhooks

@@ -4,6 +4,7 @@
 namespace App\Controller\Core;
 
 
+use App\Repository\Modules\Discord\DiscordWebhookRepository;
 use App\Repository\Modules\Mailing\MailRepository;
 use App\Repository\UserRepository;
 
@@ -18,6 +19,11 @@ class Repositories
      * @var MailRepository $mailRepository
      */
     private MailRepository $mailRepository;
+
+    /**
+     * @var DiscordWebhookRepository $discordWebhookRepository
+     */
+    private DiscordWebhookRepository $discordWebhookRepository;
 
     /**
      * @return UserRepository
@@ -51,5 +57,20 @@ class Repositories
         $this->mailRepository = $mailRepository;
     }
 
+    /**
+     * @return DiscordWebhookRepository
+     */
+    public function getDiscordWebhookRepository(): DiscordWebhookRepository
+    {
+        return $this->discordWebhookRepository;
+    }
+
+    /**
+     * @param DiscordWebhookRepository $discordWebhookRepository
+     */
+    public function setDiscordWebhookRepository(DiscordWebhookRepository $discordWebhookRepository): void
+    {
+        $this->discordWebhookRepository = $discordWebhookRepository;
+    }
 
 }

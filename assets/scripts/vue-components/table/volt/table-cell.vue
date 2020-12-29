@@ -1,8 +1,6 @@
 <!-- Template -->
 <template >
-  <td class="border-0" v-if="cellValue">
-    {{ cellValue }}
-  </td>
+  <td class="border-0" v-if="cellValue" v-html="cellValue"></td>
 </template>
 
 

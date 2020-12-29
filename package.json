@@ -44,6 +44,7 @@
         "bootstrap": "5.0.0-alpha2",
         "chartist": "^0.11.4",
         "chartist-plugin-tooltips": "0.0.17",
+        "copy-webpack-plugin": "^5.1.1",
         "countup.js": "^2.0.6",
         "fs": "0.0.1-security",
         "jarallax": "1.12.0",

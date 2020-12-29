@@ -33,7 +33,6 @@ import SemipolarSpinnerComponent from '../../../../vue-components/libs/epic-spin
 
 import TranslationsService     from "../../../../core/services/TranslationsService";
 import SymfonyRoutes           from "../../../../core/symfony/SymfonyRoutes";
-import StringUtils             from "../../../../core/utils/StringUtils";
 import GetAllEmailsResponseDto from "../../../../core/dto/api/internal/GetAllEmailsResponseDto";
 import MailDto                 from "../../../../core/dto/modules/mailing/MailDto";
 
@@ -47,7 +46,7 @@ export default {
     "volt-table"        : VoltTable,
     "semipolar-spinner" : SemipolarSpinnerComponent
   },
-  beforeMount(){
+  created(){
     this.retrieveAllEmails();
   },
   data(){
@@ -75,9 +74,6 @@ export default {
           let mailDtoForAllEmails = MailDto.fromJson(json);
           let mailDtoForTableData = MailDto.fromJson(json);
 
-          /** @description these columns have to be skipped */
-          mailDtoForTableData.body = "";
-
           allEmailsDtos.push(mailDtoForAllEmails)
           tableDataDtos.push(mailDtoForTableData)
         }
@@ -89,6 +85,7 @@ export default {
     },
     /**
      * @description build the content for Tippy.js - visible upon hovering over the row in history table
+     *
      * @param mail {MailDto}
      */
     buildRowTippyBodyContentForMail(mail){
@@ -99,12 +96,39 @@ export default {
       `;
       return content;
     },
+    /**
+     * @description will filter the data for displaying in table, either set empty value to skip them or add special
+     *              formatting/styling
+     *
+     * @param mailsDtos {Array<MailDto>}
+     * @returns {Array<MailDto>}
+     */
     filterMailsDataForDisplayingInTable(mailsDtos){
         let filteredTableData      = [];
-        let bodyMaxCharactersCount = 20;
 
         mailsDtos.forEach( (mail, index) => {
-          mail.body = StringUtils.substringAndAddDots(mail.body, bodyMaxCharactersCount);
+
+          /** @description these columns have to be skipped */
+          mail.body = "";
+
+          let classes = "";
+          switch(mail.status){
+
+            case MailDto.STATUS_PENDING:
+              classes+= " npl-text-color-dark-orange";
+            break;
+
+            case MailDto.STATUS_SENT:
+              classes+= " text-success";
+            break;
+
+            default:
+              classes+= " text-danger";
+            break;
+          }
+
+          mail.status = `<b class="${classes}">${mail.status}</b>`;
+
           filteredTableData.push(mail);
         })
 

@@ -47,6 +47,17 @@ final class Version20201130043911 extends AbstractMigration
             ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
         ');
 
+        $this->addSql('
+                CREATE TABLE IF NOT EXISTS discord_webhook (
+                    id INT AUTO_INCREMENT NOT NULL, 
+                    username VARCHAR(255) NOT NULL, 
+                    webhook_url LONGTEXT NOT NULL, 
+                    description LONGTEXT NOT NULL, 
+                    webhook_name VARCHAR(255) NOT NULL,
+                    PRIMARY KEY(id)
+                ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
+        ');
+
     }
 
     public function down(Schema $schema) : void

@@ -2,6 +2,7 @@
 
 namespace App\Controller\Core;
 
+use App\Controller\Modules\Discord\DiscordWebhookController;
 use App\Controller\Modules\Mailing\MailController;
 use App\Controller\System\SecurityController;
 use App\Controller\UserController;
@@ -22,6 +23,11 @@ class Controllers
      * @var MailController $mailingController
      */
     private MailController $mailingController;
+
+    /**
+     * @var DiscordWebhookController $discordWebhookController
+     */
+    private DiscordWebhookController $discordWebhookController;
 
     /**
      * @return SecurityController
@@ -69,6 +75,22 @@ class Controllers
     public function setMailingController(MailController $mailingController): void
     {
         $this->mailingController = $mailingController;
+    }
+
+    /**
+     * @return DiscordWebhookController
+     */
+    public function getDiscordWebhookController(): DiscordWebhookController
+    {
+        return $this->discordWebhookController;
+    }
+
+    /**
+     * @param DiscordWebhookController $discordWebhookController
+     */
+    public function setDiscordWebhookController(DiscordWebhookController $discordWebhookController): void
+    {
+        $this->discordWebhookController = $discordWebhookController;
     }
 
 }

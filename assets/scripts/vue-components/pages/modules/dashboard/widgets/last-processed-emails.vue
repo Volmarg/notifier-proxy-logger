@@ -148,7 +148,7 @@ export default {
       return content;
     }
   },
-  beforeMount(){
+  created(){
     this.getLastProcessedEmails();
   }
 }

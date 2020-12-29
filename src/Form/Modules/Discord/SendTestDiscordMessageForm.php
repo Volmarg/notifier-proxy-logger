@@ -1,0 +1,66 @@
+<?php
+
+namespace App\Form\Modules\Discord;
+
+use App\Controller\Application;
+use App\Controller\Core\Controllers;
+use App\Entity\Modules\Discord\DiscordWebhook;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Choice;
+
+class SendTestDiscordMessageForm extends AbstractType
+{
+
+    const FORM_DATA_WEBHOOKS_ENTITIES_ARRAY = 'webhooksEntitiesArray';
+
+    const FIELD_NAME_WEBHOOKS = "webhooks";
+    const FIELD_NAME_MESSAGE  = "message";
+
+    /**
+     * @var Application $application
+     */
+    private Application $application;
+
+    /**
+     * @var Controllers $controllers
+     */
+    private Controllers $controllers;
+
+    public function __construct(Application $application, Controllers $controllers)
+    {
+        $this->application = $application;
+        $this->controllers = $controllers;
+    }
+
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $webhooks = $options[self::FORM_DATA_WEBHOOKS_ENTITIES_ARRAY];
+
+        $builder
+            ->add(self::FIELD_NAME_WEBHOOKS, Choice::class, [
+                "choices" => $webhooks,
+            ])
+            ->add(self::FIELD_NAME_MESSAGE, TextareaType::class, [
+            ]);
+    }
+
+    /**
+     * @param OptionsResolver $resolver
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'data_class' => DiscordWebhook::class,
+        ]);
+
+        $resolver->setRequired(self::FORM_DATA_WEBHOOKS_ENTITIES_ARRAY);
+    }
+
+}
