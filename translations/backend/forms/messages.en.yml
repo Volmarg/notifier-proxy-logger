@@ -32,3 +32,26 @@ forms:
       placeholder: The title of the message
     submit:
       label: Submit
+  addDiscordWebhookForm:
+    webhookUrl:
+      label: Webhook url
+      placeholder: Full url of Discord Webhook API Endpoint
+    webhookName:
+      label: Webhook name
+      placeholder: Name of webhook - used only internally
+    description:
+      label: Description
+      placeholder: Information text regarding given webhook
+    username:
+      label: Username
+      placeholder: Name of the user that will be show in chat
+    submit:
+      label: Submit
+  testDiscordMessageForm:
+    webhooks:
+      label: Webhooks
+    message:
+      label: Message
+      placeholder: Text to be sent to given webhook
+    submit:
+      label: Submit

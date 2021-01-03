@@ -4,7 +4,7 @@
     <span class="nav-link d-flex justify-content-between align-items-center collapsed" data-toggle="collapse" data-target="#submenu-app" aria-expanded="false">
       <span>
         <span class="sidebar-icon">
-          <span class="fas fa-envelope-open-text"></span>
+          <span class="fas fa-lg fa-envelope-open-text"></span>
         </span>
         {{ mailingTranslations }}
       </span>

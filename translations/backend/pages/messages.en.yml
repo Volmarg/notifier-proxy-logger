@@ -50,6 +50,9 @@ pages:
           tippy:
             description: Description
             username: Username
+    testMessageSending:
+      header:
+        main: Test message sending
   dashboard:
     overview:
       widgets:

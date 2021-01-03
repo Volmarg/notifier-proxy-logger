@@ -6,6 +6,7 @@ use App\Controller\Application;
 use App\Controller\Core\Controllers;
 use App\Entity\Modules\Discord\DiscordWebhook;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -18,6 +19,7 @@ class SendTestDiscordMessageForm extends AbstractType
 
     const FIELD_NAME_WEBHOOKS = "webhooks";
     const FIELD_NAME_MESSAGE  = "message";
+    const FIELD_NAME_SUBMIT   = "submit";
 
     /**
      * @var Application $application
@@ -48,7 +50,8 @@ class SendTestDiscordMessageForm extends AbstractType
                 "choices" => $webhooks,
             ])
             ->add(self::FIELD_NAME_MESSAGE, TextareaType::class, [
-            ]);
+            ])
+            ->add(self::FIELD_NAME_SUBMIT, SubmitType::class);
     }
 
     /**

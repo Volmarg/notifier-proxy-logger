@@ -20,6 +20,9 @@
       </div>
     </div>
   </div>
+
+  <br/>
+  <add-discord-webhook-form/>
 </template>
 
 <!-- Script -->
@@ -33,11 +36,9 @@ import VoltTableHeadComponent           from '../../../table/volt/table-head';
 import VoltTableBodyComponent           from '../../../table/volt/table-body';
 import VoltTableRowComponent            from '../../../table/volt/table-row';
 import SemipolarSpinnerComponent        from '../../../../vue-components/libs/epic-spinners/semipolar-spinner'
+import AddDiscordWebhookFormComponent   from '../../../../vue-components/form/modules/discord/add-discord-webhook-form'
 
 import TranslationsService              from "../../../../core/services/TranslationsService";
-
-let translationsService = new TranslationsService();
-
 export default {
   data(){
     return {
@@ -47,11 +48,12 @@ export default {
     }
   },
   components: {
-    'volt-table'        : VoltTableComponent,
-    'volt-table-head'   : VoltTableHeadComponent,
-    'volt-table-body'   : VoltTableBodyComponent,
-    'volt-table-row'    : VoltTableRowComponent,
-    'semipolar-spinner' : SemipolarSpinnerComponent,
+    'volt-table'               : VoltTableComponent,
+    'volt-table-head'          : VoltTableHeadComponent,
+    'volt-table-body'          : VoltTableBodyComponent,
+    'volt-table-row'           : VoltTableRowComponent,
+    'semipolar-spinner'        : SemipolarSpinnerComponent,
+    'add-discord-webhook-form' : AddDiscordWebhookFormComponent,
   },
   computed: {
     tableHeadersTranslations: function(){
@@ -106,7 +108,6 @@ export default {
      * @param discordWebhookDto {DiscordWebhookDto}
      */
     buildTippyContentForSingeDiscordWebhookRow(discordWebhookDto){
-      console.log(discordWebhookDto);
       let content = `
         <b>${this.tableRowTippyDescriptionTranslation}:</b>
         <br/>

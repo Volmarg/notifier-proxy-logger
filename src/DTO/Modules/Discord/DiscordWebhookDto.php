@@ -8,10 +8,16 @@ namespace App\DTO\Modules\Discord;
 class DiscordWebhookDto
 {
 
+    const KEY_ID           = "id";
     const KEY_USERNAME     = "username";
     const KEY_WEBHOOK_URL  = "webhookUrl";
     const KEY_DESCRIPTION  = "description";
     const KEY_WEBHOOK_NAME = "webhookName";
+
+    /**
+     * @var int $id
+     */
+    private int $id;
 
     /**
      * @var string $username
@@ -98,6 +104,22 @@ class DiscordWebhookDto
     }
 
     /**
+     * @return int
+     */
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int $id
+     */
+    public function setId(int $id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
      * Returns array representation of the dto
      *
      * @return array
@@ -109,6 +131,7 @@ class DiscordWebhookDto
             self::KEY_USERNAME     => $this->getUsername(),
             self::KEY_WEBHOOK_NAME => $this->getWebhookName(),
             self::KEY_WEBHOOK_URL  => $this->getWebhookUrl(),
+            self::KEY_ID           => $this->getId(),
         ];
     }
 

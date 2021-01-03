@@ -3,6 +3,12 @@
  */
 export default class DiscordWebhookDto
 {
+
+    /**
+     * @param id {number}
+     */
+    private _id: number|null = null;
+
     /**
      * @param username {string}
      */
@@ -55,6 +61,14 @@ export default class DiscordWebhookDto
         this._webhookName = value;
     }
 
+    get id(): number {
+        return this._id;
+    }
+
+    set id(value: number) {
+        this._id = value;
+    }
+
     /**
      * Will produce dto from json
      *
@@ -65,6 +79,7 @@ export default class DiscordWebhookDto
         let object = JSON.parse(json);
         let dto    = new DiscordWebhookDto();
 
+        dto.id          = object.id;
         dto.username    = object.username;
         dto.webhookUrl  = object.webhookUrl;
         dto.description = object.description;

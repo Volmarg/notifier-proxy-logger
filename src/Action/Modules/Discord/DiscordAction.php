@@ -11,11 +11,16 @@ use App\Services\External\DiscordService;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route("/modules/discord", name: "modules_discord_")]
 class DiscordAction extends AbstractController
 {
+
+    const KEY_WEBHOOK_ID = "webhookId";
+    const KEY_MESSAGE    = "message";
+
     /**
      * @var Application $app
      */
@@ -38,9 +43,32 @@ class DiscordAction extends AbstractController
         $this->discordService = $discordService;
     }
 
-    #[Route("/send-test-message-discord")]
-    public function testSending(): JsonResponse
+    /**
+     * This function will handle the request of sending test message to the discord webhook
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    #[Route("/send-test-message-discord", name: "send_test_message_discord", methods: ["POST"])]
+    public function testSending(Request $request): JsonResponse
     {
+        $webhookId = "";
+        $message   = "";
+
+        try{
+
+
+
+        }catch(Exception $e){
+            $this->app->getLoggerService()->logThrowable($e);
+
+            $message = $this->app->trans('pages.discord.getAllWebhooks.messages.fail');
+
+            $baseResponseDto = BaseApiResponseDto::buildInternalServerErrorResponse();
+            $baseResponseDto->setMessage($message);
+
+            return $baseResponseDto->toJsonResponse();
+
         // todo: needs to be finished,
         //  add the test page with form
         $msg = "Test **message** ";
@@ -68,6 +96,7 @@ class DiscordAction extends AbstractController
 
             foreach($discordWebhooks as $discordWebhook){
                 $discordWebhookDto = new DiscordWebhookDto();
+                $discordWebhookDto->setId($discordWebhook->getId());
                 $discordWebhookDto->setDescription($discordWebhook->getDescription());
                 $discordWebhookDto->setUsername($discordWebhook->getUsername());
                 $discordWebhookDto->setWebhookName($discordWebhook->getWebhookName());;
