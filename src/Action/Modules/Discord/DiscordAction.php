@@ -8,6 +8,7 @@ use App\DTO\API\BaseApiResponseDto;
 use App\DTO\API\Internal\GetAllDiscordWebhooksResponseDto;
 use App\DTO\Modules\Discord\DiscordWebhookDto;
 use App\Services\External\DiscordService;
+use App\Services\Internal\FormService;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -36,9 +37,15 @@ class DiscordAction extends AbstractController
      */
     private DiscordService $discordService;
 
-    public function __construct(Application $app, Controllers $controllers, DiscordService $discordService)
+    /**
+     * @var FormService $formService
+     */
+    private FormService $formService;
+
+    public function __construct(Application $app, Controllers $controllers, DiscordService $discordService, FormService $formService)
     {
         $this->app            = $app;
+        $this->formService    = $formService;
         $this->controllers    = $controllers;
         $this->discordService = $discordService;
     }
@@ -56,10 +63,19 @@ class DiscordAction extends AbstractController
         $message   = "";
 
         try{
+            
+            $sendTestMessageDiscordForm = $this->app->getForms()->getSendTestDiscordMessageForm();
+            $sendTestMessageDiscordForm = $this->formService->handlePostFormForAxiosCall($sendTestMessageDiscordForm, $request);
 
 
+            // todo: needs to be finished,
+            //  add the test page with form
+            $msg = "Test **message** ";
 
-        }catch(Exception $e){
+            $discordWebhook = $this->controllers->getDiscordWebhookController()->getOneByWebhookName('test');
+            $responseDto    = $this->discordService->sendDiscordMessage($discordWebhook, $msg);
+
+        }catch(Exception $e) {
             $this->app->getLoggerService()->logThrowable($e);
 
             $message = $this->app->trans('pages.discord.getAllWebhooks.messages.fail');
@@ -68,17 +84,55 @@ class DiscordAction extends AbstractController
             $baseResponseDto->setMessage($message);
 
             return $baseResponseDto->toJsonResponse();
-
-        // todo: needs to be finished,
-        //  add the test page with form
-        $msg = "Test **message** ";
-
-        $discordWebhook = $this->controllers->getDiscordWebhookController()->getOneByWebhookName('test');
-        $responseDto    = $this->discordService->sendDiscordMessage($discordWebhook, $msg);
+        }
 
         dump($responseDto);
         die();
     }
+
+    /**
+     * Handles the frontend (axios) request to add the discord webhook
+     *
+     * @param Request $request
+     * @return JsonResponse
+     * @throws Exception
+     */
+    #[Route("/add-webhook", name: "add_webhook", methods: ["POST"])]
+    public function addWebhook(Request $request): JsonResponse
+    {
+        try{
+            $successMessage = $this->app->trans('pages.discord.addDiscordWebhook.messages.success');
+
+            $baseResponseDto = new BaseApiResponseDto();
+            $baseResponseDto->prefillBaseFieldsForSuccessResponse();
+            $baseResponseDto->setMessage($successMessage);
+
+            $addDiscordWebhookForm = $this->app->getForms()->getAddDiscordWebhookForm();
+            $this->formService->handlePostFormForAxiosCall($addDiscordWebhookForm, $request);
+
+            if( $addDiscordWebhookForm->isSubmitted() && $addDiscordWebhookForm->isValid() ){
+                $discordWebhook = $addDiscordWebhookForm->getData();
+                $this->controllers->getDiscordWebhookController()->save($discordWebhook);
+            }else{
+                $failMessage = $this->app->trans('pages.discord.addDiscordWebhook.messages.invalidDataHasBeenProvided');
+
+                $baseResponseDto->prefillBaseFieldsForBadRequestResponse();
+                $baseResponseDto->setMessage($failMessage);
+            }
+        }catch(Exception $e){
+            $this->app->getLoggerService()->logThrowable($e);
+
+            $message = $this->app->trans('pages.discord.addDiscordWebhook.messages.fail');
+
+            $baseResponseDto = BaseApiResponseDto::buildInternalServerErrorResponse();
+            $baseResponseDto->setMessage($message);
+
+            return $baseResponseDto->toJsonResponse();
+        }
+
+        return $baseResponseDto->toJsonResponse();
+    }
+
 
     /**
      * Will return all webhooks

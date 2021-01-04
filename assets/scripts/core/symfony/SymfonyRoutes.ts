@@ -42,6 +42,11 @@ export default class SymfonyRoutes {
     static readonly GET_ALL_DISCORD_WEBHOOKS = "/modules/discord/get-all-webhooks";
 
     /**
+     * @description will add single discord webhook
+     */
+    static readonly ADD_DISCORD_WEBHOOK = "/modules/discord/add-webhook";
+
+    /**
      * @description will use the url with params and replace the params with values
      */
     public static buildUrlWithReplacedParams(processedUrl: string, replacedParamsWithValues: object): string

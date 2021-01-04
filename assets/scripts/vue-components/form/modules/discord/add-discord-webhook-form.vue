@@ -4,16 +4,17 @@
   <div class="row">
     <div class="col-12 col-xl-12">
       <div class="card card-body bg-white border-light shadow-sm mb-4">
-        <h2 class="h5 mb-4"> {{ mainHeaderDiscordWebhooksTranslation }}  </h2>
+        <h2 class="h5 mb-4"> {{ mainHeaderAddDiscordWebhookTranslation }}  </h2>
         <section class="">
 
-          <form ref="form" method="POST">
+          <form ref="form" method="POST" @submit.prevent="submitNewWebhook">
             <div class="row">
               <div class="col-md-10 mb-3">
                 <div>
                   <label for="add_discord_webhook_url">{{ webhookUrlLabelTranslation }}</label>
                   <input class="form-control" id="add_discord_webhook_url" type="text" required=""
                          :placeholder="webhookUrlPlaceholderTranslation"
+                         ref="webhookUrl"
                   >
                 </div>
               </div>
@@ -25,7 +26,21 @@
                   <label for="add_discord_webhook_name">{{ webhookNameLabelTranslation }}</label>
                   <input class="form-control" id="add_discord_webhook_name" type="text" required=""
                          :placeholder="webhookNamePlaceholderTranslation"
+                         ref="webhookName"
                   >
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-10 mb-3">
+                <div class="form-group">
+                  <label for="username">{{ usernameLabelTranslation }}</label>
+                  <input id="username"  class="form-control" required=""
+                         type="text"
+                         :placeholder="usernamePlaceholderTranslation"
+                         ref="username"
+                  />
                 </div>
               </div>
             </div>
@@ -36,18 +51,7 @@
                   <label for="description">{{ descriptionLabelTranslation }}</label>
                   <textarea id="description"  class="form-control" required=""
                             :placeholder="descriptionPlaceholderTranslation"
-                  >
-          </textarea>
-                </div>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-md-10 mb-3">
-                <div class="form-group">
-                  <label for="username">{{ usernameLabelTranslation }}</label>
-                  <textarea id="username"  class="form-control" required=""
-                            :placeholder="usernamePlaceholderTranslation"
+                            ref="description"
                   >
           </textarea>
                 </div>
@@ -59,7 +63,7 @@
               >{{ submitButtonTranslation }}</button>
             </div>
 
-            <!--    <CsrfTokenInputComponent :csrf-token="csrfToken"/>-->
+            <csrf-token :csrf-token="csrfToken"/>
           </form>
 
         </section>
@@ -71,11 +75,25 @@
 
 <!-- Script -->
 <script>
-import TranslationsService from '../../../../core/services/TranslationsService';
+import TranslationsService        from '../../../../core/services/TranslationsService';
+import SymfonyRoutes              from "../../../../core/symfony/SymfonyRoutes";
+import Notification               from "../../../../libs/mdb5/Notification";
+
+import BaseInternalApiResponseDto from "../../../../core/dto/api/internal/BaseInternalApiResponseDto";
+import CsrfTokenComponent         from "../../../../vue-components/form/components/csrf-token-input";
+import SymfonyForms               from "../../../../core/symfony/SymfonyForms";
+
+import CsrfTokenResponseDto       from "../../../../core/dto/api/internal/CsrfTokenResponseDto";
 
 let translationsService = new TranslationsService();
+let notification        = new Notification();
 
 export default {
+  data(){
+    return {
+      csrfToken: "",
+    }
+  },
   computed: {
     webhookUrlLabelTranslation: function(){
       return translationsService.getTranslationForString('forms.addDiscordWebhookForm.webhookUrl.label');
@@ -104,6 +122,50 @@ export default {
     submitButtonTranslation: function(){
       return translationsService.getTranslationForString('forms.addDiscordWebhookForm.submit.label');
     },
+    mainHeaderAddDiscordWebhookTranslation: function(){
+      return translationsService.getTranslationForString('pages.discord.addDiscordWebhook.header.main');
+    },
+  },
+  methods: {
+    submitNewWebhook(){
+      let ajaxData = {
+        "username"    : this.$refs.username.value,
+        "webhookUrl"  : this.$refs.webhookUrl.value,
+        "description" : this.$refs.description.value,
+        "webhookName" : this.$refs.webhookName.value,
+        "_token"      : this.csrfToken,
+      };
+
+      this.axios.post(SymfonyRoutes.ADD_DISCORD_WEBHOOK, ajaxData).then( (response) => {
+        let baseApiResponseDto = BaseInternalApiResponseDto.fromAxiosResponse(response);
+
+        if( baseApiResponseDto.success ){
+          notification.showGreenNotification(baseApiResponseDto.message);
+        }else{
+          notification.showRedNotification(baseApiResponseDto.message);
+        }
+
+      })
+
+    },
+    getCsrfToken(){
+      let urlReplacementParams = {
+        [SymfonyRoutes.GET_CSRF_TOKEN_PARAM_FORM_NAME]: SymfonyForms.ADD_DISCORD_WEBHOOK_FORM_BLOCK_NAME
+      }
+
+      let url = SymfonyRoutes.buildUrlWithReplacedParams(SymfonyRoutes.GET_CSRF_TOKEN, urlReplacementParams)
+
+      this.axios.get(url).then( (response) => {
+        let csrfTokenResponse = CsrfTokenResponseDto.fromAxiosResponse(response);
+        this.csrfToken = csrfTokenResponse.csrToken;
+      })
+    }
+  },
+  beforeMount(){
+    this.getCsrfToken();
+  },
+  components: {
+    "csrf-token": CsrfTokenComponent
   }
 }
 </script>

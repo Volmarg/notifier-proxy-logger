@@ -4,6 +4,8 @@ namespace App\Controller\Modules\Discord;
 
 use App\Controller\Application;
 use App\Entity\Modules\Discord\DiscordWebhook;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class DiscordWebhookController extends AbstractController
@@ -38,6 +40,19 @@ class DiscordWebhookController extends AbstractController
     public function getAll(): array
     {
         return $this->app->getRepositories()->getDiscordWebhookRepository()->findAll();
+    }
+
+    /**
+     * Will save entity if it's a new one, or update already existing
+     *
+     * @param DiscordWebhook $discordWebhook
+     * @return DiscordWebhook
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function save(DiscordWebhook $discordWebhook): DiscordWebhook
+    {
+        return $this->app->getRepositories()->getDiscordWebhookRepository()->save($discordWebhook);
     }
 
 }

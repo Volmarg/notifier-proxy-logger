@@ -26,6 +26,11 @@ export default class Tippy {
      */
     public applyForElement(domElement: HTMLElement|any): void
     {
+        // happens for example by datatable where there is one row with text `no records`
+        if( "undefined" === typeof domElement.dataset ){
+            return;
+        }
+
         let content   = domElement.dataset[Tippy.DATA_ATTRIBUTE_CONTENT] as string;
         let placement = domElement.dataset[Tippy.DATA_ATTRIBUTE_PLACEMENT] as Placement;
 

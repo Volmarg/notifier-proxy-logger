@@ -39,6 +39,9 @@ import SemipolarSpinnerComponent        from '../../../../vue-components/libs/ep
 import AddDiscordWebhookFormComponent   from '../../../../vue-components/form/modules/discord/add-discord-webhook-form'
 
 import TranslationsService              from "../../../../core/services/TranslationsService";
+
+let translationsService = new TranslationsService();
+
 export default {
   data(){
     return {

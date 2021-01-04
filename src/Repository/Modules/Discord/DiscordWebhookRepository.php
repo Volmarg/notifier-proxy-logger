@@ -4,6 +4,8 @@ namespace App\Repository\Modules\Discord;
 
 use App\Entity\Modules\Discord\DiscordWebhook;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -32,6 +34,22 @@ class DiscordWebhookRepository extends ServiceEntityRepository
         ]);
 
         return $discordWebHook;
+    }
+
+    /**
+     * Will save entity if it's a new one, or update already existing
+     *
+     * @param DiscordWebhook $discordWebhook
+     * @return DiscordWebhook
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function save(DiscordWebhook $discordWebhook): DiscordWebhook
+    {
+        $this->_em->persist($discordWebhook);
+        $this->_em->flush();
+
+        return $discordWebhook;
     }
 
 }

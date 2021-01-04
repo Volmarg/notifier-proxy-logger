@@ -53,6 +53,13 @@ pages:
     testMessageSending:
       header:
         main: Test message sending
+    addDiscordWebhook:
+      header:
+        main: Add discord webhook
+      messages:
+        fail: Failed to add new discord webhook
+        invalidDataHasBeenProvided: Invalid data has been provided
+        success: New webhook has been added
   dashboard:
     overview:
       widgets:
