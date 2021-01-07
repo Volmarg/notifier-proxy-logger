@@ -126,6 +126,9 @@ export default {
       return translationsService.getTranslationForString('pages.discord.addDiscordWebhook.header.main');
     },
   },
+  emits: [
+      'discordManageWebhookAddWebhookFormSubmitted'
+  ],
   methods: {
     submitNewWebhook(){
       let ajaxData = {
@@ -147,6 +150,8 @@ export default {
 
       })
 
+      // tell the parent to fetch new state of hooks to update the table
+      this.$emit('discordManageWebhookAddWebhookFormSubmitted')
     },
     getCsrfToken(){
       let urlReplacementParams = {

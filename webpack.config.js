@@ -58,7 +58,15 @@ Encore
 
     // enables Sass/SCSS support
     .enableSassLoader()
-    .enableVueLoader()
+    .enableVueLoader(function(vueLoaderConfig){
+
+        /**
+         * @description this is required in order to use:
+         * @link https://chrome.google.com/webstore/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd?hl=en
+         */
+        vueLoaderConfig.devtool = 'cheap-module-eval-sourcemap';
+        vueLoaderConfig.version = 3;
+    })
     .enableTypeScriptLoader(function (typeScriptConfigOptions) {
         typeScriptConfigOptions.transpileOnly = true;
         typeScriptConfigOptions.configFile    = 'tsconfig.json';

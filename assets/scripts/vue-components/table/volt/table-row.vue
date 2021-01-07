@@ -9,6 +9,10 @@
 <script>
 import TableCellComponent from './table-cell';
 
+import Tippy from '../../../libs/tippy/Tippy';
+
+let tippy = new Tippy();
+
 /**
  * @description tippy js is handled in the DataTables.ts file, as  the logic for tippy MUST be
  *              applied alongside with DataTables
@@ -27,6 +31,9 @@ export default {
   },
   components: {
     "table-cell": TableCellComponent
+  },
+  mounted(){
+    tippy.applyForElement(this.$refs.tableRow);
   }
 }
 </script>

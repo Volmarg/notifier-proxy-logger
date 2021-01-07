@@ -1,9 +1,12 @@
 import {DataTable} from 'simple-datatables';
 import Tippy       from '../tippy/Tippy';
 
+// todo: update the mails history - remove this class
+
 /**
  * @description handles the logic of searchable/filtered/paginated datatables for vue
  * @link https://www.npmjs.com/package/simple-datatables
+ * @link https://github.com/fiduswriter/Simple-DataTables/wiki
  */
 export default class DataTables
 {
@@ -15,7 +18,7 @@ export default class DataTables
     /**
      * @description will initialize datatables for domElement
      */
-    public initForDomElement(domElement: HTMLElement|any): void
+    public initForDomElement(domElement: HTMLElement|any): DataTable
     {
         let datatableInstance = new DataTable(domElement, {
             searchable: true,
@@ -30,6 +33,8 @@ export default class DataTables
         datatableInstance.on('datatable.page', () => {
             this.attachTippyForDataTableInstance(datatableInstance);
         });
+
+        return datatableInstance;
     }
 
     /***
