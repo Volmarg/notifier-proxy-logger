@@ -129,8 +129,12 @@ export default {
      * @description will decide if the dots for pagination should be shown
      */
     doShowPaginationDots(pageNumber){
-      let centerOfPagination = ( this.paginationCount / 2 );
+      // don't add dots if there are only few pages
+      if(this.paginationCount <= this.countOfPagesShownInBetweenDots ){
+        return;
+      }
 
+      let centerOfPagination = ( this.paginationCount / 2 );
       if( pageNumber == Math.ceil(centerOfPagination) ){
         return true;
       }
@@ -242,6 +246,11 @@ export default {
    * @description mostly setting the initial values
    */
   updated() {
+    // deny working with the table if there is not data present to display
+    if( !this.rowsData.length ){
+      return;
+    }
+
     // store original rows data for future filtering etc
     if (0 === this.searchResultRows.length) {
       this.originalRowsData = this.rowsData;
