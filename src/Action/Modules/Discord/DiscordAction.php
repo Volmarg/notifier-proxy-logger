@@ -5,8 +5,10 @@ namespace App\Action\Modules\Discord;
 use App\Controller\Application;
 use App\Controller\Core\Controllers;
 use App\DTO\API\BaseApiResponseDto;
+use App\DTO\API\External\DiscordWebhookResponseDto;
 use App\DTO\API\Internal\GetAllDiscordWebhooksResponseDto;
 use App\DTO\Modules\Discord\DiscordWebhookDto;
+use App\Form\Modules\Discord\SendTestDiscordMessageForm;
 use App\Services\External\DiscordService;
 use App\Services\Internal\FormService;
 use Exception;
@@ -59,35 +61,74 @@ class DiscordAction extends AbstractController
     #[Route("/send-test-message-discord", name: "send_test_message_discord", methods: ["POST"])]
     public function testSending(Request $request): JsonResponse
     {
-        $webhookId = "";
-        $message   = "";
+        $requestBodyContentJson = $request->getContent();
+        $dataArray              = json_decode($requestBodyContentJson, true);
+
+        if( !array_key_exists(self::KEY_MESSAGE, $dataArray) ){
+            $message = $this->app->trans('pages.discord.testMessageSending.missingParameterInRequest', [
+                "{{parameterName}}" => self::KEY_MESSAGE
+            ]);
+            $responseDto = DiscordWebhookResponseDto::buildBadRequestErrorResponse();
+
+            $responseDto->setMessage($message);
+            return $responseDto->toJsonResponse();
+        }
+
+        if( !array_key_exists(self::KEY_WEBHOOK_ID, $dataArray) ){
+            $message = $this->app->trans('pages.discord.testMessageSending.missingParameterInRequest', [
+                "{{parameterName}}" => self::KEY_WEBHOOK_ID
+            ]);
+            $responseDto = DiscordWebhookResponseDto::buildBadRequestErrorResponse();
+
+            $responseDto->setMessage($message);
+            return $responseDto->toJsonResponse();
+        }
+
+        $webhookId      = $dataArray[self::KEY_WEBHOOK_ID];
+        $webhookMessage = $dataArray[self::KEY_MESSAGE];
 
         try{
-            
-            $sendTestMessageDiscordForm = $this->app->getForms()->getSendTestDiscordMessageForm();
+
+            $allWebhooks                = $this->controllers->getDiscordWebhookController()->getAll();
+            $sendTestMessageDiscordForm = $this->app->getForms()->getSendTestDiscordMessageForm(null, [
+                SendTestDiscordMessageForm::FORM_DATA_WEBHOOKS_ENTITIES_ARRAY => $allWebhooks,
+            ]);
             $sendTestMessageDiscordForm = $this->formService->handlePostFormForAxiosCall($sendTestMessageDiscordForm, $request);
 
+            if( $sendTestMessageDiscordForm->isSubmitted() && $sendTestMessageDiscordForm->isValid() ){
 
-            // todo: needs to be finished,
-            //  add the test page with form
-            $msg = "Test **message** ";
+                $discordWebhook = $this->controllers->getDiscordWebhookController()->getOneById($webhookId);
 
-            $discordWebhook = $this->controllers->getDiscordWebhookController()->getOneByWebhookName('test');
-            $responseDto    = $this->discordService->sendDiscordMessage($discordWebhook, $msg);
+                if( empty($discordWebhook) ){
+                    $message     = $this->app->trans('pages.discord.testMessageSending.fail');
+                    $responseDto = DiscordWebhookResponseDto::buildBadRequestErrorResponse();
 
+                    $responseDto->setMessage($message);
+                    return $responseDto->toJsonResponse();
+                }
+
+                $responseDto = $this->discordService->sendDiscordMessage($discordWebhook, $webhookMessage);
+            }else{
+
+                $this->app->getLoggerService()->getLogger()->critical("Either the form was not submitted or there is an error within the form", [
+                    "formErrors" => $sendTestMessageDiscordForm->getErrors(),
+                ]);
+                $message = $this->app->trans('pages.discord.testMessageSending.fail');
+                $responseDto = DiscordWebhookResponseDto::buildBadRequestErrorResponse();
+                $responseDto->setMessage($message);;
+            }
         }catch(Exception $e) {
             $this->app->getLoggerService()->logThrowable($e);
 
-            $message = $this->app->trans('pages.discord.getAllWebhooks.messages.fail');
+            $message = $this->app->trans('pages.discord.testMessageSending.fail');
 
-            $baseResponseDto = BaseApiResponseDto::buildInternalServerErrorResponse();
+            $baseResponseDto = DiscordWebhookResponseDto::buildInternalServerErrorResponse();
             $baseResponseDto->setMessage($message);
 
             return $baseResponseDto->toJsonResponse();
         }
 
-        dump($responseDto);
-        die();
+        return $responseDto->toJsonResponse();
     }
 
     /**

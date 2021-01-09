@@ -53,6 +53,11 @@ pages:
     testMessageSending:
       header:
         main: Test message sending
+      success: Message has been sent
+      fail: Could not send the message
+      missingParameterInRequest: "Missing parameter in request: {{parameterName}}"
+      jsonReturnedFromDiscordServerIsMalformed: "Json returned from discord server is malformed"
+      thereWasAnIssueWhileCallingTheDiscordWebhook: "There was an issue while calling discord webhook, got httpCode: {{httpCode}}"
     addDiscordWebhook:
       header:
         main: Add discord webhook

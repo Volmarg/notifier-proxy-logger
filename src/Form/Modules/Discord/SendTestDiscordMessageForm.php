@@ -5,12 +5,13 @@ namespace App\Form\Modules\Discord;
 use App\Controller\Application;
 use App\Controller\Core\Controllers;
 use App\Entity\Modules\Discord\DiscordWebhook;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\Choice;
 
 class SendTestDiscordMessageForm extends AbstractType
 {
@@ -46,8 +47,10 @@ class SendTestDiscordMessageForm extends AbstractType
         $webhooks = $options[self::FORM_DATA_WEBHOOKS_ENTITIES_ARRAY];
 
         $builder
-            ->add(self::FIELD_NAME_WEBHOOKS, Choice::class, [
-                "choices" => $webhooks,
+            ->add(self::FIELD_NAME_WEBHOOKS, EntityType::class, [
+                "choices"      => $webhooks,
+                "class"        => DiscordWebhook::class,
+                "choice_label" => DiscordWebhook::FIELD_NAME_WEBHOOK_NAME,
             ])
             ->add(self::FIELD_NAME_MESSAGE, TextareaType::class, [
             ])
@@ -59,11 +62,10 @@ class SendTestDiscordMessageForm extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'data_class' => DiscordWebhook::class,
-        ]);
-
         $resolver->setRequired(self::FORM_DATA_WEBHOOKS_ENTITIES_ARRAY);
+        $resolver->setDefaults([
+            'allow_extra_fields' => true,
+        ]);
     }
 
 }

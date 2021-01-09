@@ -3,6 +3,7 @@
 
 namespace App\DTO\API;
 
+use App\DTO\AbstractDTO;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -13,11 +14,14 @@ use Symfony\Component\HttpFoundation\Response;
  * Class BaseInternalApiResponseDto
  * @package App\DTO\API\Internal
  */
-class BaseApiResponseDto
+class BaseApiResponseDto extends AbstractDTO
 {
     const KEY_CODE    = "code";
     const KEY_MESSAGE = "message";
     const KEY_SUCCESS = "success";
+
+    const DEFAULT_CODE    = Response::HTTP_BAD_REQUEST;
+    const DEFAULT_MESSAGE = "Bad request";
 
     /**
      * @var int $code
@@ -117,11 +121,11 @@ class BaseApiResponseDto
     /**
      * Will build internal server error response
      *
-     * @return BaseApiResponseDto
+     * @return static
      */
-    public static function buildInternalServerErrorResponse(): BaseApiResponseDto
+    public static function buildInternalServerErrorResponse(): static
     {
-        $dto = new BaseApiResponseDto();
+        $dto = new static();
         $dto->setCode(Response::HTTP_INTERNAL_SERVER_ERROR);
         $dto->setSuccess(false);
 
@@ -131,11 +135,11 @@ class BaseApiResponseDto
     /**
      * Will build internal server error response
      *
-     * @return BaseApiResponseDto
+     * @return static
      */
-    public static function buildBadRequestErrorResponse(): BaseApiResponseDto
+    public static function buildBadRequestErrorResponse(): static
     {
-        $dto = new BaseApiResponseDto();
+        $dto = new static();
         $dto->setCode(Response::HTTP_BAD_REQUEST);
         $dto->setSuccess(false);
 
@@ -149,4 +153,25 @@ class BaseApiResponseDto
     {
         return new JsonResponse($this->toArray());
     }
+
+    /**
+     * Will build the dto from json
+     *
+     * @param string $json
+     * @return static
+     */
+    public static function fromJson(string $json): static
+    {
+        $dataArray = json_decode($json, true);
+
+        $message = self::checkAndGetKey($dataArray, self::KEY_MESSAGE, self::DEFAULT_MESSAGE);
+        $code    = self::checkAndGetKey($dataArray, self::KEY_CODE, self:: DEFAULT_CODE);
+
+        $dto = new BaseApiResponseDto();
+        $dto->setMessage($message);
+        $dto->setCode($code);
+
+        return $dto;
+    }
+
 }

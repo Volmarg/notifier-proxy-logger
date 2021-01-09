@@ -59,11 +59,12 @@ class Application extends AbstractController
      * Will translate a string using data in `/translations/`
      *
      * @param string $string
+     * @param array $parameters
      * @return string
      */
-    public function trans(string $string): string
+    public function trans(string $string, array $parameters = []): string
     {
-        return $this->translator->trans($string);
+        return $this->translator->trans($string, $parameters);
     }
 
     /**

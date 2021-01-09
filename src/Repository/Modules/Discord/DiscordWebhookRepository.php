@@ -37,6 +37,17 @@ class DiscordWebhookRepository extends ServiceEntityRepository
     }
 
     /**
+     * Will return one webhook or null if no webhook for given id was found
+     *
+     * @param string $id
+     * @return DiscordWebhook|null
+     */
+    public function getOneById(string $id): ?DiscordWebhook
+    {
+        return $this->find($id);
+    }
+
+    /**
      * Will save entity if it's a new one, or update already existing
      *
      * @param DiscordWebhook $discordWebhook

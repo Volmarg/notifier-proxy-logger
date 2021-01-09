@@ -3,8 +3,11 @@
 namespace App\Services\External;
 
 use App\Controller\Application;
+use App\DTO\API\BaseApiResponseDto;
 use App\DTO\API\External\DiscordWebhookResponseDto;
 use App\Entity\Modules\Discord\DiscordWebhook;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 
 class DiscordService
 {
@@ -52,6 +55,25 @@ class DiscordService
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
+        if(
+                !$httpCode
+            ||  $httpCode >= Response::HTTP_INTERNAL_SERVER_ERROR
+        ){
+            $this->app->getLoggerService()->getLogger()->critical("Tried to call the discord webhook but something went wrong", [
+                "calledUrl"         => $discordWebhook->getWebhookUrl(),
+                "httpCodeResponse"  => $httpCode,
+            ]);
+
+            $message = $this->app->trans('pages.discord.testMessageSending.thereWasAnIssueWhileCallingTheDiscordWebhook', [
+                "{{httpCode}}" => $httpCode,
+            ]);
+
+            $discordWebhookResponseDto = DiscordWebhookResponseDto::buildInternalServerErrorResponse();
+            $discordWebhookResponseDto->setMessage($message);
+
+            return $discordWebhookResponseDto;
+        }
+
         $discordWebhookResponseDto = $this->handleDiscordResponse($response, $httpCode);
 
         $this->app->getLoggerService()->getLogger()->info("Finished sending discord message for hook");
@@ -76,12 +98,23 @@ class DiscordService
                     &&  $httpCode < 300
                 )
         ){
-            return DiscordWebhookResponseDto::buildOkResponse();
+            $message = $this->app->trans('pages.discord.testMessageSending.success');
+
+            $discordWebhookResponseDto = new DiscordWebhookResponseDto();
+            $discordWebhookResponseDto->prefillBaseFieldsForSuccessResponse();
+            $discordWebhookResponseDto->setMessage($message);;
+
+            return $discordWebhookResponseDto;
         }
 
         json_decode($response, true);
         if( JSON_ERROR_NONE !== json_last_error() ){
-            return DiscordWebhookResponseDto::buildBadRequestResponse();
+            $message = $this->app->trans('pages.discord.testMessageSending.jsonReturnedFromDiscordServerIsMalformed');
+
+            $discordWebhookResponseDto = DiscordWebhookResponseDto::buildBadRequestErrorResponse();
+            $discordWebhookResponseDto->setMessage($message);
+
+            return $discordWebhookResponseDto;
         }
 
         $dto = DiscordWebhookResponseDto::fromJson($response);

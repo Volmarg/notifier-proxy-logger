@@ -47,6 +47,11 @@ export default class SymfonyRoutes {
     static readonly ADD_DISCORD_WEBHOOK = "/modules/discord/add-webhook";
 
     /**
+     * @description will send message to given webhook
+     */
+    static readonly SEND_DISCORD_TEST_MESSAGE = "/modules/discord/send-test-message-discord"
+
+    /**
      * @description will use the url with params and replace the params with values
      */
     public static buildUrlWithReplacedParams(processedUrl: string, replacedParamsWithValues: object): string

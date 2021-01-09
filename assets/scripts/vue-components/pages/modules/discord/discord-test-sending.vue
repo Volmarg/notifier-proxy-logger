@@ -58,11 +58,16 @@ import SemipolarSpinnerComponent        from '../../../../vue-components/libs/ep
 
 import GetAllDiscordWebhooksResponseDto from "../../../../core/dto/api/internal/GetAllDiscordWebhooksResponseDto";
 import DiscordWebhookDto                from "../../../../core/dto/modules/discord/DiscordWebhookDto";
+import CsrfTokenResponseDto             from "../../../../core/dto/api/internal/CsrfTokenResponseDto";
+import BaseInternalApiResponseDto       from "../../../../core/dto/api/internal/BaseInternalApiResponseDto";
 
 import SymfonyRoutes                    from "../../../../core/symfony/SymfonyRoutes";
 import TranslationsService              from "../../../../core/services/TranslationsService";
+import Notification                     from "../../../../libs/mdb5/Notification";
+import SymfonyForms from "../../../../core/symfony/SymfonyForms";
 
 let translationsService = new TranslationsService();
+let notification        = new Notification();
 
 export default {
   data(){
@@ -115,11 +120,32 @@ export default {
     },
     submitSendDiscordMessage(){
 
-      let dataBag = {
-        "webhookId" : this.$refs.webhookSelect.value,
-        "message"   : this.$refs.message.value,
+      let urlReplacementParams = {
+        [SymfonyRoutes.GET_CSRF_TOKEN_PARAM_FORM_NAME]: SymfonyForms.SEND_TEST_DISCORD_MESSAGE_FORM
       }
+      let url                 = SymfonyRoutes.buildUrlWithReplacedParams(SymfonyRoutes.GET_CSRF_TOKEN, urlReplacementParams)
+      let getCsrfTokenPromise = this.axios.get(url);
 
+      getCsrfTokenPromise.then( (response) => {
+        let csrfTokenResponse = CsrfTokenResponseDto.fromAxiosResponse(response);
+        this.csrfToken = csrfTokenResponse.csrToken;
+
+        let dataBag = {
+          "webhookId" : this.$refs.webhookSelect.value,
+          "message"   : this.$refs.message.value,
+          '_token'    : this.csrfToken,
+        }
+
+        this.axios.post(SymfonyRoutes.SEND_DISCORD_TEST_MESSAGE, dataBag).then( (response) => {
+
+          let baseApiResponseDto = BaseInternalApiResponseDto.fromAxiosResponse(response);
+          if( baseApiResponseDto.success ){
+            notification.showGreenNotification(baseApiResponseDto.message);
+          }else{
+            notification.showRedNotification(baseApiResponseDto.message);
+          }
+        })
+      })
 
     }
   },

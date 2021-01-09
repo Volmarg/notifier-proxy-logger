@@ -33,6 +33,17 @@ class DiscordWebhookController extends AbstractController
     }
 
     /**
+     * Will return one webhook or null if no webhook for given id was found
+     *
+     * @param string $id
+     * @return DiscordWebhook|null
+     */
+    public function getOneById(string $id): ?DiscordWebhook
+    {
+        return $this->app->getRepositories()->getDiscordWebhookRepository()->getOneById($id);
+    }
+
+    /**
      * Will return all entities
      *
      * @return DiscordWebhook[]
