@@ -1,7 +1,7 @@
 <!-- Template -->
 <template>
   <li class="nav-item">
-    <span class="nav-link d-flex justify-content-between align-items-center collapsed" data-toggle="collapse" data-target="#submenu-app" aria-expanded="false">
+    <span class="nav-link d-flex justify-content-between align-items-center collapsed" data-toggle="collapse" data-target="#submenu-discord" aria-expanded="false">
       <span>
         <span class="sidebar-icon">
           <span class="fab fa-lg fa-discord"></span>
@@ -13,7 +13,7 @@
       </span>
     </span>
 
-    <div class="multi-level collapse" role="list" id="submenu-app" aria-expanded="false" style="">
+    <div class="multi-level collapse" role="list" id="submenu-discord" aria-expanded="false" style="">
       <ul class="flex-column nav">
         <li class="nav-item" :class="{'active' : ( this.$route.name === 'modules_discord_test_sending' )}">
           <router-link :to="{ name: 'modules_discord_test_sending' }" class="nav-link">
@@ -37,14 +37,6 @@ import TranslationsService from "../../../../../../core/services/TranslationsSer
 let translationService = new TranslationsService();
 
 export default {
-  data() {
-    return {
-      menuLinkClasses: {
-        "active" : this.isActiveLink
-      },
-      isActiveLink : false,
-    }
-  },
   computed: {
     discordMenuLabelTranslation : {
       get: function(){
