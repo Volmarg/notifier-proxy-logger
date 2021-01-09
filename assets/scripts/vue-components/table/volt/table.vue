@@ -27,45 +27,61 @@
     </volt-table-body>
   </table>
 
-  <button
+  <template
       v-for="pageNumber in paginationCount"
       :key="pageNumber"
-      class="btn btn-light ml-1 mt-1 pagination-button"
-      :class="{
+  >
+    <button
+        v-show="
+            isCurrentlyRenderedPageNumberShown(pageNumber)
+        || (pageNumber == nextResultPage)
+        || (pageNumber == previousResultPage)
+        || (pageNumber == currentResultPage)
+        "
+        class="btn btn-light ml-1 mt-1 pagination-button"
+        :class="{
         'text-danger': (pageNumber == currentResultPage)
       }"
-      @click="showDataForPageNumber($event.currentTarget.innerHTML)"
-  >
-    {{ pageNumber }}
-  </button>
+        @click="paginationButtonClicked($event.currentTarget.innerHTML)"
+        :ref="'pageNumberButton' + pageNumber"
+    >
+      {{ pageNumber }}
+    </button>
+    <span v-if="doShowPaginationDots(pageNumber)">
+      ...
+    </span>
+  </template>
 
 </template>
 
 <!-- Script -->
 <script>
-import DataTables             from '../../../libs/datatable/DataTables';
 import TranslationsService    from '../../../core/services/TranslationsService';
 
 import VoltTableHeadComponent from "./table-head";
 import VoltTableRowComponent  from "./table-row";
 import VoltTableBodyComponent from "./table-body";
 
-let dataTables          = new DataTables();
 let translationsService = new TranslationsService();
 
 export default {
   data(){
     return {
-      datatableInstance  : null,
-      originalRowsData   : [],
-      shownRowsData      : [],
+      datatableInstance : null,
+      originalRowsData  : [],
+      shownRowsData     : [],
 
-      maxResultPerPage   : 10,
-      currentResultPage  : 1,
-      paginationCount    : 0,
+      maxResultPerPage               : 10,
+      currentResultPage              : 1,
+      paginationCount                : 0,
+      countOfPagesShownInBetweenDots : 3,
+      arePaginationDotsRendered      : false,
 
-      searchInput        : "",
-      searchResultRows   : [],
+      nextResultPage     : this.currentResultPage+1,
+      previousResultPage : this.currentResultPage-1,
+
+      searchInput      : "",
+      searchResultRows : [],
     }
   },
   computed: {
@@ -95,6 +111,41 @@ export default {
   },
   methods: {
     /**
+     * @description will decide if given page number should be visible upon rendering
+     */
+    isCurrentlyRenderedPageNumberShown(pageNumber){
+
+      // show the basic numbers from beginning and end
+      if(
+              pageNumber <= this.countOfPagesShownInBetweenDots
+          ||  pageNumber > ( this.paginationCount - this.countOfPagesShownInBetweenDots )
+      ){
+        return true;
+      }
+
+      return false;
+    },
+    /**
+     * @description will decide if the dots for pagination should be shown
+     */
+    doShowPaginationDots(pageNumber){
+      let centerOfPagination = ( this.paginationCount / 2 );
+
+      if( pageNumber == Math.ceil(centerOfPagination) ){
+        return true;
+      }
+      return false;
+    },
+    /**
+     * @description this function will decide if we need to show some additional pagination buttons in between
+     *              the numbers that are shown initially. Like for example when user clicks on 3 - we want to show 4,
+     *              but when it's 4 and so on we show another button 5 after dots etc.
+     */
+    decideShowingPaginationButtonsInBetweenLowerAndHigherRanges(){
+      this.nextResultPage     = this.currentResultPage + 1;
+      this.previousResultPage = this.currentResultPage - 1;
+    },
+    /**
      * @description creates tippy content for single data row - this means the popup visible upon hovering
      */
     getTippyBodyContentForSingleRow(index){
@@ -110,9 +161,10 @@ export default {
      */
     searchForStringInTableCells(){
       let matchingRowsData = [];
+      let searchRegexp     = new RegExp(this.searchInput, 'i');
 
       if( "" === this.searchInput.trim() ){
-        this.showDataForPageNumber(this.currentResultPage);
+        this.paginationButtonClicked(this.currentResultPage);
         this.updatePaginationCount();
         return;
       }
@@ -120,10 +172,25 @@ export default {
       this.originalRowsData.forEach( (objectWithData) => {
         let objectValues = Object.values(objectWithData);
 
+        // iterate over all props of object
         for( let value of objectValues ){
-          if( value.search(this.searchInput) !== -1 ){
-            matchingRowsData.push(objectWithData);
-            return false;
+
+          // object is a value of prop
+          if( "object" === typeof value ){
+
+            for(let innerObjectValue in value){
+              if( innerObjectValue.match(searchRegexp) ){
+                matchingRowsData.push(objectWithData);
+                return false;
+              }
+            }
+            //string is a value of prop
+          }else{
+
+            if( value.match(searchRegexp) ){
+              matchingRowsData.push(objectWithData);
+              return false;
+            }
           }
         }
       })
@@ -131,7 +198,7 @@ export default {
       this.shownRowsData    = matchingRowsData;
       this.searchResultRows = matchingRowsData;
 
-      this.showDataForPageNumber();
+      this.paginationButtonClicked();
       this.updatePaginationCount();
     },
     /**
@@ -145,11 +212,13 @@ export default {
       }
     },
     /**
-     * @description handles showing the rows in table for current pageNumber by slicing the data in array
+     * @description handles
+     *             - showing the rows in table for current pageNumber by slicing the data in array
+     *             - rendering pagination based on the page which user currently is on
      *
      * @param visiblePageNumber
      */
-    showDataForPageNumber(visiblePageNumber){
+    paginationButtonClicked(visiblePageNumber){
       /** @description this is required as on page 1 we want offset starting from 1, page 2 from 11 etc **/
       let visiblePageNumberOffsetMultiplier = (visiblePageNumber - 1);
 
@@ -165,7 +234,8 @@ export default {
         this.shownRowsData = this.searchResultRows.slice(startOffset, endOffset)
       }
 
-      this.currentResultPage = visiblePageNumber;
+      this.currentResultPage = parseInt(visiblePageNumber);
+      this.decideShowingPaginationButtonsInBetweenLowerAndHigherRanges();
     }
   },
   /**
@@ -180,7 +250,7 @@ export default {
 
     if (0 === this.shownRowsData.length) {
       this.shownRowsData = this.rowsData;
-      this.showDataForPageNumber(1); // show initial data for page 1
+      this.paginationButtonClicked(1); // show initial data for page 1
     }
 
     // set initial pagination count when opening page
@@ -194,7 +264,7 @@ export default {
      */
     if( this.originalRowsData.length !== this.rowsData.length ){
       this.originalRowsData = this.rowsData;
-      this.showDataForPageNumber(this.currentResultPage);
+      this.paginationButtonClicked(this.currentResultPage);
       this.updatePaginationCount();
     }
   }

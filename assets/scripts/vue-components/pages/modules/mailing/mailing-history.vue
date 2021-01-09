@@ -6,17 +6,11 @@
     <div class="col-12 col-xl-12">
       <div class="card card-body bg-white border-light shadow-sm mb-4">
         <h2 class="h5 mb-4"> {{ sentEmailsLabel }}  </h2>
-          <section class="">
-            <volt-table>
-              <volt-table-head :table-headers="tableHeaders">
-              </volt-table-head>
-              <volt-table-body v-if="tableData.length">
-                <template v-for="(mail, index) in tableData" :key="index">
-                  <volt-table-row :row-data="mail" :tippy-row-body-content="buildRowTippyBodyContentForMail(allEmails[index])"/>
-                </template>
-              </volt-table-body>
-            </volt-table>
-          </section>
+
+        <section class="">
+          <volt-table :headers="tableHeaders" :rows-data="tableData" :tippy-content-for-all-rows-data="buildRowTippyBodyContentForMail()" />
+        </section>
+
       </div>
     </div>
   </div>
@@ -85,16 +79,21 @@ export default {
     },
     /**
      * @description build the content for Tippy.js - visible upon hovering over the row in history table
-     *
-     * @param mail {MailDto}
      */
-    buildRowTippyBodyContentForMail(mail){
-      let content = `
+    buildRowTippyBodyContentForMail(){
+
+      let tippyContentForaAllMailRows = [];
+      this.allMails.forEach((dto, index) => {
+        let content = `
         <b>${this.tippyBodyContentTranslationBodyString}:</b>
         <br/>
-        ${mail.body}
+        ${dto.body}
       `;
-      return content;
+
+        tippyContentForaAllMailRows.push(content);
+      })
+
+      return tippyContentForaAllMailRows;
     },
     /**
      * @description will filter the data for displaying in table, either set empty value to skip them or add special

@@ -7,7 +7,7 @@
       <div class="card card-body bg-white border-light shadow-sm mb-4">
         <h2 class="h5 mb-4"> {{ mainHeaderDiscordWebhooksTranslation }}  </h2>
         <section class="">
-          <volt-table :headers="tableHeadersTranslations" :rows-data="discordWebhooksTableData" :tippy-content-for-all-rows-data="buildTippyContentForAllDiscordWebhookRows(discordWebhooksDtos)" />
+          <volt-table :headers="tableHeadersTranslations" :rows-data="discordWebhooksTableData" :tippy-content-for-all-rows-data="buildTippyContentForAllDiscordWebhookRows()" />
         </section>
       </div>
     </div>
@@ -91,17 +91,15 @@ export default {
         this.discordWebhooksTableData = discordWebhooksDtosForTable;
         this.discordWebhooksDtos      = discordWebhooksDtos;
         this.isSpinnerVisible         = false;
-        // todo bug: the added rows are not propagated to the child table
       });
     },
     /**
      * @description will output the string shown upon hovering over the webhook row
-     * @param discordWebhookDtos {Array<DiscordWebhookDto>}
      */
-    buildTippyContentForAllDiscordWebhookRows(discordWebhookDtos){
+    buildTippyContentForAllDiscordWebhookRows(){
 
       let tippyContentForaAllDiscordWebhookRows = [];
-      discordWebhookDtos.forEach((dto, index) => {
+      this.discordWebhooksDtos.forEach((dto, index) => {
         let content = `
         <b>${this.tableRowTippyDescriptionTranslation}:</b>
         <br/>
