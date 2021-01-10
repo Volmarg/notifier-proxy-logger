@@ -79,7 +79,7 @@ class DiscordExternalApiAction extends AbstractController
             return $responseDto->toJsonResponse();
         }catch(Exception| TypeError $e){
             $this->app->getLoggerService()->logThrowable($e, [
-                "info" => "Issue occurred while handling external API method for inserting mail"
+                "info" => "Issue occurred while handling external API method for inserting discord message"
             ]);
             $message = $this->app->trans('api.external.general.messages.internalServerError');
 

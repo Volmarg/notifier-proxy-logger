@@ -5,7 +5,9 @@ namespace App\Action\Modules\Dashboard;
 use App\Controller\Application;
 use App\Controller\Core\Controllers;
 use App\DTO\API\BaseApiResponseDto;
+use App\DTO\API\Internal\GetLastProcessedDiscordMessagesResponseDto;
 use App\DTO\API\Internal\GetLastProcessedEmailsResponseDto;
+use App\DTO\Modules\Discord\DiscordMessageDTO;
 use App\DTO\Modules\Mailing\MailDTO;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,7 +17,8 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route("/modules/dashboard", name: "modules_dashboard_")]
 class DashboardAction extends AbstractController
 {
-    const GET_LAST_PROCESSED_EMAILS_DEFAULT_COUNT = 5;
+    const GET_LAST_PROCESSED_EMAILS_DEFAULT_COUNT           = 5;
+    const GET_LAST_PROCESSED_DISCORD_MESSAGES_DEFAULT_COUNT = 5;
 
     /**
      * @var Application $app
@@ -63,7 +66,46 @@ class DashboardAction extends AbstractController
         }catch(Exception $e){
             $this->app->getLoggerService()->logThrowable($e);
 
-            $message = $this->app->trans('pages.mailing.history.messages.errors.couldNotGetAllSentEmails');
+            $message = $this->app->trans('pages.dashboard.apiMessages.getLastProcessedEmails.error');
+
+            $baseResponseDto = BaseApiResponseDto::buildInternalServerErrorResponse();
+            $baseResponseDto->setMessage($message);
+
+            return $baseResponseDto->toJsonResponse();
+        }
+
+        return $dto->toJsonResponse();
+    }
+
+    /**
+     * Will return Last processed DiscordMessages for the dashboard widget `last-processed-discord-messages`
+     * @param int $messagesCount
+     * @return JsonResponse
+     */
+    #[Route("/get-last-processed-discord-messages/{messagesCount}", name: "get_last_processed_discord_messages")]
+    public function getLastProcessedDiscordMessages(int $messagesCount = self::GET_LAST_PROCESSED_DISCORD_MESSAGES_DEFAULT_COUNT): JsonResponse
+    {
+        try{
+            $lastProcessedMessages = $this->controllers->getDiscordMessageController()->getLastMessages($messagesCount);
+            $messagesJsons         = [];
+
+            foreach( $lastProcessedMessages as $message ){
+                $discordMessageDTO = new DiscordMessageDTO();
+                $discordMessageDTO->setMessageContent($message->getMessageContent());
+                $discordMessageDTO->setMessageTitle($message->getMessageTitle());
+                $discordMessageDTO->setStatus($message->getStatus());
+                $discordMessageDTO->setCreated($message->getCreated()->format("Y-m-d H:i:s"));
+
+                $messagesJsons[] = $discordMessageDTO->toJson();
+            }
+
+            $dto = new GetLastProcessedDiscordMessagesResponseDto();
+            $dto->prefillBaseFieldsForSuccessResponse();
+            $dto->setDiscordMessagesJsons($messagesJsons);
+        }catch(Exception $e){
+            $this->app->getLoggerService()->logThrowable($e);
+
+            $message = $this->app->trans('pages.dashboard.apiMessages.getLastProcessedDiscordMessages');
 
             $baseResponseDto = BaseApiResponseDto::buildInternalServerErrorResponse();
             $baseResponseDto->setMessage($message);

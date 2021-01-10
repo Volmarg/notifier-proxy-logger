@@ -37,6 +37,13 @@ export default class SymfonyRoutes {
     static readonly GET_LAST_PROCESSED_EMAILS_PARAM_EMAILS_COUNT = "{emailsCount}";
 
     /**
+     * @description returns last processed discord messages
+     *              used for example in the dashboard widget
+     */
+    static readonly GET_LAST_PROCESSED_DISCORD_MESSAGES                      = "/modules/dashboard/get-last-processed-discord-messages/{messagesCount}"
+    static readonly GET_LAST_PROCESSED_DISCORD_MESSAGES_PARAM_MESSAGES_COUNT = "{messagesCount}";
+
+    /**
      * @description returns all defined webhooks used for sending messages in discord
      */
     static readonly GET_ALL_DISCORD_WEBHOOKS = "/modules/discord/get-all-webhooks";

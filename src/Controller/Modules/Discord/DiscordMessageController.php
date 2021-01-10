@@ -75,6 +75,7 @@ class DiscordMessageController extends AbstractController
         $discordMessage = new DiscordMessage();
         $discordMessage->setMessageContent($discordMessageDto->getMessageContent());
         $discordMessage->setMessageContent($discordMessageDto->getMessageContent());
+        $discordMessage->setMessageTitle($discordMessageDto->getMessageTitle());
         $discordMessage->setSource($discordMessageDto->getSource());
 
         $discordWebhook = $this->discordWebhookController->getOneByWebhookName($discordMessageDto->getWebhookName());

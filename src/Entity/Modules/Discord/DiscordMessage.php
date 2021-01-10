@@ -42,6 +42,11 @@ class DiscordMessage implements EntityInterface
     private string $messageContent;
 
     /**
+     * @ORM\Column(type="string", length=250)
+     */
+    private string $messageTitle;
+
+    /**
      * @ORM\Column(type="string", length=100)
      */
     private string $status;
@@ -145,6 +150,22 @@ class DiscordMessage implements EntityInterface
         $this->source = $source;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMessageTitle(): string
+    {
+        return $this->messageTitle;
+    }
+
+    /**
+     * @param string $messageTitle
+     */
+    public function setMessageTitle(string $messageTitle): void
+    {
+        $this->messageTitle = $messageTitle;
     }
 
 }

@@ -25,6 +25,7 @@ final class Version20210110075754 extends AbstractMigration
                 id INT AUTO_INCREMENT NOT NULL, 
                 discord_webhook_id INT NOT NULL, 
                 message_content LONGTEXT NOT NULL, 
+                message_title VARCHAR(250) NOT NULL, 
                 status VARCHAR(100) NOT NULL, 
                 source VARCHAR(50) NOT NULL, 
                 created DATETIME NOT NULL, 

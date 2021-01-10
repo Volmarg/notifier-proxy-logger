@@ -4,5 +4,6 @@ Content-Type: application/json
 {
   "webhookName": "Volmarg test room set",
   "messageContent": "Discord message content",
+  "messageTitle": "Test title",
   "source": "Rest test"
 }

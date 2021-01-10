@@ -76,3 +76,15 @@ pages:
               from: From
               to: To
               content: Content
+        lastProcessedDiscordMessages:
+          header:
+            label: Last processed Discord Messages
+          tippy:
+            bodyContent:
+              title: Title
+              content: Content
+    apiMessages:
+      getLastProcessedDiscordMessages:
+        error: Could not fetch last processed discord messages
+      getLastProcessedEmails:
+        error: Could not fetch last processed emails
