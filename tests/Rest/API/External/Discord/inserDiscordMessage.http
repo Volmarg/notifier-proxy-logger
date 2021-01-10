@@ -1,0 +1,8 @@
+POST http://127.0.0.1:8001/api/external/discord/insert-message?XDEBUG_SESSION_START=PHPSTORM
+Content-Type: application/json
+
+{
+  "webhookName": "Volmarg test room set",
+  "messageContent": "Discord message content",
+  "source": "Rest test"
+}

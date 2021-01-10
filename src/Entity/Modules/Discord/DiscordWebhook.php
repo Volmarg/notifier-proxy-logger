@@ -3,9 +3,15 @@
 namespace App\Entity\Modules\Discord;
 
 use App\Repository\Modules\Discord\DiscordWebhookRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\UniqueConstraint;
 
 /**
+ * @ORM\Table(name="discord_webhook", uniqueConstraints={
+ *  @UniqueConstraint(name="unique_name", columns={"webhook_name"})
+ * })
  * @ORM\Entity(repositoryClass=DiscordWebhookRepository::class)
  */
 class DiscordWebhook
@@ -39,6 +45,16 @@ class DiscordWebhook
      * @ORM\Column(type="string", length=255)
      */
     private $webhookName;
+
+    /**
+     * @ORM\OneToMany(targetEntity=DiscordMessage::class, mappedBy="discordWebhook")
+     */
+    private $discordMessages;
+
+    public function __construct()
+    {
+        $this->discordMessages = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -89,6 +105,36 @@ class DiscordWebhook
     public function setWebhookName(string $webhookName): self
     {
         $this->webhookName = $webhookName;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|DiscordMessage[]
+     */
+    public function getDiscordMessages(): Collection
+    {
+        return $this->discordMessages;
+    }
+
+    public function addDiscordMessage(DiscordMessage $discordMessage): self
+    {
+        if (!$this->discordMessages->contains($discordMessage)) {
+            $this->discordMessages[] = $discordMessage;
+            $discordMessage->setDiscordWebhook($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDiscordMessage(DiscordMessage $discordMessage): self
+    {
+        if ($this->discordMessages->removeElement($discordMessage)) {
+            // set the owning side to null (unless already changed)
+            if ($discordMessage->getDiscordWebhook() === $this) {
+                $discordMessage->setDiscordWebhook(null);
+            }
+        }
 
         return $this;
     }

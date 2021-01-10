@@ -3,7 +3,9 @@
 namespace App\Controller\Modules\Discord;
 
 use App\Controller\Application;
+use App\DTO\Modules\Discord\DiscordMessageDTO;
 use App\Entity\Modules\Discord\DiscordMessage;
+use App\Exception\NoEntityWasFoundException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,9 +18,15 @@ class DiscordMessageController extends AbstractController
      */
     private Application $app;
 
-    public function __construct(Application $app)
+    /**
+     * @var DiscordWebhookController $discordWebhookController
+     */
+    private DiscordWebhookController $discordWebhookController;
+
+    public function __construct(Application $app, DiscordWebhookController $discordWebhookController)
     {
-        $this->app = $app;
+        $this->app                      = $app;
+        $this->discordWebhookController = $discordWebhookController;
     }
 
     /**
@@ -53,6 +61,29 @@ class DiscordMessageController extends AbstractController
     public function saveEntity(DiscordMessage $discordMessage): DiscordMessage
     {
         return $this->app->getRepositories()->getDiscordMessageRepository()->saveEntity($discordMessage);
+    }
+
+    /**
+     * Will build DiscordMessage entity from DiscordMessageDTO
+     *
+     * @param DiscordMessageDTO $discordMessageDto
+     * @return DiscordMessage
+     * @throws NoEntityWasFoundException
+     */
+    public function buildMailEntityFromDto(DiscordMessageDTO $discordMessageDto): DiscordMessage
+    {
+        $discordMessage = new DiscordMessage();
+        $discordMessage->setMessageContent($discordMessageDto->getMessageContent());
+        $discordMessage->setMessageContent($discordMessageDto->getMessageContent());
+        $discordMessage->setSource($discordMessageDto->getSource());
+
+        $discordWebhook = $this->discordWebhookController->getOneByWebhookName($discordMessageDto->getWebhookName());
+        if( empty($discordWebhook) ){
+            throw new NoEntityWasFoundException("No DiscordWebhook entity was found for given webhook name: {$discordMessageDto->getWebhookName()}");
+        }
+
+        $discordMessage->setDiscordWebhook($discordWebhook);
+        return $discordMessage;
     }
 
 }

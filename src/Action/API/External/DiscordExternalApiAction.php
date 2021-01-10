@@ -5,7 +5,8 @@ namespace App\Action\API\External;
 use App\Controller\Application;
 use App\Controller\Core\Controllers;
 use App\DTO\API\BaseApiResponseDto;
-use App\DTO\Modules\Mailing\MailDTO;
+use App\DTO\Modules\Discord\DiscordMessageDTO;
+use App\Exception\NoEntityWasFoundException;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,7 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use TypeError;
 
 #[Route("/api/external", name: "api_external_")]
-class MailingExternalApiAction extends AbstractController
+class DiscordExternalApiAction extends AbstractController
 {
 
     /**
@@ -41,7 +42,7 @@ class MailingExternalApiAction extends AbstractController
      * @param Request $request
      * @return JsonResponse
      */
-    #[Route("/mailing/insert-mail", name: "mailing_insert_mail", methods: ["POST"])]
+    #[Route("/discord/insert-message", name: "discord_insert_messages", methods: ["POST"])]
     public function insertMail(Request $request): JsonResponse
     {
         try{
@@ -59,15 +60,23 @@ class MailingExternalApiAction extends AbstractController
                 return $baseApiResponseDto->toJsonResponse();
             }
 
-            $mailDto = MailDTO::fromJson($json);
-            $mail    = $this->controllers->getMailingController()->buildMailEntityFromMailDto($mailDto);
+            $discordMessageDto = DiscordMessageDTO::fromJson($json);
+            $discordMessage    = $this->controllers->getDiscordMessageController()->buildMailEntityFromDto($discordMessageDto);
 
-            $this->controllers->getMailingController()->saveEntity($mail);
+            $this->controllers->getDiscordMessageController()->saveEntity($discordMessage);
 
             $message = $this->app->trans("api.external.general.messages.ok");
             $baseApiResponseDto->setMessage($message);
 
             return $baseApiResponseDto->toJsonResponse();
+        }catch(NoEntityWasFoundException $noEntityExc){
+            $this->app->getLoggerService()->logThrowable($noEntityExc);
+            $message = $this->app->trans('api.external.general.messages.badRequest');
+
+            $responseDto = BaseApiResponseDto::buildBadRequestErrorResponse();
+            $responseDto->setMessage($message);
+
+            return $responseDto->toJsonResponse();
         }catch(Exception| TypeError $e){
             $this->app->getLoggerService()->logThrowable($e, [
                 "info" => "Issue occurred while handling external API method for inserting mail"

@@ -51,7 +51,16 @@ class DiscordMessage implements EntityInterface
      */
     private DateTime $created;
 
-    // add relation to webhook but without orphanting
+    /**
+     * @ORM\Column(type="string", length=50)
+     */
+    private string $source;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=DiscordWebhook::class, inversedBy="discordMessages")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $discordWebhook;
 
     public function __construct()
     {
@@ -113,4 +122,29 @@ class DiscordMessage implements EntityInterface
         $metadata->addPropertyConstraint('messageContent', new NotBlank());
 
     }
+
+    public function getDiscordWebhook(): ?DiscordWebhook
+    {
+        return $this->discordWebhook;
+    }
+
+    public function setDiscordWebhook(?DiscordWebhook $discordWebhook): self
+    {
+        $this->discordWebhook = $discordWebhook;
+
+        return $this;
+    }
+
+    public function getSource(): ?string
+    {
+        return $this->source;
+    }
+
+    public function setSource(string $source): self
+    {
+        $this->source = $source;
+
+        return $this;
+    }
+
 }

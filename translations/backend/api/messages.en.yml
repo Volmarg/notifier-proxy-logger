@@ -5,3 +5,4 @@ api:
         invalidJsonSyntax: Invali json syntax
         ok: Ok
         internalServerError: Internal server error
+        badRequest: Bad request
