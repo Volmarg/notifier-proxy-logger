@@ -105,17 +105,12 @@ export default {
 
         let getAllDiscordWebhooksResponseDto = GetAllDiscordWebhooksResponseDto.fromAxiosResponse(response);
         let discordWebhooksJsons             = getAllDiscordWebhooksResponseDto.discordWebhooksJsons;
-        let discordWebhooksDtos              = [];
 
-        for(let index in discordWebhooksJsons){
-          let discordWebhookDtoJson     = discordWebhooksJsons[index];
-          let discordWebhookDto         = DiscordWebhookDto.fromJson(discordWebhookDtoJson);
+        this.isSpinnerVisible    = false;
+        this.discordWebhooksDtos = discordWebhooksJsons.map( (json) => {
+          return DiscordWebhookDto.fromJson(json);
+        });
 
-          discordWebhooksDtos.push(discordWebhookDto);
-        }
-
-        this.discordWebhooksDtos      = discordWebhooksDtos;
-        this.isSpinnerVisible         = false;
       });
     },
     submitSendDiscordMessage(){

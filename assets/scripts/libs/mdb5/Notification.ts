@@ -1,17 +1,20 @@
 import {Notyf} from 'notyf';
+import {NotyfHorizontalPosition, NotyfVerticalPosition} from "notyf/notyf.options";
 
 /**
+ * @description handles showing popups with messages
+ *
  * @lik https://mdbootstrap.com/docs/standard/components/alerts/
  */
 export default class Notification
 {
-    private static readonly TYPE_WARNING       = "warning";
-    private static readonly TYPE_SUCCESS       = "_success";
-    private static readonly TYPE_DANGER        = "danger";
+    private static readonly TYPE_WARNING: string       = "warning";
+    private static readonly TYPE_SUCCESS: string       = "_success";
+    private static readonly TYPE_DANGER: string        = "danger";
 
-    private static readonly POSITION_X_CENTER  = "center"
+    private static readonly POSITION_X_CENTER: NotyfHorizontalPosition  = "center"
 
-    private static readonly POSITION_Y_TOP     = "top";
+    private static readonly POSITION_Y_TOP: NotyfVerticalPosition = "top";
 
     private notifier: Notyf;
 

@@ -42,7 +42,7 @@
         :class="{
         'text-danger': (pageNumber == currentResultPage)
       }"
-        @click="paginationButtonClicked($event.currentTarget.innerHTML)"
+        @click="handleShowingTableDataForPaginationAndResult($event.currentTarget.innerHTML)"
         :ref="'pageNumberButton' + pageNumber"
     >
       {{ pageNumber }}
@@ -57,6 +57,7 @@
 <!-- Script -->
 <script>
 import TranslationsService    from '../../../core/services/TranslationsService';
+import StringUtils            from "../../../core/utils/StringUtils";
 
 import VoltTableHeadComponent from "./table-head";
 import VoltTableRowComponent  from "./table-row";
@@ -135,10 +136,8 @@ export default {
       }
 
       let centerOfPagination = ( this.paginationCount / 2 );
-      if( pageNumber == Math.ceil(centerOfPagination) ){
-        return true;
-      }
-      return false;
+
+      return ( parseInt(pageNumber) === Math.ceil(centerOfPagination) );
     },
     /**
      * @description this function will decide if we need to show some additional pagination buttons in between
@@ -168,7 +167,7 @@ export default {
       let searchRegexp     = new RegExp(this.searchInput, 'i');
 
       if( "" === this.searchInput.trim() ){
-        this.paginationButtonClicked(this.currentResultPage);
+        this.handleShowingTableDataForPaginationAndResult(this.currentResultPage);
         this.updatePaginationCount();
         return;
       }
@@ -182,7 +181,7 @@ export default {
           // object is a value of prop
           if( "object" === typeof value ){
 
-            for(let innerObjectValue in value){
+            for(let innerObjectValue of value){
               if( innerObjectValue.match(searchRegexp) ){
                 matchingRowsData.push(objectWithData);
                 return false;
@@ -202,7 +201,7 @@ export default {
       this.shownRowsData    = matchingRowsData;
       this.searchResultRows = matchingRowsData;
 
-      this.paginationButtonClicked();
+      this.handleShowingTableDataForPaginationAndResult(1);
       this.updatePaginationCount();
     },
     /**
@@ -222,7 +221,7 @@ export default {
      *
      * @param visiblePageNumber
      */
-    paginationButtonClicked(visiblePageNumber){
+    handleShowingTableDataForPaginationAndResult(visiblePageNumber){
       /** @description this is required as on page 1 we want offset starting from 1, page 2 from 11 etc **/
       let visiblePageNumberOffsetMultiplier = (visiblePageNumber - 1);
 
@@ -232,7 +231,7 @@ export default {
       }
       let endOffset = startOffset + this.maxResultPerPage;
 
-      if( "" === this.searchInput ){
+      if( StringUtils.isEmptyString(this.searchInput) ){
         this.shownRowsData = this.originalRowsData.slice(startOffset, endOffset)
       }else{
         this.shownRowsData = this.searchResultRows.slice(startOffset, endOffset)
@@ -257,9 +256,12 @@ export default {
       this.searchResultRows = this.rowsData; // initial data is required
     }
 
-    if (0 === this.shownRowsData.length) {
+    if (
+            0 === this.shownRowsData.length
+        &&  StringUtils.isEmptyString(this.searchInput)
+    ) {
       this.shownRowsData = this.rowsData;
-      this.paginationButtonClicked(1); // show initial data for page 1
+      this.handleShowingTableDataForPaginationAndResult(1); // show initial data for page 1
     }
 
     // set initial pagination count when opening page
@@ -273,7 +275,7 @@ export default {
      */
     if( this.originalRowsData.length !== this.rowsData.length ){
       this.originalRowsData = this.rowsData;
-      this.paginationButtonClicked(this.currentResultPage);
+      this.handleShowingTableDataForPaginationAndResult(this.currentResultPage);
       this.updatePaginationCount();
     }
   }

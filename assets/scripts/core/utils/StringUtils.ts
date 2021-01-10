@@ -1,3 +1,6 @@
+/**
+ * @description contains usefull methods to working with the strings
+ */
 export default class StringUtils {
 
     /**

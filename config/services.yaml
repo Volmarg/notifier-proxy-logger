@@ -48,12 +48,19 @@ services:
     repository.discord_webhook_repository:
         alias: App\Repository\Modules\Discord\DiscordWebhookRepository
 
+    App\Repository\Modules\Discord\DiscordMessageRepository:
+        public: true
+
+    repository.discord_message_repository:
+        alias: App\Repository\Modules\Discord\DiscordMessageRepository
+
     App\Controller\Core\Repositories:
         public: true
         calls:
             - setUserRepository: ['@repository.user_repository']
             - setMailRepository: ['@repository.mail_repository']
             - setDiscordWebhookRepository: ['@repository.discord_webhook_repository']
+            - setDiscordMessageRepository: ['@repository.discord_message_repository']
 
     controller.core.repositories:
         alias: App\Controller\Core\Repositories
@@ -85,6 +92,12 @@ services:
     controller.discord_webhook_controller:
         alias: App\Controller\Modules\Discord\DiscordWebhookController
 
+    App\Controller\Modules\Discord\DiscordMessageController:
+        public: true
+
+    controller.discord_message_controller:
+        alias: App\Controller\Modules\Discord\DiscordMessageController
+
     App\Controller\Application:
         calls:
             - setTranslator: ['@translator']
@@ -98,3 +111,4 @@ services:
             - setUserController: ['@controller.user_controller']
             - setMailingController: ['@controller.modules_mailing_mail_controller']
             - setDiscordWebhookController: ['@controller.discord_webhook_controller']
+            - setDiscordMessageController: ['@controller.discord_message_controller']

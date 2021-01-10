@@ -6,16 +6,16 @@ import tippy       from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 import 'tippy.js/themes/light.css';
 
-
 /**
  * @description this class handles displaying popups upon interacting with DOM elements
  * @link https://atomiks.github.io/tippyjs/
  */
 export default class Tippy {
 
-    static readonly DATA_ATTRIBUTE_CONTENT   = "tippyContent";
-    static readonly DATA_ATTRIBUTE_PLACEMENT = "tippyPlacement";
-    static readonly DEFAULT_PLACEMENT        = "top";
+    static readonly DATA_ATTRIBUTE_CONTENT: string   = "tippyContent";
+    static readonly DATA_ATTRIBUTE_PLACEMENT: string = "tippyPlacement";
+    static readonly DEFAULT_PLACEMENT: Placement     = "top";
+    static readonly DEFAULT_THEME                    = "light";
 
     /**
      * @description will initialize Tippy by the data attr
@@ -31,8 +31,8 @@ export default class Tippy {
             return;
         }
 
-        let content   = domElement.dataset[Tippy.DATA_ATTRIBUTE_CONTENT] as string;
-        let placement = domElement.dataset[Tippy.DATA_ATTRIBUTE_PLACEMENT] as Placement;
+        let content   = domElement.dataset[Tippy.DATA_ATTRIBUTE_CONTENT];
+        let placement = domElement.dataset[Tippy.DATA_ATTRIBUTE_PLACEMENT];
 
         if( StringUtils.isEmptyString(placement) ){
             placement = Tippy.DEFAULT_PLACEMENT;
@@ -40,12 +40,11 @@ export default class Tippy {
 
         if(
                 !StringUtils.isEmptyString(content)
-            // @ts-ignore
             &&  !domElement._tippy
         ){
             tippy(domElement, {
                 allowHTML : true,
-                theme     : 'light',
+                theme     : Tippy.DEFAULT_THEME,
                 content   : content,
                 placement : placement
             });

@@ -57,23 +57,17 @@ export default {
     retrieveAllEmails(){
       this.axios.get(SymfonyRoutes.GET_ALL_EMAILS).then( (response) => {
         let allEmailsResponseDtos = GetAllEmailsResponseDto.fromAxiosResponse(response);
-        let allEmailsDtos         = [];
-        let tableDataDtos         = [];
         let emailsJsons           = allEmailsResponseDtos.emailsJsons;
 
-        for(let index in emailsJsons){
-          let json = emailsJsons[index];
+        this.allMails = emailsJsons.map( (json) => {
+          return MailDto.fromJson(json);
+        });
 
-          /** @description duplication required due to overwriting original object upon changing it's value */
-          let mailDtoForAllEmails = MailDto.fromJson(json);
-          let mailDtoForTableData = MailDto.fromJson(json);
+        let tableDataDtos = emailsJsons.map( (json) => {
+          return MailDto.fromJson(json);
+        });
 
-          allEmailsDtos.push(mailDtoForAllEmails)
-          tableDataDtos.push(mailDtoForTableData)
-        }
-
-        this.allMails  = allEmailsDtos;
-        this.tableData = this.filterMailsDataForDisplayingInTable(tableDataDtos);
+        this.tableData        = this.processMailsDataForDisplayingInTable(tableDataDtos);
         this.isSpinnerVisible = false;
       })
     },
@@ -82,16 +76,13 @@ export default {
      */
     buildRowTippyBodyContentForMail(){
 
-      let tippyContentForaAllMailRows = [];
-      this.allMails.forEach((dto, index) => {
-        let content = `
-        <b>${this.tippyBodyContentTranslationBodyString}:</b>
-        <br/>
-        ${dto.body}
-      `;
-
-        tippyContentForaAllMailRows.push(content);
-      })
+      let tippyContentForaAllMailRows = this.allMails.map( (dto) => {
+        return `
+          <b>${this.tippyBodyContentTranslationBodyString}:</b>
+          <br/>
+          ${dto.body}
+        `;
+      });
 
       return tippyContentForaAllMailRows;
     },
@@ -102,7 +93,7 @@ export default {
      * @param mailsDtos {Array<MailDto>}
      * @returns {Array<MailDto>}
      */
-    filterMailsDataForDisplayingInTable(mailsDtos){
+    processMailsDataForDisplayingInTable(mailsDtos){
         let filteredTableData      = [];
 
         mailsDtos.forEach( (mail, index) => {
