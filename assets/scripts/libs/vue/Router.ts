@@ -4,6 +4,7 @@ import MailingModuleHistoryComponent                    from '../../vue-componen
 import DashboardOverviewComponent                       from '../../vue-components/pages/modules/dashboard/overview.vue';
 import DiscordWebhookManagementComponent                from '../../vue-components/pages/modules/discord/discord-manage-webhooks.vue';
 import DiscordTestSendingComponent                      from '../../vue-components/pages/modules/discord/discord-test-sending.vue';
+import DiscordHistoryComponent                          from '../../vue-components/pages/modules/discord/discord-messages-history.vue';
 
 /**
  * @description Router used by vue
@@ -18,7 +19,6 @@ export default class Router {
             path      : '/modules/mailing/overview',
             component : MailingModuleOverviewComponent,
             name      : "modules_mailing_overview"
-
         },
         {
             path      : "/modules/mailing/history",
@@ -39,6 +39,11 @@ export default class Router {
             path      : "/modules/discord/test-sending",
             component : DiscordTestSendingComponent,
             name      : "modules_discord_test_sending"
+        },
+        {
+            path      : "/modules/discord/history",
+            component : DiscordHistoryComponent,
+            name      : "modules_discord_history"
         }
     ];
 

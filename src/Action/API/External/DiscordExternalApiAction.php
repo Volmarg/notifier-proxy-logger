@@ -43,7 +43,7 @@ class DiscordExternalApiAction extends AbstractController
      * @return JsonResponse
      */
     #[Route("/discord/insert-message", name: "discord_insert_messages", methods: ["POST"])]
-    public function insertMail(Request $request): JsonResponse
+    public function insertDiscordMessage(Request $request): JsonResponse
     {
         try{
             $baseApiResponseDto  = new BaseApiResponseDto();
@@ -61,7 +61,7 @@ class DiscordExternalApiAction extends AbstractController
             }
 
             $discordMessageDto = DiscordMessageDTO::fromJson($json);
-            $discordMessage    = $this->controllers->getDiscordMessageController()->buildMailEntityFromDto($discordMessageDto);
+            $discordMessage    = $this->controllers->getDiscordMessageController()->buildDiscordMessageEntityFromDto($discordMessageDto);
 
             $this->controllers->getDiscordMessageController()->saveEntity($discordMessage);
 

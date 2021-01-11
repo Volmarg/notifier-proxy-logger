@@ -36,7 +36,7 @@ class DiscordMessageController extends AbstractController
      */
     public function getAllMessages(): array
     {
-        return $this->app->getRepositories()->getMailRepository()->getAllEmails();
+        return $this->app->getRepositories()->getDiscordMessageRepository()->getAllMessages();
     }
 
     /**
@@ -70,7 +70,7 @@ class DiscordMessageController extends AbstractController
      * @return DiscordMessage
      * @throws NoEntityWasFoundException
      */
-    public function buildMailEntityFromDto(DiscordMessageDTO $discordMessageDto): DiscordMessage
+    public function buildDiscordMessageEntityFromDto(DiscordMessageDTO $discordMessageDto): DiscordMessage
     {
         $discordMessage = new DiscordMessage();
         $discordMessage->setMessageContent($discordMessageDto->getMessageContent());

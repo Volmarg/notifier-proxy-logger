@@ -25,6 +25,13 @@
             <span>{{ discordSubmenuManageWebhooksLabelTranslation }}</span>
           </router-link>
         </li>
+        <li class="nav-item" :class="{'active' : ( this.$route.name === 'modules_discord_history' )}">
+          <router-link :to="{ name: 'modules_discord_history'}" class="nav-link">
+            <span>
+              {{ discordSubmenuHistoryLabelTranslation }}
+            </span>
+          </router-link>
+        </li>
       </ul>
     </div>
   </li>
@@ -51,6 +58,11 @@ export default {
     discordSubmenuManageWebhooksLabelTranslation : {
       get: function() {
         return translationService.getTranslationForString('sidebar.menu.nodes.discord.manageWebhooks.label');
+      }
+    },
+    discordSubmenuHistoryLabelTranslation : {
+      get: function(){
+        return translationService.getTranslationForString('sidebar.menu.nodes.discord.history.label');
       }
     }
   }

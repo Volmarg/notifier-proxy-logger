@@ -15,3 +15,5 @@ sidebar:
           label: Test sending
         manageWebhooks:
           label: Manage webhooks
+        history:
+          label: History

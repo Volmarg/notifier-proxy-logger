@@ -30,6 +30,11 @@ export default class SymfonyRoutes {
     static readonly GET_ALL_EMAILS = "/modules/mailing/get-all-emails";
 
     /**
+     * @description returns all DiscordMessages entities data
+     */
+    static readonly GET_ALL_DISCORD_MESSAGES = "/modules/discord/get-all-discord-messages";
+
+    /**
      * @description returns last processed emails
      *              used for example in the dashboard widget
      */

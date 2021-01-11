@@ -65,6 +65,27 @@ pages:
         fail: Failed to add new discord webhook
         invalidDataHasBeenProvided: Invalid data has been provided
         success: New webhook has been added
+    history:
+      labels:
+        main: Sent Discord Messages - History
+      table:
+        headers:
+          messageTitle:
+            label: Title
+          messageContent:
+            label: Content
+          status:
+            label: Status
+          created:
+            label: Created
+          source:
+            label: Source
+        rows:
+          tippyContent:
+            contentString: Content
+      messages:
+        errors:
+          couldNotGetAllMessages: Could not get all messages
   dashboard:
     overview:
       widgets:

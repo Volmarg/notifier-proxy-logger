@@ -167,7 +167,7 @@ class DiscordMessageDTO extends AbstractDTO
         return [
             self::KEY_WEBHOOK_NAME    => $this->getWebhookName(),
             self::KEY_MESSAGE_CONTENT => $this->getMessageContent(),
-            self::KEY_MESSAGE_TITLE   => $this->getMessageContent(),
+            self::KEY_MESSAGE_TITLE   => $this->getMessageTitle(),
             self::KEY_SOURCE          => $this->getSource(),
             self::KEY_STATUS          => $this->getStatus(),
             self::KEY_CREATED         => $this->getCreated(),

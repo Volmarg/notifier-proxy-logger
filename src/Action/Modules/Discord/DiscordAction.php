@@ -6,7 +6,9 @@ use App\Controller\Application;
 use App\Controller\Core\Controllers;
 use App\DTO\API\BaseApiResponseDto;
 use App\DTO\API\External\DiscordWebhookResponseDto;
+use App\DTO\API\Internal\GetAllDiscordMessagesResponseDto;
 use App\DTO\API\Internal\GetAllDiscordWebhooksResponseDto;
+use App\DTO\Modules\Discord\DiscordMessageDTO;
 use App\DTO\Modules\Discord\DiscordWebhookDto;
 use App\Form\Modules\Discord\SendTestDiscordMessageForm;
 use App\Services\External\DiscordService;
@@ -217,6 +219,44 @@ class DiscordAction extends AbstractController
         }
 
         return $responseDto->toJsonResponse();
+    }
+
+    /**
+     * Will return all DiscordMessage
+     * @return JsonResponse
+     */
+    #[Route("/get-all-discord-messages", name: "get_all_discord_messages", methods: ["GET"])]
+    public function getAllDiscordMessages(): JsonResponse
+    {
+        try{
+            $allDiscordMessages = $this->controllers->getDiscordMessageController()->getAllMessages();
+
+            $arrayOfDtosJsons = [];
+            foreach($allDiscordMessages as $message){
+                $discordMessageDto = new DiscordMessageDTO();
+                $discordMessageDto->setMessageContent($message->getMessageContent());
+                $discordMessageDto->setMessageTitle($message->getMessageTitle());
+                $discordMessageDto->setCreated($message->getCreated()->format("Y-m-d H:i:s"));
+                $discordMessageDto->setStatus($message->getStatus());
+
+                $arrayOfDtosJsons[] = $discordMessageDto->toJson();
+            }
+
+            $responseDto = new GetAllDiscordMessagesResponseDto();
+            $responseDto->prefillBaseFieldsForSuccessResponse();
+            $responseDto->setDiscordMessagesJsons($arrayOfDtosJsons);
+
+            return $responseDto->toJsonResponse();
+        }catch(Exception $e){
+            $this->app->getLoggerService()->logThrowable($e);
+
+            $message = $this->app->trans('pages.discord.history.messages.errors.couldNotGetAllMessages');
+
+            $baseResponseDto = BaseApiResponseDto::buildInternalServerErrorResponse();
+            $baseResponseDto->setMessage($message);
+
+            return $baseResponseDto->toJsonResponse();
+        }
     }
 
 }
