@@ -53,5 +53,8 @@ forms:
     message:
       label: Message
       placeholder: Text to be sent to given webhook
+    title:
+      label: Title
+      placeholder: Title of the message
     submit:
       label: Submit

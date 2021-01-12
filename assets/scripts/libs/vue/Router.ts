@@ -1,5 +1,5 @@
 import {createRouter, createWebHistory, RouterOptions}  from 'vue-router';
-import MailingModuleOverviewComponent                   from '../../vue-components/pages/modules/mailing/overview.vue';
+import MailingModuleOverviewComponent                   from '../../vue-components/pages/modules/mailing/mailing-test-sending.vue';
 import MailingModuleHistoryComponent                    from '../../vue-components/pages/modules/mailing/mailing-history.vue';
 import DashboardOverviewComponent                       from '../../vue-components/pages/modules/dashboard/overview.vue';
 import DiscordWebhookManagementComponent                from '../../vue-components/pages/modules/discord/discord-manage-webhooks.vue';

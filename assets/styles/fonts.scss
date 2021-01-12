@@ -1,5 +1,5 @@
 /* Fonts paths must be relative toward the `public` directory, where paths are a bit different */
-
+/* DO NOT use the `latin-ext` fonts (these won't render properly) just use the `latin`
 /* latin-ext */
 @font-face {
   font-family: 'Courgette';
@@ -23,4 +23,32 @@
   font-family: 'Roboto-Regular';
   font-weight: 100;
   src: url('../fonts/Roboto/Roboto-Regular.ttf');
+}
+
+/* latin */
+@font-face {
+  font-family: 'Nunito Sans';
+  font-weight: 300;
+  src: url('../fonts/NunitoSans/pe03MImSLYBIv1o4X1M8cc8WAc5tU1E.woff2') format('woff2');
+}
+
+/* latin */
+@font-face {
+  font-family: 'Nunito Sans';
+  font-weight: 400;
+  src: url('../fonts/NunitoSans/pe0qMImSLYBIv1o4X1M8cce9I9s.woff2') format('woff2');
+}
+
+/* latin */
+@font-face {
+  font-family: 'Nunito Sans';
+  font-weight: 600;
+  src: url('../fonts/NunitoSans/pe03MImSLYBIv1o4X1M8cc9iB85tU1E.woff2') format('woff2');
+}
+
+/* latin */
+@font-face {
+  font-family: 'Nunito Sans';
+  font-weight: 700;
+  src: url('../fonts/NunitoSans/pe03MImSLYBIv1o4X1M8cc8GBs5tU1E.woff2') format('woff2');
 }

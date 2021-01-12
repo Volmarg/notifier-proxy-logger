@@ -1,0 +1,4 @@
+discord:
+  defaultMessagesTemplate:
+    subject: Subject
+    content: Content

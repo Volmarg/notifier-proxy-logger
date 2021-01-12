@@ -5,17 +5,21 @@ namespace App\Services\External;
 use App\Controller\Application;
 use App\DTO\API\BaseApiResponseDto;
 use App\DTO\API\External\DiscordWebhookResponseDto;
+use App\Entity\Modules\Discord\DiscordMessage;
 use App\Entity\Modules\Discord\DiscordWebhook;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 
-class DiscordService
+class DiscordService extends AbstractController
 {
 
     const REQUEST_FIELD_CONTENT  = "content";
     const REQUEST_FIELD_USERNAME = "username";
 
     const PING_TYPE_EVERYONE = "@everyone";
+
+    const DISCORD_MESSAGE_TEMPLATE_DEFAULT = "discord/default-message-template.twig";
 
     /**
      * @var Application $app
@@ -31,15 +35,20 @@ class DiscordService
      * Will send single discord message to the provided webhook
      *
      * @param DiscordWebhook $discordWebhook
-     * @param string $message
+     * @param DiscordMessage $discordMessage
+     * @param string $discordMessageTemplate
      * @return DiscordWebhookResponseDto
      */
-    public function sendDiscordMessage(DiscordWebhook $discordWebhook, string $message): DiscordWebhookResponseDto
+    public function sendDiscordMessage(DiscordWebhook $discordWebhook, DiscordMessage $discordMessage, string $discordMessageTemplate = self::DISCORD_MESSAGE_TEMPLATE_DEFAULT): DiscordWebhookResponseDto
     {
         $this->app->getLoggerService()->getLogger()->info("Started preparing request for sending discord message to hook.");
 
+        $templateContent = $this->render($discordMessageTemplate, [
+            "discordMessage" => $discordMessage,
+        ])->getContent();
+
         $requestData = [
-            self::REQUEST_FIELD_CONTENT  => $message,
+            self::REQUEST_FIELD_CONTENT  => $templateContent,
             self::REQUEST_FIELD_USERNAME => $discordWebhook->getUsername()
         ];
 
@@ -64,12 +73,12 @@ class DiscordService
                 "httpCodeResponse"  => $httpCode,
             ]);
 
-            $message = $this->app->trans('pages.discord.testMessageSending.thereWasAnIssueWhileCallingTheDiscordWebhook', [
+            $responseMessage = $this->app->trans('pages.discord.testMessageSending.thereWasAnIssueWhileCallingTheDiscordWebhook', [
                 "{{httpCode}}" => $httpCode,
             ]);
 
             $discordWebhookResponseDto = DiscordWebhookResponseDto::buildInternalServerErrorResponse();
-            $discordWebhookResponseDto->setMessage($message);
+            $discordWebhookResponseDto->setMessage($responseMessage);
 
             return $discordWebhookResponseDto;
         }

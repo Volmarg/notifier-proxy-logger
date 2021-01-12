@@ -1,5 +1,4 @@
 <!-- Template -->
-<!-- todo: split the inputs to components with given styling (?)-->
 <template>
   <div class="row">
     <div class="col-12 col-xl-12">
@@ -52,8 +51,7 @@
                   <textarea id="description"  class="form-control" required=""
                             :placeholder="descriptionPlaceholderTranslation"
                             ref="description"
-                  >
-          </textarea>
+                  ></textarea>
                 </div>
               </div>
             </div>
@@ -63,7 +61,6 @@
               >{{ submitButtonTranslation }}</button>
             </div>
 
-            <csrf-token :csrf-token="csrfToken"/>
           </form>
 
         </section>
@@ -162,7 +159,7 @@ export default {
 
       this.axios.get(url).then( (response) => {
         let csrfTokenResponse = CsrfTokenResponseDto.fromAxiosResponse(response);
-        this.csrfToken = csrfTokenResponse.csrToken;
+        this.csrfToken        = csrfTokenResponse.csrToken;
       })
     }
   },

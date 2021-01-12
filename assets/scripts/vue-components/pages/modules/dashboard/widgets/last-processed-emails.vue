@@ -7,7 +7,6 @@
     <template #card-body>
       <div v-if="[lastProcessedEmails.length]">
 
-        <!-- todo: check why the if required [], and the ones below don't -->
         <row-fontawesome-icon-with-text
             v-for="(mailDto, index) in lastProcessedEmails"
             :key="index"

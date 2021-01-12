@@ -10,6 +10,7 @@ use App\DTO\API\Internal\GetAllDiscordMessagesResponseDto;
 use App\DTO\API\Internal\GetAllDiscordWebhooksResponseDto;
 use App\DTO\Modules\Discord\DiscordMessageDTO;
 use App\DTO\Modules\Discord\DiscordWebhookDto;
+use App\Entity\Modules\Discord\DiscordMessage;
 use App\Form\Modules\Discord\SendTestDiscordMessageForm;
 use App\Services\External\DiscordService;
 use App\Services\Internal\FormService;
@@ -25,6 +26,7 @@ class DiscordAction extends AbstractController
 
     const KEY_WEBHOOK_ID = "webhookId";
     const KEY_MESSAGE    = "message";
+    const KEY_TITLE      = "title";
 
     /**
      * @var Application $app
@@ -86,8 +88,19 @@ class DiscordAction extends AbstractController
             return $responseDto->toJsonResponse();
         }
 
+        if( !array_key_exists(self::KEY_TITLE, $dataArray) ){
+            $message = $this->app->trans('pages.discord.testMessageSending.missingParameterInRequest', [
+                "{{parameterName}}" => self::KEY_TITLE
+            ]);
+            $responseDto = DiscordWebhookResponseDto::buildBadRequestErrorResponse();
+
+            $responseDto->setMessage($message);
+            return $responseDto->toJsonResponse();
+        }
+
         $webhookId      = $dataArray[self::KEY_WEBHOOK_ID];
         $webhookMessage = $dataArray[self::KEY_MESSAGE];
+        $webhookTitle   = $dataArray[self::KEY_TITLE];
 
         try{
 
@@ -109,7 +122,11 @@ class DiscordAction extends AbstractController
                     return $responseDto->toJsonResponse();
                 }
 
-                $responseDto = $this->discordService->sendDiscordMessage($discordWebhook, $webhookMessage);
+                $discordMessage = new DiscordMessage();
+                $discordMessage->setMessageContent($webhookMessage);
+                $discordMessage->setMessageTitle($webhookTitle);
+
+                $responseDto = $this->discordService->sendDiscordMessage($discordWebhook, $discordMessage);
             }else{
 
                 $this->app->getLoggerService()->getLogger()->critical("Either the form was not submitted or there is an error within the form", [

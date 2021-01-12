@@ -7,7 +7,6 @@
     <template #card-body>
       <div v-if="[lastProcessedDiscordMessages.length]">
 
-        <!-- todo: check why the if required [], and the ones below don't -->
         <row-fontawesome-icon-with-text
             v-for="(discordMessage, index) in lastProcessedDiscordMessages"
             :key="index"
@@ -17,9 +16,9 @@
 
           <template #icon>
             <i class="font-weight-bold">
-              <i v-if="discordMessage.status === discordMessageStatusSent" :class="fontawesomeIconClassesSent"></i>
+              <i v-if="discordMessage.status === discordMessageStatusSent"         :class="fontawesomeIconClassesSent"></i>
               <i v-else-if="discordMessage.status === discordMessageStatusPending" :class="fontawesomeIconClassesPending"></i>
-              <i v-else                                                  :class="fontawesomeIconClassesError"></i>
+              <i v-else                                                            :class="fontawesomeIconClassesError"></i>
             </i>
           </template>
 
