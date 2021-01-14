@@ -2,6 +2,7 @@
 
 namespace App\Action\API\External;
 
+use App\Attributes\IsApiRoute;
 use App\Controller\Application;
 use App\Controller\Core\Controllers;
 use App\DTO\API\BaseApiResponseDto;
@@ -41,6 +42,7 @@ class MailingExternalApiAction extends AbstractController
      * @param Request $request
      * @return JsonResponse
      */
+    #[IsApiRoute]
     #[Route("/mailing/insert-mail", name: "mailing_insert_mail", methods: ["POST"])]
     public function insertMail(Request $request): JsonResponse
     {

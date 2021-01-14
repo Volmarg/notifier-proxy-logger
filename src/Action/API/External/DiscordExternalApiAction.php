@@ -2,6 +2,7 @@
 
 namespace App\Action\API\External;
 
+use App\Attributes\IsApiRoute;
 use App\Controller\Application;
 use App\Controller\Core\Controllers;
 use App\DTO\API\BaseApiResponseDto;
@@ -42,6 +43,7 @@ class DiscordExternalApiAction extends AbstractController
      * @param Request $request
      * @return JsonResponse
      */
+    #[IsApiRoute]
     #[Route("/discord/insert-message", name: "discord_insert_messages", methods: ["POST"])]
     public function insertDiscordMessage(Request $request): JsonResponse
     {
