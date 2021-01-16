@@ -8,7 +8,17 @@
         <h2 class="h5 mb-4"> {{ sentDiscordMessagesLabel }} </h2>
 
         <section class="">
-          <volt-table :headers="tableHeaders" :rows-data="tableData" :tippy-content-for-all-rows-data="buildRowTippyBodyContentForDiscordMessage()" />
+          <volt-table
+              :headers="tableHeaders"
+              :rows-data="tableData"
+          >
+            <volt-table-row
+                v-for="(discordMessageDto, index) in tableData"
+                :key="index"
+                :row-data="discordMessageDto"
+                :tippy-row-body-content="buildRowTippyBodyContentForDiscordMessage(allDiscordMessages[index])"
+            />
+          </volt-table>
         </section>
 
       </div>
@@ -74,18 +84,15 @@ export default {
     },
     /**
      * @description build the content for Tippy.js - visible upon hovering over the row in history table
+     *
+     * @param discordMessageDto {DiscordMessageDto}
      */
-    buildRowTippyBodyContentForDiscordMessage(){
-
-      let tippyContentForaAllDiscordWebhooksRows = this.cachedAllDiscordMessages.map( (dto) => {
-        return `
+    buildRowTippyBodyContentForDiscordMessage(discordMessageDto){
+      return `
           <b>${this.tippyBodyContentTranslationContentString}:</b>
           <br/>
-          ${dto.messageContent}
+          ${discordMessageDto.messageContent}
         `;
-      });
-
-      return tippyContentForaAllDiscordWebhooksRows;
     },
     /**
      * @description will filter the data for displaying in table, either set empty value to skip them or add special
@@ -123,7 +130,7 @@ export default {
         });
 
         return filteredTableData;
-      },
+    }
   },
   computed: {
     tableHeaders: {

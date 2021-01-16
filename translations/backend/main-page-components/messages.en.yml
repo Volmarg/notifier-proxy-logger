@@ -4,3 +4,9 @@ mainPageComponents:
   table:
     searchInput:
       label: Search
+  dialog:
+    buttons:
+      main:
+        cancel:
+          label: Cancel
+      update: Update

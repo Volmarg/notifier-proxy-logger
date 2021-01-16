@@ -5,7 +5,7 @@
       :is-spinner-visible="isSpinnerVisible"
   >
     <template #card-body>
-      <div v-if="[lastProcessedDiscordMessages.length]">
+      <div v-if="lastProcessedDiscordMessages.length">
 
         <row-fontawesome-icon-with-text
             v-for="(discordMessage, index) in lastProcessedDiscordMessages"
@@ -59,7 +59,7 @@ export default {
   data(){
     return {
       lastProcessedDiscordMessages : [],
-      isSpinnerVisible    : true,
+      isSpinnerVisible             : true,
     }
   },
   computed: {

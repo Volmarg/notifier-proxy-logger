@@ -23,7 +23,7 @@
         "regenerator-runtime": "^0.13.2",
         "ts-loader": "^5.4.5",
         "typescript": "^4.1.2",
-        "vue": "^3.0.4",
+        "vue": "^3.0.5",
         "vue-i18n": "^8.22.2",
         "vue-loader": "^16.1.2",
         "vue-template-compiler": "^2.6.12",
@@ -40,6 +40,8 @@
     "dependencies": {
         "@fortawesome/fontawesome-free": "5.11.2",
         "@hopin/logger": "^2.0.93",
+        "@material/dialog": "^9.0.0",
+        "@material/textfield": "^9.0.0",
         "axios": "^0.21.0",
         "bootstrap": "5.0.0-alpha2",
         "chartist": "^0.11.4",

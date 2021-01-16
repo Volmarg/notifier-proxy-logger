@@ -1,13 +1,19 @@
 <!-- Template -->
 <template>
   <tr class="volt-table-row" :data-tippy-content="tippyRowBodyContent" ref="tableRow">
-    <table-cell v-for="(value, key, index) in rowData" :key="index" :cell-value="value"/>
+    <table-cell v-for="(value, key, index) in rowData" :key="index" :do-show="0 !== value.length">
+      <template #cellValue>
+        <raw-content :content="value" />
+      </template>
+    </table-cell>
+    <slot></slot>
   </tr>
 </template>
 
 <!-- Script -->
 <script>
-import TableCellComponent from './table-cell';
+import TableCellComponent   from './table-cell';
+import RawContentComponent  from '../../other/raw-content';
 
 import Tippy from '../../../libs/tippy/Tippy';
 
@@ -30,7 +36,8 @@ export default {
     }
   },
   components: {
-    "table-cell": TableCellComponent
+    "table-cell": TableCellComponent,
+    "raw-content" : RawContentComponent,
   },
   mounted(){
     tippy.applyForElement(this.$refs.tableRow);

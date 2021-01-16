@@ -14,16 +14,13 @@
     </div>
   </div>
 
+  <!-- todo: refactor also in emails table -->
+
   <table class="table table-centered table-nowrap mb-0 rounded" ref="table">
     <volt-table-head :table-headers="headers">
     </volt-table-head>
     <volt-table-body v-if="shownRowsData.length">
-      <volt-table-row
-          v-for="(rowData, index) in shownRowsData"
-          :key="index"
-          :row-data="rowData"
-          :tippy-row-body-content="getTippyBodyContentForSingleRow(index)"
-      />
+      <slot></slot>
     </volt-table-body>
   </table>
 
@@ -42,7 +39,7 @@
         :class="{
         'text-danger': (pageNumber == currentResultPage)
       }"
-        @click="handleShowingTableDataForPaginationAndResult($event.currentTarget.innerHTML)"
+        @click="$emit('paginationButtonClicked')"
         :ref="'pageNumberButton' + pageNumber"
     >
       {{ pageNumber }}
@@ -60,7 +57,6 @@ import TranslationsService    from '../../../core/services/TranslationsService';
 import StringUtils            from "../../../core/utils/StringUtils";
 
 import VoltTableHeadComponent from "./table-head";
-import VoltTableRowComponent  from "./table-row";
 import VoltTableBodyComponent from "./table-body";
 
 let translationsService = new TranslationsService();
@@ -99,15 +95,9 @@ export default {
       type     : Array,
       required : true,
     },
-    "tippyContentForAllRowsData": {
-      type     : Array,
-      required : false,
-      default  : []
-    }
   },
   components: {
     'volt-table-head' : VoltTableHeadComponent,
-    'volt-table-row'  : VoltTableRowComponent,
     'volt-table-body' : VoltTableBodyComponent,
   },
   methods: {
@@ -147,16 +137,6 @@ export default {
     decideShowingPaginationButtonsInBetweenLowerAndHigherRanges(){
       this.nextResultPage     = this.currentResultPage + 1;
       this.previousResultPage = this.currentResultPage - 1;
-    },
-    /**
-     * @description creates tippy content for single data row - this means the popup visible upon hovering
-     */
-    getTippyBodyContentForSingleRow(index){
-      if( index in this.tippyContentForAllRowsData ){
-        return this.tippyContentForAllRowsData[index];
-      }
-
-      return "";
     },
     /**
      * @description handles showing the rows in table based on searched string in input field

@@ -5,7 +5,7 @@
       :is-spinner-visible="isSpinnerVisible"
   >
     <template #card-body>
-      <div v-if="[lastProcessedEmails.length]">
+      <div v-if="lastProcessedEmails.length">
 
         <row-fontawesome-icon-with-text
             v-for="(mailDto, index) in lastProcessedEmails"
