@@ -39,7 +39,7 @@
         :class="{
         'text-danger': (pageNumber == currentResultPage)
       }"
-        @click="$emit('paginationButtonClicked')"
+        @click="$emit('paginationButtonClicked', pageNumber)"
         :ref="'pageNumberButton' + pageNumber"
     >
       {{ pageNumber }}
@@ -96,6 +96,9 @@ export default {
       required : true,
     },
   },
+  emits: [
+      'pageNumberButton'
+  ],
   components: {
     'volt-table-head' : VoltTableHeadComponent,
     'volt-table-body' : VoltTableBodyComponent,
@@ -148,7 +151,6 @@ export default {
 
       if( "" === this.searchInput.trim() ){
         this.handleShowingTableDataForPaginationAndResult(this.currentResultPage);
-        this.updatePaginationCount();
         return;
       }
 
@@ -178,20 +180,33 @@ export default {
         }
       })
 
-      this.shownRowsData    = matchingRowsData;
       this.searchResultRows = matchingRowsData;
 
       this.handleShowingTableDataForPaginationAndResult(1);
-      this.updatePaginationCount();
+      this.$emit('searchForStringInTableCells', matchingRowsData);
     },
     /**
      * @description handles setting the pagination based on the total data in table or based on active search result
+     *              inside it's also required if the `ceil` or `floor` is used, this is required as it's required
+     *              to check if the count of shown/total data is bigger than `endOffset` for currentPage,
+     *              with that, further decision is taken if the data fits on current page or maybe it will require
+     *              one more page to show rest of the result
      */
     updatePaginationCount(){
       if( "" === this.searchInput ){
-        this.paginationCount = Math.ceil(this.originalRowsData.length / this.maxResultPerPage);
-      }else{
-        this.paginationCount = Math.ceil(this.searchResultRows.length / this.maxResultPerPage);
+        // handling when no search is being active
+        if( this.originalRowsData.length > this.getEndOffsetForCurrentPageNumber(this.currentResultPage) ){
+          this.paginationCount = Math.floor(this.originalRowsData.length / this.maxResultPerPage);
+        }else{
+          this.paginationCount = Math.ceil(this.originalRowsData.length / this.maxResultPerPage);
+        }
+      }else {
+        // handling for search being active
+        if( this.searchResultRows.length > this.getEndOffsetForCurrentPageNumber(this.currentResultPage) ) {
+          this.paginationCount = Math.floor(this.searchResultRows.length / this.maxResultPerPage);
+        }else{
+          this.paginationCount = Math.ceil(this.searchResultRows.length / this.maxResultPerPage);
+        }
       }
     },
     /**
@@ -202,14 +217,11 @@ export default {
      * @param visiblePageNumber
      */
     handleShowingTableDataForPaginationAndResult(visiblePageNumber){
-      /** @description this is required as on page 1 we want offset starting from 1, page 2 from 11 etc **/
-      let visiblePageNumberOffsetMultiplier = (visiblePageNumber - 1);
-
       let startOffset = 0;
       if(1 != visiblePageNumber){
-        startOffset = (visiblePageNumberOffsetMultiplier * this.maxResultPerPage) + 1
+        startOffset = this.getStartOffsetForCurrentPageNumber(visiblePageNumber);
       }
-      let endOffset = startOffset + this.maxResultPerPage;
+      let endOffset = this.getEndOffsetForCurrentPageNumber(visiblePageNumber);
 
       if( StringUtils.isEmptyString(this.searchInput) ){
         this.shownRowsData = this.originalRowsData.slice(startOffset, endOffset)
@@ -219,7 +231,26 @@ export default {
 
       this.currentResultPage = parseInt(visiblePageNumber);
       this.decideShowingPaginationButtonsInBetweenLowerAndHigherRanges();
-    }
+      this.updatePaginationCount();
+      this.$emit('handleShowingTableDataForPaginationAndResult', this.shownRowsData);
+    },
+    /**
+     * @description will return the start offset for current pagination page
+     **/
+    getStartOffsetForCurrentPageNumber(visiblePageNumber){
+      /** @description this is required as on page 1 we want offset starting from 1, page 2 from 11 etc **/
+      let visiblePageNumberOffsetMultiplier = (visiblePageNumber - 1);
+      let startOffset                       = (visiblePageNumberOffsetMultiplier * this.maxResultPerPage) + 1
+      return startOffset;
+    },
+    /**
+     * @description will return the end offset for current pagination page
+     **/
+    getEndOffsetForCurrentPageNumber(visiblePageNumber){
+      let startOffset = this.getStartOffsetForCurrentPageNumber(visiblePageNumber);
+      let endOffset   = startOffset + this.maxResultPerPage;
+      return endOffset;
+    },
   },
   /**
    * @description mostly setting the initial values
@@ -256,6 +287,10 @@ export default {
     if( this.originalRowsData.length !== this.rowsData.length ){
       this.originalRowsData = this.rowsData;
       this.handleShowingTableDataForPaginationAndResult(this.currentResultPage);
+    }
+  },
+  watch: {
+    searchResultRows(oldValue, newValue){
       this.updatePaginationCount();
     }
   }

@@ -8,7 +8,23 @@
         <h2 class="h5 mb-4"> {{ sentEmailsLabel }}  </h2>
 
         <section class="">
-          <volt-table :headers="tableHeaders" :rows-data="tableData" :tippy-content-for-all-rows-data="buildRowTippyBodyContentForMail()" />
+
+          <volt-table
+              :headers="tableHeaders"
+              :rows-data="tableData"
+              @pagination-button-clicked="onPaginationButtonClickedHandler"
+              @handle-showing-table-data-for-pagination-and-result="handleDataForPaginationAndSearch"
+              @search-for-string-in-table-cells="searchForStringInTableCells"
+              ref="table"
+          >
+            <volt-table-row
+                v-for="(mailDto, index) in currentlyVisibleDataInTable"
+                :key="index"
+                :row-data="mailDto"
+                :tippy-row-body-content="buildRowTippyBodyContentForMail(allEmails[index])"
+            />
+          </volt-table>
+
         </section>
 
       </div>
@@ -45,9 +61,10 @@ export default {
   },
   data(){
     return {
-      allEmails        : [],
-      tableData        : [],
-      isSpinnerVisible : true,
+      allEmails                   : [],
+      tableData                   : [],
+      currentlyVisibleDataInTable : [],
+      isSpinnerVisible            : true,
     }
   },
   methods: {
@@ -67,24 +84,23 @@ export default {
           return MailDto.fromJson(json);
         });
 
-        this.tableData        = this.processMailsDataForDisplayingInTable(tableDataDtos);
-        this.isSpinnerVisible = false;
+        this.currentlyVisibleDataInTable = this.processMailsDataForDisplayingInTable(tableDataDtos);
+        this.tableData                   = this.processMailsDataForDisplayingInTable(tableDataDtos);
+        this.isSpinnerVisible            = false;
       })
     },
     /**
      * @description build the content for Tippy.js - visible upon hovering over the row in history table
+     *
+     * @param mailDto {MailDto}
      */
-    buildRowTippyBodyContentForMail(){
+    buildRowTippyBodyContentForMail(mailDto){
 
-      let tippyContentForaAllMailRows = this.allMails.map( (dto) => {
-        return `
+      return `
           <b>${this.tippyBodyContentTranslationBodyString}:</b>
           <br/>
-          ${dto.body}
+          ${mailDto.body}
         `;
-      });
-
-      return tippyContentForaAllMailRows;
     },
     /**
      * @description will filter the data for displaying in table, either set empty value to skip them or add special
@@ -124,6 +140,32 @@ export default {
 
         return filteredTableData;
       },
+      /**
+       * @description method triggered when the pagination button in table was clicked
+       *
+       * @param clickedPageNumber
+       */
+      onPaginationButtonClickedHandler(clickedPageNumber){
+        let tableComponent               = this.$refs.table;
+        tableComponent.currentResultPage = clickedPageNumber;
+        tableComponent.handleShowingTableDataForPaginationAndResult(clickedPageNumber);
+      },
+      /**
+       * @description method triggered when the table data is being filtered by the `pagination logic`
+       *
+       * @param shownResult
+       */
+      handleDataForPaginationAndSearch(shownResult){
+        this.currentlyVisibleDataInTable = shownResult;
+      },
+      /**
+       * @description method triggered when some data is changing in the search input for table
+       *
+       * @param searchResult
+       */
+      searchForStringInTableCells(searchResult){
+        this.currentlyVisibleDataInTable = searchResult;
+      }
   },
   computed: {
     tableHeaders: {

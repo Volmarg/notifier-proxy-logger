@@ -7,10 +7,17 @@
       <div class="card card-body bg-white border-light shadow-sm mb-4">
         <h2 class="h5 mb-4"> {{ mainHeaderDiscordWebhooksTranslation }}  </h2>
         <section class="">
-          <volt-table :headers="tableHeadersTranslations" :rows-data="discordWebhooksTableData">
+          <volt-table
+              :headers="tableHeadersTranslations"
+              :rows-data="discordWebhooksTableData"
+              @pagination-button-clicked="onPaginationButtonClickedHandler"
+              @handle-showing-table-data-for-pagination-and-result="handleDataForPaginationAndSearch"
+              @search-for-string-in-table-cells="searchForStringInTableCells"
+              ref="table"
+          >
 
             <volt-table-row
-                v-for="(discordWebhookDto, index) in discordWebhooksTableData"
+                v-for="(discordWebhookDto, index) in currentlyVisibleDataInTable"
                 :key="index"
                 :row-data="discordWebhookDto"
                 :tippy-row-body-content="getTippyBodyContentForSingleRow(discordWebhooksDtos[index])"
@@ -74,9 +81,10 @@ let dialog              = new Dialog();
 export default {
   data(){
     return {
-      isSpinnerVisible         : true,
-      discordWebhooksDtos      : [],
-      discordWebhooksTableData : [],
+      isSpinnerVisible            : true,
+      discordWebhooksDtos         : [],
+      discordWebhooksTableData    : [],
+      currentlyVisibleDataInTable : [],
     }
   },
   components: {
@@ -143,9 +151,10 @@ export default {
           discordWebhooksDtos.push(discordWebhookDto);
         }
 
-        this.discordWebhooksTableData = discordWebhooksDtosForTable;
-        this.discordWebhooksDtos      = discordWebhooksDtos;
-        this.isSpinnerVisible         = false;
+        this.currentlyVisibleDataInTable = discordWebhooksDtosForTable;
+        this.discordWebhooksTableData    = discordWebhooksDtosForTable;
+        this.discordWebhooksDtos         = discordWebhooksDtos;
+        this.isSpinnerVisible            = false;
       });
     },
     /**
@@ -172,6 +181,32 @@ export default {
         ${dto.username}
       `;
     },
+    /**
+     * @description method triggered when the pagination button in table was clicked
+     *
+     * @param clickedPageNumber
+     */
+    onPaginationButtonClickedHandler(clickedPageNumber){
+      let tableComponent               = this.$refs.table;
+      tableComponent.currentResultPage = clickedPageNumber;
+      tableComponent.handleShowingTableDataForPaginationAndResult(clickedPageNumber);
+    },
+    /**
+     * @description method triggered when the table data is being filtered by the `pagination logic`
+     *
+     * @param shownResult
+     */
+    handleDataForPaginationAndSearch(shownResult){
+      this.currentlyVisibleDataInTable = shownResult;
+    },
+    /**
+     * @description method triggered when some data is changing in the search input for table
+     *
+     * @param searchResult
+     */
+    searchForStringInTableCells(searchResult){
+      this.currentlyVisibleDataInTable = searchResult;
+    }
   },
   created(){
     this.getAllDiscordWebhooks();

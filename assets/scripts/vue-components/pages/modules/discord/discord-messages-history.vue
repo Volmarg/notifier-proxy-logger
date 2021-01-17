@@ -10,10 +10,14 @@
         <section class="">
           <volt-table
               :headers="tableHeaders"
-              :rows-data="tableData"
+              :rows-data="allDataInTable"
+              @pagination-button-clicked="onPaginationButtonClickedHandler"
+              @handle-showing-table-data-for-pagination-and-result="handleDataForPaginationAndSearch"
+              @search-for-string-in-table-cells="searchForStringInTableCells"
+              ref="table"
           >
             <volt-table-row
-                v-for="(discordMessageDto, index) in tableData"
+                v-for="(discordMessageDto, index) in currentlyVisibleDataInTable"
                 :key="index"
                 :row-data="discordMessageDto"
                 :tippy-row-body-content="buildRowTippyBodyContentForDiscordMessage(allDiscordMessages[index])"
@@ -56,9 +60,10 @@ export default {
   },
   data(){
     return {
-      allDiscordMessages : [],
-      tableData          : [],
-      isSpinnerVisible   : true,
+      allDiscordMessages          : [],
+      currentlyVisibleDataInTable : [],
+      allDataInTable              : [],
+      isSpinnerVisible            : true,
     }
   },
   methods: {
@@ -78,8 +83,9 @@ export default {
           return DiscordMessageDto.fromJson(json);
         });
 
-        this.tableData        = this.processDiscordWebhooksDataForDisplayingInTable(tableDataDtos);
-        this.isSpinnerVisible = false;
+        this.currentlyVisibleDataInTable = this.processDiscordWebhooksDataForDisplayingInTable(tableDataDtos);
+        this.allDataInTable              = this.processDiscordWebhooksDataForDisplayingInTable(tableDataDtos);
+        this.isSpinnerVisible            = false;
       })
     },
     /**
@@ -130,6 +136,32 @@ export default {
         });
 
         return filteredTableData;
+    },
+    /**
+     * @description method triggered when the pagination button in table was clicked
+     *
+     * @param clickedPageNumber
+     */
+    onPaginationButtonClickedHandler(clickedPageNumber){
+      let tableComponent               = this.$refs.table;
+      tableComponent.currentResultPage = clickedPageNumber;
+      tableComponent.handleShowingTableDataForPaginationAndResult(clickedPageNumber);
+    },
+    /**
+     * @description method triggered when the table data is being filtered by the `pagination logic`
+     *
+     * @param shownResult
+     */
+    handleDataForPaginationAndSearch(shownResult){
+      this.currentlyVisibleDataInTable = shownResult;
+    },
+    /**
+     * @description method triggered when some data is changing in the search input for table
+     *
+     * @param searchResult
+     */
+    searchForStringInTableCells(searchResult){
+      this.currentlyVisibleDataInTable = searchResult;
     }
   },
   computed: {
