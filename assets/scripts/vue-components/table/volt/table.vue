@@ -14,8 +14,6 @@
     </div>
   </div>
 
-  <!-- todo: refactor also in emails table -->
-
   <table class="table table-centered table-nowrap mb-0 rounded" ref="table">
     <volt-table-head :table-headers="headers">
     </volt-table-head>
@@ -195,15 +193,17 @@ export default {
     updatePaginationCount(){
       if( "" === this.searchInput ){
         // handling when no search is being active
-        if( this.originalRowsData.length > this.getEndOffsetForCurrentPageNumber(this.currentResultPage) ){
+        if( this.originalRowsData.length >= this.getEndOffsetForCurrentPageNumber(this.currentResultPage) ){
           this.paginationCount = Math.floor(this.originalRowsData.length / this.maxResultPerPage);
         }else{
           this.paginationCount = Math.ceil(this.originalRowsData.length / this.maxResultPerPage);
         }
       }else {
         // handling for search being active
-        if( this.searchResultRows.length > this.getEndOffsetForCurrentPageNumber(this.currentResultPage) ) {
+        if( this.searchResultRows.length >= this.getEndOffsetForCurrentPageNumber(this.currentResultPage) ) {
           this.paginationCount = Math.floor(this.searchResultRows.length / this.maxResultPerPage);
+        }else if( 0 === this.searchResultRows.length ){
+          this.paginationCount = 0;
         }else{
           this.paginationCount = Math.ceil(this.searchResultRows.length / this.maxResultPerPage);
         }
@@ -262,7 +262,7 @@ export default {
     }
 
     // store original rows data for future filtering etc
-    if (0 === this.searchResultRows.length) {
+    if (0 === this.originalRowsData.length) {
       this.originalRowsData = this.rowsData;
       this.searchResultRows = this.rowsData; // initial data is required
     }
