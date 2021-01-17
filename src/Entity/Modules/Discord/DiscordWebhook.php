@@ -7,6 +7,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\UniqueConstraint;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 /**
  * @ORM\Table(name="discord_webhook", uniqueConstraints={
@@ -18,6 +20,9 @@ class DiscordWebhook
 {
 
     const FIELD_NAME_WEBHOOK_NAME = "webhookName";
+    const FIELD_NAME_WEBHOOK_URL  = "webhookUrl";
+    const FIELD_NAME_USERNAME     = "username";
+    const FIELD_NAME_DESCRIPTION  = "description";
 
     /**
      * @ORM\Id
@@ -137,5 +142,16 @@ class DiscordWebhook
         }
 
         return $this;
+    }
+
+    /**
+     * @param ClassMetadata $metadata
+     */
+    public static function loadValidatorMetadata(ClassMetadata $metadata): void
+    {
+        $metadata->addPropertyConstraint(self::FIELD_NAME_WEBHOOK_NAME, new NotBlank());
+        $metadata->addPropertyConstraint(self::FIELD_NAME_WEBHOOK_URL, new NotBlank());
+        $metadata->addPropertyConstraint(self::FIELD_NAME_USERNAME, new NotBlank());
+        $metadata->addPropertyConstraint(self::FIELD_NAME_DESCRIPTION, new NotBlank());
     }
 }

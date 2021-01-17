@@ -25,22 +25,28 @@
               <!-- default slot insertion -->
               <volt-cell>
                 <template #cellValue>
-                  <edit-action @on-edit-action-clicked="onEditActionClicked(index)"/>
+                  <edit-action @on-edit-action-clicked="onEditActionClicked(discordWebhooksDtos[index].id)"/>
                 </template>
               </volt-cell>
 
               <!-- Dialogs -->
               <section>
                 <!-- Edit Dialog -->
-                <material-dialog :ref="'editDialog_' + index" :accept-button-translation-string="'mainPageComponents.dialog.buttons.update'">
+                <material-dialog
+                    :ref="'editDialog_' + discordWebhooksDtos[index].id"
+                    :accept-button-translation-string="'mainPageComponents.dialog.buttons.update'"
+                    :min-width="'600px'"
+                    @material-modal-confirm-button-click="onMaterialEditModalConfirmButtonClick(discordWebhooksDtos[index].id, index)"
+                >
+
                   <!-- Webhook url -->
-                  <material-text-field :display-block="true" :label="webhookUrlTranslatedString"  :value="discordWebhooksDtos[index].webhookUrl"></material-text-field>
+                  <material-text-field :display-block="true" :label="webhookUrlTranslatedString"  :value="discordWebhooksDtos[index].webhookUrl"  :ref="'materialEditModalWebhookUrlInput_'   + discordWebhooksDtos[index].id"/>
                   <!-- Webhook name -->
-                  <material-text-field :display-block="true" :label="webhookNameTranslatedString" :value="discordWebhooksDtos[index].webhookName"></material-text-field>
-                  <!-- Username url -->
-                  <material-text-field :display-block="true" :label="usernameTranslatedString"    :value="discordWebhooksDtos[index].username"></material-text-field>
-                  <!-- Description url -->
-                  <material-text-field :display-block="true" :label="descriptionTranslatedString" :value="discordWebhooksDtos[index].description"></material-text-field>
+                  <material-text-field :display-block="true" :label="webhookNameTranslatedString" :value="discordWebhooksDtos[index].webhookName" :ref="'materialEditModalWebhookNameInput_'  + discordWebhooksDtos[index].id"/>
+                  <!-- Username-->
+                  <material-text-field :display-block="true" :label="usernameTranslatedString"    :value="discordWebhooksDtos[index].username"    :ref="'materialEditModalUsernameInput_'     + discordWebhooksDtos[index].id"/>
+                  <!-- Description -->
+                  <material-text-field :display-block="true" :label="descriptionTranslatedString" :value="discordWebhooksDtos[index].description" :ref="'materialEditModalDescriptionInput_'  + discordWebhooksDtos[index].id"/>
                 </material-dialog>
               </section>
 
@@ -58,7 +64,7 @@
 
 <!-- Script -->
 <script>
-import SymfonyRoutes                    from "../../../../core/symfony/SymfonyRoutes";
+import BaseInternalApiResponseDto       from "../../../../core/dto/api/internal/BaseInternalApiResponseDto";
 import GetAllDiscordWebhooksResponseDto from "../../../../core/dto/api/internal/GetAllDiscordWebhooksResponseDto";
 import DiscordWebhookDto                from "../../../../core/dto/modules/discord/DiscordWebhookDto";
 
@@ -69,14 +75,16 @@ import AddDiscordWebhookFormComponent   from '../../../../vue-components/form/mo
 import MaterialTextFieldComponent       from '../../../../vue-components/form/components/material/text-field';
 import MaterialDesignDialogComponent    from '../../../../vue-components/dialog-modal/material/dialog';
 import VoltTableRowComponent            from "../../../../vue-components/table/volt/table-row";
-
 import EditActionComponent              from '../../../actions/edit-action';
 
+import SymfonyRoutes                    from "../../../../core/symfony/SymfonyRoutes";
 import TranslationsService              from "../../../../core/services/TranslationsService";
 import Dialog                           from "../../../../libs/material/Dialog";
+import Notification                     from "../../../../libs/mdb5/Notification";
 
 let translationsService = new TranslationsService();
 let dialog              = new Dialog();
+let notification        = new Notification();
 
 export default {
   data(){
@@ -160,8 +168,8 @@ export default {
     /**
      * @description will handle the edit action click for given index of webhook dto
      **/
-    onEditActionClicked(index){
-      let editDialogRef = 'editDialog_' + index;
+    onEditActionClicked(webhookEntityId){
+      let editDialogRef = 'editDialog_' + webhookEntityId;
       this.$refs[editDialogRef].dialogInstance.open();
     },
     /**
@@ -206,6 +214,140 @@ export default {
      */
     searchForStringInTableCells(searchResult){
       this.currentlyVisibleDataInTable = searchResult;
+    },
+    /**
+     * @description will handle edit modal confirmation button click
+     * @param discordWebhookDtoEntityId       String
+     * @param indexOfEntityInVisibleDataDtos  Boolean
+     */
+    onMaterialEditModalConfirmButtonClick(discordWebhookDtoEntityId, indexOfEntityInVisibleDataDtos){
+
+      if(!this.hasDtoEntityWithId(discordWebhookDtoEntityId, this.discordWebhooksDtos)){
+        throw {
+          "message"          : "Tried to update the discordWebhookDto via the edit dialog but no dto with given entity id was found",
+          "expectedEntityId" : discordWebhookDtoEntityId,
+        }
+      }
+
+      let changedWebhookUrl   = this.$refs['materialEditModalWebhookUrlInput_'  + discordWebhookDtoEntityId].textFieldValue;
+      let changedWebhookName  = this.$refs['materialEditModalWebhookNameInput_' + discordWebhookDtoEntityId].textFieldValue;
+      let changedUsername     = this.$refs['materialEditModalUsernameInput_'    + discordWebhookDtoEntityId].textFieldValue;
+      let changedDescription  = this.$refs['materialEditModalDescriptionInput_' + discordWebhookDtoEntityId].textFieldValue;
+
+      let dataBag = {
+        entityId    : discordWebhookDtoEntityId,
+        webhookUrl  : changedWebhookUrl,
+        webhookName : changedWebhookName,
+        username    : changedUsername,
+        description : changedDescription,
+      }
+
+      let updateDiscordWebhookPromise = this.axios.post(SymfonyRoutes.UPDATE_DISCORD_WEBHOOK, dataBag);
+      let indexOfEntityInDto          = this.getDtoIndexForEntityWithId(discordWebhookDtoEntityId, this.discordWebhooksDtos);
+
+      updateDiscordWebhookPromise.then( (result) => {
+        let baseApiResponse = BaseInternalApiResponseDto.fromAxiosResponse(result);
+
+        if( !baseApiResponse.success ){
+          notification.showRedNotification(baseApiResponse.message);
+          return;
+        }
+
+        let currentlyProcessedDiscordWebhookDtoForTable = this.getDtoForEntityWithId(discordWebhookDtoEntityId, this.discordWebhooksDtos);
+        let currentlyProcessedDiscordWebhookDto         = this.discordWebhooksDtos[indexOfEntityInDto];
+
+        // whole data
+        currentlyProcessedDiscordWebhookDto.username    = changedUsername;
+        currentlyProcessedDiscordWebhookDto.webhookUrl  = changedWebhookUrl;
+        currentlyProcessedDiscordWebhookDto.description = changedDescription;
+        currentlyProcessedDiscordWebhookDto.webhookName = changedWebhookName;
+
+        // data used only in table
+        currentlyProcessedDiscordWebhookDtoForTable.webhookUrl  = changedWebhookUrl;
+        currentlyProcessedDiscordWebhookDtoForTable.webhookName = changedWebhookName;
+        currentlyProcessedDiscordWebhookDtoForTable.description = "";
+        currentlyProcessedDiscordWebhookDtoForTable.username    = "";
+        currentlyProcessedDiscordWebhookDtoForTable.id          = "";
+
+        let currentlyVisibleDataInTableNewData = this.currentlyVisibleDataInTable;
+        let discordWebhooksDtosNewData         = this.discordWebhooksDtos;
+
+        /**
+         * @description table reset is required to trigger vue reactivity in this case,
+         *              simply setting new modified array to variable won't work,getTippyBodyContentForSingleRow
+         *              it has to be explicitly cleared
+         */
+
+        this.currentlyVisibleDataInTable = [];
+        this.discordWebhooksDtos         = [];
+
+        currentlyVisibleDataInTableNewData[indexOfEntityInVisibleDataDtos] = currentlyProcessedDiscordWebhookDtoForTable;
+        discordWebhooksDtosNewData[indexOfEntityInDto]                     = currentlyProcessedDiscordWebhookDto;
+
+        this.currentlyVisibleDataInTable = currentlyVisibleDataInTableNewData;
+        this.discordWebhooksDtos         = discordWebhooksDtosNewData;
+
+        notification.showGreenNotification(baseApiResponse.message);
+      });
+    },
+    /**
+     * @description will return dto for given entity id
+     *
+     * @param entityId String
+     * @param dtoArray Array
+     * @return Boolean
+     */
+    hasDtoEntityWithId(entityId, dtoArray){
+      return !(null === this.getDtoForEntityWithId(entityId, dtoArray));
+    },
+    /**
+     * @description will return dto for given entity id, or null if nothing is found
+     *
+     * @param entityId
+     * @param dtoArray Array
+     * @return ?DiscordWebhookDto
+     */
+    getDtoForEntityWithId(entityId, dtoArray){
+      let foundEntities = dtoArray.filter( (discordDto) => {
+        return (discordDto.id === entityId);
+      }, dtoArray)
+
+      if(0 === foundEntities.length){
+        return null;
+      }
+
+      let foundEntity = foundEntities[0];
+
+      // new object is created to prevent modifying original one, as this is object
+      let webhookDto = new DiscordWebhookDto();
+      webhookDto.description = foundEntity.description;
+      webhookDto.id          = foundEntity.id;
+      webhookDto.username    = foundEntity.username;
+      webhookDto.webhookName = foundEntity.webhookName;
+      webhookDto.webhookUrl  = foundEntity.webhookUrl;
+
+      return webhookDto;
+    },
+    /**
+     * @description Will return the index of element in the dtos array, for given entityId
+     *              null is returned if nothing is found
+     *
+     * @param entityId String
+     * @param dtoArray Array
+     * @return ?Number
+     */
+    getDtoIndexForEntityWithId(entityId, dtoArray){
+      let indexOfDto    = null
+      let indexesOfDtos = Object.keys(dtoArray);
+
+      for(let index of indexesOfDtos){
+        let dto = dtoArray[index];
+        if(entityId == dto.id){
+          indexOfDto = index;
+          break;
+        }
+      }
+      return indexOfDto;
     }
   },
   created(){

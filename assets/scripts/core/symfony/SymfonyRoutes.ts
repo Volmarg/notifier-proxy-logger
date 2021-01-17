@@ -59,6 +59,11 @@ export default class SymfonyRoutes {
     static readonly ADD_DISCORD_WEBHOOK = "/modules/discord/add-webhook";
 
     /**
+     * @description will update single discord webhook
+     */
+    static readonly UPDATE_DISCORD_WEBHOOK = "/modules/discord/update-webhook";
+
+    /**
      * @description will send message to given webhook
      */
     static readonly SEND_DISCORD_TEST_MESSAGE = "/modules/discord/send-test-message-discord"

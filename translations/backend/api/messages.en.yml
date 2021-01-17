@@ -2,7 +2,8 @@ api:
   external:
     general:
       messages:
-        invalidJsonSyntax: Invali json syntax
+        invalidJsonSyntax: Invalid json syntax
         ok: Ok
         internalServerError: Internal server error
         badRequest: Bad request
+        fieldsViolations: 'Fields violations: {{fieldsList}}'

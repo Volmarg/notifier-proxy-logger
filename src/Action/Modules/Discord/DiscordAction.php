@@ -11,9 +11,11 @@ use App\DTO\API\Internal\GetAllDiscordWebhooksResponseDto;
 use App\DTO\Modules\Discord\DiscordMessageDTO;
 use App\DTO\Modules\Discord\DiscordWebhookDto;
 use App\Entity\Modules\Discord\DiscordMessage;
+use App\Entity\Modules\Discord\DiscordWebhook;
 use App\Form\Modules\Discord\SendTestDiscordMessageForm;
 use App\Services\External\DiscordService;
 use App\Services\Internal\FormService;
+use App\Services\Internal\ValidationService;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -27,6 +29,12 @@ class DiscordAction extends AbstractController
     const KEY_WEBHOOK_ID = "webhookId";
     const KEY_MESSAGE    = "message";
     const KEY_TITLE      = "title";
+
+    const KEY_ENTITY_ID    = 'entityId';
+    const KEY_WEBHOOK_URL  = 'webhookUrl';
+    const KEY_WEBHOOK_NAME = 'webhookName';
+    const KEY_USERNAME     = 'username';
+    const KEY_DESCRIPTION  = 'description';
 
     /**
      * @var Application $app
@@ -48,12 +56,18 @@ class DiscordAction extends AbstractController
      */
     private FormService $formService;
 
-    public function __construct(Application $app, Controllers $controllers, DiscordService $discordService, FormService $formService)
+    /**
+     * @var ValidationService $validationService
+     */
+    private ValidationService $validationService;
+
+    public function __construct(Application $app, Controllers $controllers, DiscordService $discordService, FormService $formService, ValidationService $validationService)
     {
-        $this->app            = $app;
-        $this->formService    = $formService;
-        $this->controllers    = $controllers;
-        $this->discordService = $discordService;
+        $this->app               = $app;
+        $this->formService       = $formService;
+        $this->controllers       = $controllers;
+        $this->discordService    = $discordService;
+        $this->validationService = $validationService;
     }
 
     /**
@@ -193,6 +207,102 @@ class DiscordAction extends AbstractController
         return $baseResponseDto->toJsonResponse();
     }
 
+    /**
+     * Handles the frontend (axios) request to add the discord webhook
+     *
+     * @param Request $request
+     * @return JsonResponse
+     * @throws Exception
+     */
+    #[Route("/update-webhook", name: "update_webhook", methods: ["POST"])]
+    public function updateWebhook(Request $request): JsonResponse
+    {
+        try{
+            $requestContentArray = json_decode($request->getContent(), true);
+            if( !array_key_exists(self::KEY_WEBHOOK_URL, $requestContentArray) ){
+                $message = $this->app->trans('pages.discord.testMessageSending.missingParameterInRequest', [
+                    '{{parameterName}}' => self::KEY_WEBHOOK_URL,
+                ]);
+
+                return BaseApiResponseDto::buildBadRequestErrorResponse($message)->toJsonResponse();
+            }
+
+            if( !array_key_exists(self::KEY_WEBHOOK_NAME, $requestContentArray) ){
+                $message = $this->app->trans('pages.discord.testMessageSending.missingParameterInRequest', [
+                    '{{parameterName}}' => self::KEY_WEBHOOK_NAME,
+                ]);
+
+                return BaseApiResponseDto::buildBadRequestErrorResponse($message)->toJsonResponse();
+            }
+
+            if( !array_key_exists(self::KEY_USERNAME, $requestContentArray) ){
+                $message = $this->app->trans('pages.discord.testMessageSending.missingParameterInRequest', [
+                    '{{parameterName}}' => self::KEY_USERNAME,
+                ]);
+
+                return BaseApiResponseDto::buildBadRequestErrorResponse($message)->toJsonResponse();
+            }
+
+            if( !array_key_exists(self::KEY_DESCRIPTION, $requestContentArray) ){
+                $message = $this->app->trans('pages.discord.testMessageSending.missingParameterInRequest', [
+                    '{{parameterName}}' => self::KEY_DESCRIPTION,
+                ]);
+
+                return BaseApiResponseDto::buildBadRequestErrorResponse($message)->toJsonResponse();
+            }
+
+            if( !array_key_exists(self::KEY_ENTITY_ID, $requestContentArray) ){
+                $message = $this->app->trans('pages.discord.testMessageSending.missingParameterInRequest', [
+                    '{{parameterName}}' => self::KEY_ENTITY_ID,
+                ]);
+
+                return BaseApiResponseDto::buildBadRequestErrorResponse($message)->toJsonResponse();
+            }
+
+            $entityId    = $requestContentArray[self::KEY_ENTITY_ID];
+            $webhookUrl  = $requestContentArray[self::KEY_WEBHOOK_URL];
+            $webhookName = $requestContentArray[self::KEY_WEBHOOK_NAME];
+            $username    = $requestContentArray[self::KEY_USERNAME];
+            $description = $requestContentArray[self::KEY_DESCRIPTION];
+
+            $discordWebhook = $this->controllers->getDiscordWebhookController()->getOneById($entityId);
+            if( empty($discordWebhook) ){
+                $message = $this->app->trans('pages.discord.updateDiscordWebhook.messages.fail.noDiscordWebhookWasFound');
+                return BaseApiResponseDto::buildBadRequestErrorResponse($message)->toJsonResponse();
+            }
+
+            $discordWebhook->setUsername($username);
+            $discordWebhook->setDescription($description);
+            $discordWebhook->setWebhookName($webhookName);
+            $discordWebhook->setWebhookUrl($webhookUrl);
+
+            $violations = $this->validationService->validateAndReturnInvalidFieldsWithMessagesForResponse($discordWebhook);
+            if( !empty($violations) ){
+                $message = $this->app->trans('api.external.general.messages.fieldsViolations', [
+                    '{{fieldsList}}' => $violations,
+                ]);
+                return BaseApiResponseDto::buildBadRequestErrorResponse($message)->toJsonResponse();
+            }
+
+            $this->controllers->getDiscordWebhookController()->save($discordWebhook);
+
+            $successMessage = $this->app->trans('pages.discord.updateDiscordWebhook.messages.success');
+            $baseResponseDto = new BaseApiResponseDto();
+            $baseResponseDto->prefillBaseFieldsForSuccessResponse();
+            $baseResponseDto->setMessage($successMessage);
+        }catch(Exception $e){
+            $this->app->getLoggerService()->logThrowable($e);
+
+            $message = $this->app->trans('pages.discord.updateDiscordWebhook.messages.fail.failedToUpdate');
+
+            $baseResponseDto = BaseApiResponseDto::buildInternalServerErrorResponse();
+            $baseResponseDto->setMessage($message);
+
+            return $baseResponseDto->toJsonResponse();
+        }
+
+        return $baseResponseDto->toJsonResponse();
+    }
 
     /**
      * Will return all webhooks

@@ -65,6 +65,12 @@ pages:
         fail: Failed to add new discord webhook
         invalidDataHasBeenProvided: Invalid data has been provided
         success: New webhook has been added
+    updateDiscordWebhook:
+      messages:
+        success: Discord webhook has been updated
+        fail:
+          noDiscordWebhookWasFound: No discord webhook was found for given webhook name
+          failedToUpdate: Failed to update webhook
     history:
       labels:
         main: Sent Discord Messages - History

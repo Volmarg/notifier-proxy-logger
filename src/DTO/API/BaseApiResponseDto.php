@@ -135,23 +135,26 @@ class BaseApiResponseDto extends AbstractDTO
     /**
      * Will build internal server error response
      *
+     * @param string $message
      * @return static
      */
-    public static function buildBadRequestErrorResponse(): static
+    public static function buildBadRequestErrorResponse(string $message = ""): static
     {
         $dto = new static();
         $dto->setCode(Response::HTTP_BAD_REQUEST);
         $dto->setSuccess(false);
+        $dto->setMessage($message);
 
         return $dto;
     }
 
     /**
+     * @param int $responseCode
      * @return JsonResponse
      */
-    public function toJsonResponse(): JsonResponse
+    public function toJsonResponse(int $responseCode = Response::HTTP_OK): JsonResponse
     {
-        return new JsonResponse($this->toArray());
+        return new JsonResponse($this->toArray(), $responseCode);
     }
 
     /**

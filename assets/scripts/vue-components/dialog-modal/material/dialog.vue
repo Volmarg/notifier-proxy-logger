@@ -2,7 +2,7 @@
 <template>
   <div class="mdc-dialog" ref="dialog">
     <div class="mdc-dialog__container">
-      <div class="mdc-dialog__surface">
+      <div class="mdc-dialog__surface" :style="{'min-width': minWidth}">
         <div class="mdc-dialog__content" id="my-dialog-content">
           <slot></slot>
         </div>
@@ -11,7 +11,7 @@
             <div class="mdc-button__ripple"></div>
             <span class="mdc-button__label">{{ cancelButtonTranslatedString }}</span>
           </button>
-          <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="discard">
+          <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="discard" @click="$emit('materialModalConfirmButtonClick')">
             <div class="mdc-button__ripple"></div>
             <span class="mdc-button__label">{{ acceptButtonTranslatedString }}</span>
           </button>
@@ -41,6 +41,11 @@ export default {
     'acceptButtonTranslationString': {
       type     : String,
       required : true
+    },
+    'minWidth': {
+      type     : String,
+      required : false,
+      default  : '300px',
     }
   },
   data(){

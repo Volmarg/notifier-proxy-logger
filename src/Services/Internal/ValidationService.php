@@ -28,13 +28,25 @@ class ValidationService
      * @param object $object
      * @return string[]
      */
-    public function validateAndReturnInvalidFieldsWithMessages(object $object): array
+    public function validateAndReturnArrayOfInvalidFieldsWithMessages(object $object): array
     {
         $validator  = $this->buildValidator();
         $violations = $validator->validate($object);
 
         return [];
     }
+
+    /**
+     * @param object $object
+     * @return string
+     */
+    public function validateAndReturnInvalidFieldsWithMessagesForResponse(object $object): string
+    {
+        // todo:
+
+        return "";
+    }
+
 
 
 }
