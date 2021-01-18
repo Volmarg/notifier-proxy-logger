@@ -8,7 +8,7 @@
       </div>
 
       <div class="col-2 d-inline-block ml-2">
-        <input type="text" v-model="searchInput" id="searchInput" class="form-control col-2" @change="searchForStringInTableCells()"/>
+        <input type="text" v-model="searchInput" id="searchInput" class="form-control col-2"/>
       </div>
 
     </div>
@@ -17,7 +17,7 @@
   <table class="table table-centered table-nowrap mb-0 rounded" ref="table">
     <volt-table-head :table-headers="headers">
     </volt-table-head>
-    <volt-table-body v-if="shownRowsData.length">
+    <volt-table-body v-if="shownRowsData.length" :key="tableReloadFlag">
       <slot></slot>
     </volt-table-body>
   </table>
@@ -77,6 +77,8 @@ export default {
 
       searchInput      : "",
       searchResultRows : [],
+
+      tableReloadFlag: 0,
     }
   },
   computed: {
@@ -142,8 +144,17 @@ export default {
     /**
      * @description handles showing the rows in table based on searched string in input field
      *              the search looks if any of the property provided as rowData has given string
+     *
+     * @param dataArrayToSearchIn Array
+     *        - if provided then will be used to search the data in it, usable in case of having some form
+     *          where the data is being added, so providing the updated table data from parent will trigger filtering
+     *          when search result is active
      */
-    searchForStringInTableCells(){
+    searchForStringInTableCells(dataArrayToSearchIn = null){
+      if(null === dataArrayToSearchIn){
+        dataArrayToSearchIn = this.originalRowsData;
+      }
+
       let matchingRowsData = [];
       let searchRegexp     = new RegExp(this.searchInput, 'i');
 
@@ -152,7 +163,7 @@ export default {
         return;
       }
 
-      this.originalRowsData.forEach( (objectWithData) => {
+      dataArrayToSearchIn.forEach( (objectWithData) => {
         let objectValues = Object.values(objectWithData);
 
         // iterate over all props of object
@@ -179,9 +190,8 @@ export default {
       })
 
       this.searchResultRows = matchingRowsData;
-
       this.handleShowingTableDataForPaginationAndResult(1);
-      this.$emit('searchForStringInTableCells', matchingRowsData);
+      this.tableReloadFlag++;
     },
     /**
      * @description handles setting the pagination based on the total data in table or based on active search result
@@ -191,22 +201,20 @@ export default {
      *              one more page to show rest of the result
      */
     updatePaginationCount(){
-      if( "" === this.searchInput ){
-        // handling when no search is being active
-        if( this.originalRowsData.length >= this.getEndOffsetForCurrentPageNumber(this.currentResultPage) ){
-          this.paginationCount = Math.floor(this.originalRowsData.length / this.maxResultPerPage);
-        }else{
-          this.paginationCount = Math.ceil(this.originalRowsData.length / this.maxResultPerPage);
-        }
-      }else {
-        // handling for search being active
-        if( this.searchResultRows.length >= this.getEndOffsetForCurrentPageNumber(this.currentResultPage) ) {
-          this.paginationCount = Math.floor(this.searchResultRows.length / this.maxResultPerPage);
-        }else if( 0 === this.searchResultRows.length ){
-          this.paginationCount = 0;
-        }else{
-          this.paginationCount = Math.ceil(this.searchResultRows.length / this.maxResultPerPage);
-        }
+      let dataArrayToSearchIn = this.originalRowsData;
+      if( "" !== this.searchInput ){
+        dataArrayToSearchIn = this.searchResultRows;
+      }
+
+      if( dataArrayToSearchIn.length >= this.getEndOffsetForCurrentPageNumber(this.currentResultPage) ){
+        // there are more results in general than offset for current page
+        this.paginationCount = Math.ceil(dataArrayToSearchIn.length / this.maxResultPerPage);
+      }else if( dataArrayToSearchIn.length >= 1){
+        // there is at least one result but not more than max offset
+        this.paginationCount = 1;
+      }else{
+        // nothing in table so far
+        this.paginationCount = 0;
       }
     },
     /**
@@ -231,7 +239,6 @@ export default {
 
       this.currentResultPage = parseInt(visiblePageNumber);
       this.decideShowingPaginationButtonsInBetweenLowerAndHigherRanges();
-      this.updatePaginationCount();
       this.$emit('handleShowingTableDataForPaginationAndResult', this.shownRowsData);
     },
     /**
@@ -240,7 +247,7 @@ export default {
     getStartOffsetForCurrentPageNumber(visiblePageNumber){
       /** @description this is required as on page 1 we want offset starting from 1, page 2 from 11 etc **/
       let visiblePageNumberOffsetMultiplier = (visiblePageNumber - 1);
-      let startOffset                       = (visiblePageNumberOffsetMultiplier * this.maxResultPerPage) + 1
+      let startOffset                       = (visiblePageNumberOffsetMultiplier * this.maxResultPerPage)
       return startOffset;
     },
     /**
@@ -290,7 +297,8 @@ export default {
     }
   },
   watch: {
-    searchResultRows(oldValue, newValue){
+    searchInput(){
+      this.searchForStringInTableCells();
       this.updatePaginationCount();
     }
   }

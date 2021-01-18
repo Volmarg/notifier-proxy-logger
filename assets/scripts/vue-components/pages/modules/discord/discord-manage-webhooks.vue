@@ -160,10 +160,17 @@ export default {
           discordWebhooksDtos.push(discordWebhookDto);
         }
 
+        this.currentlyVisibleDataInTable = [];
+        this.discordWebhooksTableData    = [];
+        this.discordWebhooksDtos         = [];
+
         this.currentlyVisibleDataInTable = discordWebhooksDtosForTable;
         this.discordWebhooksTableData    = discordWebhooksDtosForTable;
         this.discordWebhooksDtos         = discordWebhooksDtos;
         this.isSpinnerVisible            = false;
+
+        this.$refs.table.searchInput     = "";
+        this.$refs.table.handleShowingTableDataForPaginationAndResult(1);
       });
     },
     /**
