@@ -170,7 +170,7 @@ export default {
             //string is a value of prop
           }else{
 
-            if( value.match(searchRegexp) ){
+            if( String(value).match(searchRegexp) ){
               matchingRowsData.push(objectWithData);
               return false;
             }

@@ -1,7 +1,7 @@
 <!-- Template -->
 <template>
   <tr class="volt-table-row" :data-tippy-content="tippyRowBodyContent" ref="tableRow">
-    <table-cell v-for="(value, key, index) in rowData" :key="index" :do-show="0 !== value.length">
+    <table-cell v-for="(value, key, index) in rowData" :key="index" :do-show="0 !== value.length && !isKeySkipped(key)">
       <template #cellValue>
         <raw-content :content="value" />
       </template>
@@ -24,6 +24,10 @@ let tippy = new Tippy();
  *              applied alongside with DataTables
  */
 export default {
+  components: {
+    "table-cell": TableCellComponent,
+    "raw-content" : RawContentComponent,
+  },
   props: {
     "rowData": {
       type     : Object,
@@ -33,11 +37,30 @@ export default {
       type     : String,
       required : false,
       default  : ""
+    },
+    "skippedKeys": {
+      type     : Array,
+      required : false,
+      default  : [],
     }
   },
-  components: {
-    "table-cell": TableCellComponent,
-    "raw-content" : RawContentComponent,
+  methods: {
+    /**
+     * @description will check if the provided key in the object/array is skipped
+     *              which means that the value for that key won't be shown
+     *
+     *              Since dto object has properties also beginning with `_`
+     *              which in term of TS means that these are private, it's required
+     *              to strip the leading underscore
+     * @param key
+     */
+    isKeySkipped(key){
+      if( "_" === key.slice(0, 1) ){
+        key = key.slice(1, key.length);
+      }
+
+      return this.skippedKeys.includes(key);
+    },
   },
   mounted(){
     tippy.applyForElement(this.$refs.tableRow);

@@ -22,6 +22,7 @@
                 :key="index"
                 :row-data="mailDto"
                 :tippy-row-body-content="buildRowTippyBodyContentForMail(allEmails[index])"
+                :skipped-keys="skippedDtoProperties"
             />
           </volt-table>
 
@@ -65,6 +66,39 @@ export default {
       tableData                   : [],
       currentlyVisibleDataInTable : [],
       isSpinnerVisible            : true,
+    }
+  },
+  computed: {
+    tableHeaders: {
+      get: function () {
+        return translationService.getTranslationsForStrings([
+          'pages.mailing.history.table.headers.subject.label',
+          'pages.mailing.history.table.headers.status.label',
+          'pages.mailing.history.table.headers.created.label',
+          'pages.mailing.history.table.headers.receivers.label'
+        ]);
+      },
+    },
+    sentEmailsLabel: {
+      get: function () {
+        return translationService.getTranslationForString('pages.mailing.history.labels.main');
+      }
+    },
+    allMails: {
+      get: function() {
+        return this.allEmails;
+      },
+      set: function (emails) {
+        this.allEmails = emails;
+      }
+    },
+    tippyBodyContentTranslationBodyString: function(){
+      return translationService.getTranslationForString('pages.dashboard.overview.widgets.lastProcessedEmails.tippy.bodyContent.content');
+    },
+    skippedDtoProperties(){
+      return [
+        "body",
+      ];
     }
   },
   methods: {
@@ -113,9 +147,6 @@ export default {
         let filteredTableData      = [];
 
         mailsDtos.forEach( (mail, index) => {
-
-          /** @description these columns have to be skipped */
-          mail.body = "";
 
           let classes = "";
           switch(mail.status){
@@ -166,34 +197,6 @@ export default {
       searchForStringInTableCells(searchResult){
         this.currentlyVisibleDataInTable = searchResult;
       }
-  },
-  computed: {
-    tableHeaders: {
-      get: function () {
-        return translationService.getTranslationsForStrings([
-            'pages.mailing.history.table.headers.subject.label',
-            'pages.mailing.history.table.headers.status.label',
-            'pages.mailing.history.table.headers.created.label',
-            'pages.mailing.history.table.headers.receivers.label'
-        ]);
-      },
-    },
-    sentEmailsLabel: {
-      get: function () {
-        return translationService.getTranslationForString('pages.mailing.history.labels.main');
-      }
-    },
-    allMails: {
-      get: function() {
-        return this.allEmails;
-      },
-      set: function (emails) {
-        this.allEmails = emails;
-      }
-    },
-    tippyBodyContentTranslationBodyString: function(){
-      return translationService.getTranslationForString('pages.dashboard.overview.widgets.lastProcessedEmails.tippy.bodyContent.content');
-    },
   }
 }
 </script>

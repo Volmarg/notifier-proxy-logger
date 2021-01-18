@@ -21,6 +21,7 @@
                 :key="index"
                 :row-data="discordMessageDto"
                 :tippy-row-body-content="buildRowTippyBodyContentForDiscordMessage(allDiscordMessages[index])"
+                :skipped-keys="skippedDtoProperties"
             />
           </volt-table>
         </section>
@@ -64,6 +65,38 @@ export default {
       currentlyVisibleDataInTable : [],
       allDataInTable              : [],
       isSpinnerVisible            : true,
+    }
+  },
+  computed: {
+    tableHeaders: {
+      get: function () {
+        return translationService.getTranslationsForStrings([
+          'pages.discord.history.table.headers.messageTitle.label',
+          'pages.discord.history.table.headers.status.label',
+          'pages.discord.history.table.headers.created.label'
+        ]);
+      },
+    },
+    sentDiscordMessagesLabel: {
+      get: function () {
+        return translationService.getTranslationForString('pages.discord.history.labels.main');
+      }
+    },
+    cachedAllDiscordMessages: {
+      get: function() {
+        return this.allDiscordMessages;
+      },
+      set: function (discordMessages) {
+        this.allDiscordMessages = discordMessages;
+      }
+    },
+    tippyBodyContentTranslationContentString: function(){
+      return translationService.getTranslationForString('pages.discord.history.table.rows.tippyContent.contentString');
+    },
+    skippedDtoProperties() {
+      return [
+          "messageContent"
+      ]
     }
   },
   methods: {
@@ -110,9 +143,6 @@ export default {
         let filteredTableData = [];
 
         discordMessageDtos.forEach( (discordMessage, index) => {
-
-          /** @description these columns have to be skipped */
-          discordMessage.messageContent = "";
 
           let classes = "";
           switch(discordMessage.status){
@@ -163,33 +193,6 @@ export default {
     searchForStringInTableCells(searchResult){
       this.currentlyVisibleDataInTable = searchResult;
     }
-  },
-  computed: {
-    tableHeaders: {
-      get: function () {
-        return translationService.getTranslationsForStrings([
-            'pages.discord.history.table.headers.messageTitle.label',
-            'pages.discord.history.table.headers.status.label',
-            'pages.discord.history.table.headers.created.label'
-        ]);
-      },
-    },
-    sentDiscordMessagesLabel: {
-      get: function () {
-        return translationService.getTranslationForString('pages.discord.history.labels.main');
-      }
-    },
-    cachedAllDiscordMessages: {
-      get: function() {
-        return this.allDiscordMessages;
-      },
-      set: function (discordMessages) {
-        this.allDiscordMessages = discordMessages;
-      }
-    },
-    tippyBodyContentTranslationContentString: function(){
-      return translationService.getTranslationForString('pages.discord.history.table.rows.tippyContent.contentString');
-    },
   }
 }
 </script>

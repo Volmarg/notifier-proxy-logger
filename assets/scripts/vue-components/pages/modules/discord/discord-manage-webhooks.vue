@@ -17,15 +17,16 @@
           >
 
             <volt-table-row
-                v-for="(discordWebhookDto, index) in currentlyVisibleDataInTable"
-                :key="index"
+                v-for="discordWebhookDto in currentlyVisibleDataInTable"
+                :key="discordWebhookDto.id"
                 :row-data="discordWebhookDto"
-                :tippy-row-body-content="getTippyBodyContentForSingleRow(discordWebhooksDtos[index])"
+                :tippy-row-body-content="getTippyBodyContentForSingleRow(discordWebhookDto)"
+                :skipped-keys="skippedDtoProperties"
             >
               <!-- default slot insertion -->
               <volt-cell>
                 <template #cellValue>
-                  <edit-action @on-edit-action-clicked="onEditActionClicked(discordWebhooksDtos[index].id)"/>
+                  <edit-action @on-edit-action-clicked="onEditActionClicked(discordWebhookDto.id)"/>
                 </template>
               </volt-cell>
 
@@ -33,20 +34,20 @@
               <section>
                 <!-- Edit Dialog -->
                 <material-dialog
-                    :ref="'editDialog_' + discordWebhooksDtos[index].id"
+                    :ref="'editDialog_' + discordWebhookDto.id"
                     :accept-button-translation-string="'mainPageComponents.dialog.buttons.update'"
                     :min-width="'600px'"
-                    @material-modal-confirm-button-click="onMaterialEditModalConfirmButtonClick(discordWebhooksDtos[index].id, index)"
+                    @material-modal-confirm-button-click="onMaterialEditModalConfirmButtonClick(discordWebhookDto.id)"
                 >
 
                   <!-- Webhook url -->
-                  <material-text-field :display-block="true" :label="webhookUrlTranslatedString"  :value="discordWebhooksDtos[index].webhookUrl"  :ref="'materialEditModalWebhookUrlInput_'   + discordWebhooksDtos[index].id"/>
+                  <material-text-field :display-block="true" :label="webhookUrlTranslatedString"  :value="discordWebhookDto.webhookUrl"  :ref="'materialEditModalWebhookUrlInput_'  + discordWebhookDto.id"/>
                   <!-- Webhook name -->
-                  <material-text-field :display-block="true" :label="webhookNameTranslatedString" :value="discordWebhooksDtos[index].webhookName" :ref="'materialEditModalWebhookNameInput_'  + discordWebhooksDtos[index].id"/>
+                  <material-text-field :display-block="true" :label="webhookNameTranslatedString" :value="discordWebhookDto.webhookName" :ref="'materialEditModalWebhookNameInput_' + discordWebhookDto.id"/>
                   <!-- Username-->
-                  <material-text-field :display-block="true" :label="usernameTranslatedString"    :value="discordWebhooksDtos[index].username"    :ref="'materialEditModalUsernameInput_'     + discordWebhooksDtos[index].id"/>
+                  <material-text-field :display-block="true" :label="usernameTranslatedString"    :value="discordWebhookDto.username"    :ref="'materialEditModalUsernameInput_'    + discordWebhookDto.id"/>
                   <!-- Description -->
-                  <material-text-field :display-block="true" :label="descriptionTranslatedString" :value="discordWebhooksDtos[index].description" :ref="'materialEditModalDescriptionInput_'  + discordWebhooksDtos[index].id"/>
+                  <material-text-field :display-block="true" :label="descriptionTranslatedString" :value="discordWebhookDto.description" :ref="'materialEditModalDescriptionInput_' + discordWebhookDto.id"/>
                 </material-dialog>
               </section>
 
@@ -79,11 +80,9 @@ import EditActionComponent              from '../../../actions/edit-action';
 
 import SymfonyRoutes                    from "../../../../core/symfony/SymfonyRoutes";
 import TranslationsService              from "../../../../core/services/TranslationsService";
-import Dialog                           from "../../../../libs/material/Dialog";
 import Notification                     from "../../../../libs/mdb5/Notification";
 
 let translationsService = new TranslationsService();
-let dialog              = new Dialog();
 let notification        = new Notification();
 
 export default {
@@ -106,6 +105,13 @@ export default {
     'volt-table-row'           : VoltTableRowComponent,
   },
   computed: {
+    skippedDtoProperties: function(){
+      return [
+        'id',
+        'username',
+        'description',
+      ]
+    },
     tableHeadersTranslations: function(){
       return [
         this.webhookUrlTranslatedString,
@@ -149,11 +155,6 @@ export default {
           let discordWebhookDtoJson     = discordWebhooksJsons[index];
           let discordWebhookDto         = DiscordWebhookDto.fromJson(discordWebhookDtoJson);
           let discordWebhookDtoForTable = DiscordWebhookDto.fromJson(discordWebhookDtoJson);
-
-          /**@description do not show this columns */
-          discordWebhookDtoForTable.id          = "";
-          discordWebhookDtoForTable.username    = "";
-          discordWebhookDtoForTable.description = "";
 
           discordWebhooksDtosForTable.push(discordWebhookDtoForTable);
           discordWebhooksDtos.push(discordWebhookDto);
@@ -218,16 +219,17 @@ export default {
     /**
      * @description will handle edit modal confirmation button click
      * @param discordWebhookDtoEntityId       String
-     * @param indexOfEntityInVisibleDataDtos  Boolean
      */
-    onMaterialEditModalConfirmButtonClick(discordWebhookDtoEntityId, indexOfEntityInVisibleDataDtos){
+    onMaterialEditModalConfirmButtonClick(discordWebhookDtoEntityId){
 
-      if(!this.hasDtoEntityWithId(discordWebhookDtoEntityId, this.discordWebhooksDtos)){
+      if( !this.hasDtoEntityWithId(discordWebhookDtoEntityId, this.currentlyVisibleDataInTable) ){
         throw {
           "message"          : "Tried to update the discordWebhookDto via the edit dialog but no dto with given entity id was found",
           "expectedEntityId" : discordWebhookDtoEntityId,
         }
       }
+      let indexOfEntityInVisibleDataDtos = this.getDtoIndexForEntityWithId(discordWebhookDtoEntityId, this.currentlyVisibleDataInTable);
+      let indexOfEntityInAllDtosArray    = this.getDtoIndexForEntityWithId(discordWebhookDtoEntityId);
 
       let changedWebhookUrl   = this.$refs['materialEditModalWebhookUrlInput_'  + discordWebhookDtoEntityId].textFieldValue;
       let changedWebhookName  = this.$refs['materialEditModalWebhookNameInput_' + discordWebhookDtoEntityId].textFieldValue;
@@ -242,10 +244,7 @@ export default {
         description : changedDescription,
       }
 
-      let updateDiscordWebhookPromise = this.axios.post(SymfonyRoutes.UPDATE_DISCORD_WEBHOOK, dataBag);
-      let indexOfEntityInDto          = this.getDtoIndexForEntityWithId(discordWebhookDtoEntityId, this.discordWebhooksDtos);
-
-      updateDiscordWebhookPromise.then( (result) => {
+      this.axios.post(SymfonyRoutes.UPDATE_DISCORD_WEBHOOK, dataBag).then( (result) => {
         let baseApiResponse = BaseInternalApiResponseDto.fromAxiosResponse(result);
 
         if( !baseApiResponse.success ){
@@ -253,8 +252,8 @@ export default {
           return;
         }
 
-        let currentlyProcessedDiscordWebhookDtoForTable = this.getDtoForEntityWithId(discordWebhookDtoEntityId, this.discordWebhooksDtos);
-        let currentlyProcessedDiscordWebhookDto         = this.discordWebhooksDtos[indexOfEntityInDto];
+        let currentlyProcessedDiscordWebhookDtoForTable = this.getDtoForEntityWithId(discordWebhookDtoEntityId);
+        let currentlyProcessedDiscordWebhookDto         = this.discordWebhooksDtos[indexOfEntityInVisibleDataDtos];
 
         // whole data
         currentlyProcessedDiscordWebhookDto.username    = changedUsername;
@@ -265,9 +264,6 @@ export default {
         // data used only in table
         currentlyProcessedDiscordWebhookDtoForTable.webhookUrl  = changedWebhookUrl;
         currentlyProcessedDiscordWebhookDtoForTable.webhookName = changedWebhookName;
-        currentlyProcessedDiscordWebhookDtoForTable.description = "";
-        currentlyProcessedDiscordWebhookDtoForTable.username    = "";
-        currentlyProcessedDiscordWebhookDtoForTable.id          = "";
 
         let currentlyVisibleDataInTableNewData = this.currentlyVisibleDataInTable;
         let discordWebhooksDtosNewData         = this.discordWebhooksDtos;
@@ -282,7 +278,7 @@ export default {
         this.discordWebhooksDtos         = [];
 
         currentlyVisibleDataInTableNewData[indexOfEntityInVisibleDataDtos] = currentlyProcessedDiscordWebhookDtoForTable;
-        discordWebhooksDtosNewData[indexOfEntityInDto]                     = currentlyProcessedDiscordWebhookDto;
+        discordWebhooksDtosNewData[indexOfEntityInAllDtosArray]            = currentlyProcessedDiscordWebhookDto;
 
         this.currentlyVisibleDataInTable = currentlyVisibleDataInTableNewData;
         this.discordWebhooksDtos         = discordWebhooksDtosNewData;
@@ -293,24 +289,28 @@ export default {
     /**
      * @description will return dto for given entity id
      *
-     * @param entityId String
-     * @param dtoArray Array
+     * @param entityId  String
+     * @param dataArray Array
      * @return Boolean
      */
-    hasDtoEntityWithId(entityId, dtoArray){
-      return !(null === this.getDtoForEntityWithId(entityId, dtoArray));
+    hasDtoEntityWithId(entityId, dataArray){
+      return !(null === this.getDtoForEntityWithId(entityId));
     },
     /**
      * @description will return dto for given entity id, or null if nothing is found
      *
-     * @param entityId
-     * @param dtoArray Array
+     * @param entityId  String
+     * @param dataArray Array
      * @return ?DiscordWebhookDto
      */
-    getDtoForEntityWithId(entityId, dtoArray){
-      let foundEntities = dtoArray.filter( (discordDto) => {
+    getDtoForEntityWithId(entityId, dataArray){
+      if( "undefined" === typeof dataArray){
+        dataArray = this.discordWebhooksDtos;
+      }
+
+      let foundEntities = dataArray.filter( (discordDto) => {
         return (discordDto.id === entityId);
-      }, dtoArray)
+      }, dataArray)
 
       if(0 === foundEntities.length){
         return null;
@@ -333,15 +333,19 @@ export default {
      *              null is returned if nothing is found
      *
      * @param entityId String
-     * @param dtoArray Array
+     * @param dataArray Array
      * @return ?Number
      */
-    getDtoIndexForEntityWithId(entityId, dtoArray){
+    getDtoIndexForEntityWithId(entityId, dataArray){
+      if( "undefined" === typeof dataArray){
+        dataArray = this.discordWebhooksDtos;
+      }
+
       let indexOfDto    = null
-      let indexesOfDtos = Object.keys(dtoArray);
+      let indexesOfDtos = Object.keys(dataArray);
 
       for(let index of indexesOfDtos){
-        let dto = dtoArray[index];
+        let dto = dataArray[index];
         if(entityId == dto.id){
           indexOfDto = index;
           break;
