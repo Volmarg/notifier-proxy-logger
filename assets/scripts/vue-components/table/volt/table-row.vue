@@ -24,6 +24,11 @@ let tippy = new Tippy();
  *              applied alongside with DataTables
  */
 export default {
+  data(){
+      return {
+        tippyInstance: null,
+      }
+  },
   components: {
     "table-cell": TableCellComponent,
     "raw-content" : RawContentComponent,
@@ -63,7 +68,12 @@ export default {
     },
   },
   mounted(){
-    tippy.applyForElement(this.$refs.tableRow);
+    this.tippyInstance = tippy.applyForElement(this.$refs.tableRow);
+  },
+  updated(){
+    if(null !== this.tippyInstance){
+      this.tippyInstance.setContent(this.tippyRowBodyContent);
+    }
   }
 }
 </script>

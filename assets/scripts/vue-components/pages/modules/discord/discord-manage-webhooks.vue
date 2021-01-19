@@ -269,8 +269,10 @@ export default {
         currentlyProcessedDiscordWebhookDto.webhookName = changedWebhookName;
 
         // data used only in table
-        currentlyProcessedDiscordWebhookDtoForTable.webhookUrl  = changedWebhookUrl;
-        currentlyProcessedDiscordWebhookDtoForTable.webhookName = changedWebhookName;
+        currentlyProcessedDiscordWebhookDtoForTable.webhookUrl   = changedWebhookUrl;
+        currentlyProcessedDiscordWebhookDtoForTable.webhookName  = changedWebhookName;
+        currentlyProcessedDiscordWebhookDtoForTable.description  = changedDescription;
+        currentlyProcessedDiscordWebhookDtoForTable.username     = changedUsername;
 
         let currentlyVisibleDataInTableNewData = this.currentlyVisibleDataInTable;
         let discordWebhooksDtosNewData         = this.discordWebhooksDtos;

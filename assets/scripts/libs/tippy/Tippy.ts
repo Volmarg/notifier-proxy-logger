@@ -28,7 +28,7 @@ export default class Tippy {
     {
         // happens for example by datatable where there is one row with text `no records`
         if( "undefined" === typeof domElement.dataset ){
-            return;
+            return null;
         }
 
         let content   = domElement.dataset[Tippy.DATA_ATTRIBUTE_CONTENT];
@@ -42,12 +42,15 @@ export default class Tippy {
                 !StringUtils.isEmptyString(content)
             &&  !domElement._tippy
         ){
-            tippy(domElement, {
+            let tippyInstance = tippy(domElement, {
                 allowHTML : true,
                 theme     : Tippy.DEFAULT_THEME,
                 content   : content,
                 placement : placement
             });
+
+            //@ts-ignore
+            return tippyInstance;
         }
     }
 
