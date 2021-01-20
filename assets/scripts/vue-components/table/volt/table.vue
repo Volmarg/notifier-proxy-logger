@@ -300,6 +300,9 @@ export default {
     searchInput(){
       this.searchForStringInTableCells();
       this.updatePaginationCount();
+    },
+    originalRowsData(){
+      this.updatePaginationCount();
     }
   }
 }

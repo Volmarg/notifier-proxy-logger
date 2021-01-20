@@ -4,6 +4,7 @@ namespace App\Controller\Modules\Discord;
 
 use App\Controller\Application;
 use App\Entity\Modules\Discord\DiscordWebhook;
+use App\Entity\SoftDeletableInterface;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -50,7 +51,9 @@ class DiscordWebhookController extends AbstractController
      */
     public function getAll(): array
     {
-        return $this->app->getRepositories()->getDiscordWebhookRepository()->findAll();
+        return $this->app->getRepositories()->getDiscordWebhookRepository()->findBy([
+            SoftDeletableInterface::FIELD_NAME_DELETED => false,
+        ]);
     }
 
     /**
@@ -64,6 +67,19 @@ class DiscordWebhookController extends AbstractController
     public function save(DiscordWebhook $discordWebhook): DiscordWebhook
     {
         return $this->app->getRepositories()->getDiscordWebhookRepository()->save($discordWebhook);
+    }
+
+    /**
+     * Will soft delete the entity
+     *
+     * @param DiscordWebhook $discordWebhook
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function softDelete(DiscordWebhook $discordWebhook): void
+    {
+        $discordWebhook->setDeleted(true);
+        $this->app->getRepositories()->getDiscordWebhookRepository()->save($discordWebhook);
     }
 
 }

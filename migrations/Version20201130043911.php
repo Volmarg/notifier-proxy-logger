@@ -54,6 +54,7 @@ final class Version20201130043911 extends AbstractMigration
                     webhook_url LONGTEXT NOT NULL, 
                     description LONGTEXT NOT NULL, 
                     webhook_name VARCHAR(255) NOT NULL,
+                    deleted TINYINT(1) NOT NULL DEFAULT 0,
                     PRIMARY KEY(id)
                 ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
         ');

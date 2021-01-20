@@ -69,8 +69,14 @@ pages:
       messages:
         success: Discord webhook has been updated
         fail:
-          noDiscordWebhookWasFound: No discord webhook was found for given webhook name
+          noDiscordWebhookWasFound: No discord webhook was found for given webhook id
           failedToUpdate: Failed to update webhook
+    removeDiscordWebhook:
+      messages:
+        success: Discord webhook has been removed
+        fail:
+          noDiscordWebhookWasFound: No discord webhook was found for given webhook id
+          failedToRemove: Failed to remove webhook
     history:
       labels:
         main: Sent Discord Messages - History

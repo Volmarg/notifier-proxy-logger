@@ -64,6 +64,12 @@ export default class SymfonyRoutes {
     static readonly UPDATE_DISCORD_WEBHOOK = "/modules/discord/update-webhook";
 
     /**
+     * @description handles the removal of single webhook by the provided id
+     */
+    static readonly REMOVE_DISCORD_WEBHOOK                  = "/modules/discord/remove-webhook/{webhookId}";
+    static readonly REMOVE_DISCORD_WEBHOOK_PARAM_WEBHOOK_ID = "{webhookId}";
+
+    /**
      * @description will send message to given webhook
      */
     static readonly SEND_DISCORD_TEST_MESSAGE = "/modules/discord/send-test-message-discord"

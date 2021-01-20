@@ -2,6 +2,8 @@
 
 namespace App\Entity\Modules\Discord;
 
+use App\Entity\EntityInterface;
+use App\Entity\SoftDeletableInterface;
 use App\Repository\Modules\Discord\DiscordWebhookRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -16,7 +18,7 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
  * })
  * @ORM\Entity(repositoryClass=DiscordWebhookRepository::class)
  */
-class DiscordWebhook
+class DiscordWebhook implements EntityInterface, SoftDeletableInterface
 {
 
     const FIELD_NAME_WEBHOOK_NAME = "webhookName";
@@ -55,6 +57,11 @@ class DiscordWebhook
      * @ORM\OneToMany(targetEntity=DiscordMessage::class, mappedBy="discordWebhook")
      */
     private $discordMessages;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private bool $deleted = false;
 
     public function __construct()
     {
@@ -153,5 +160,21 @@ class DiscordWebhook
         $metadata->addPropertyConstraint(self::FIELD_NAME_WEBHOOK_URL, new NotBlank());
         $metadata->addPropertyConstraint(self::FIELD_NAME_USERNAME, new NotBlank());
         $metadata->addPropertyConstraint(self::FIELD_NAME_DESCRIPTION, new NotBlank());
+    }
+
+    /**
+     * @param bool $deleted
+     */
+    public function setDeleted(bool $deleted): void
+    {
+        $this->deleted = $deleted;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDeleted(): bool
+    {
+        return $this->deleted;
     }
 }

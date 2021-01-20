@@ -305,6 +305,42 @@ class DiscordAction extends AbstractController
     }
 
     /**
+     * Handles the removal of single webhook
+     *
+     * @param string $webhookId
+     * @return JsonResponse
+     */
+    #[Route("/remove-webhook/{webhookId}", name: "remove_webhook", methods: [ "GET" ])]
+    public function removeWebhook(string $webhookId): JsonResponse
+    {
+        try{
+            $discordWebhook = $this->controllers->getDiscordWebhookController()->getOneById($webhookId);
+            if( empty($discordWebhook) ){
+                $message = $this->app->trans('pages.discord.removeDiscordWebhook.messages.fail.noDiscordWebhookWasFound');
+                return BaseApiResponseDto::buildBadRequestErrorResponse($message)->toJsonResponse();
+            }
+
+            $this->controllers->getDiscordWebhookController()->softDelete($discordWebhook);
+
+            $successMessage = $this->app->trans('pages.discord.removeDiscordWebhook.messages.success');
+            $baseResponseDto = new BaseApiResponseDto();
+            $baseResponseDto->prefillBaseFieldsForSuccessResponse();
+            $baseResponseDto->setMessage($successMessage);
+        }catch(Exception $e){
+            $this->app->getLoggerService()->logThrowable($e);
+
+            $message = $this->app->trans('pages.discord.removeDiscordWebhook.messages.fail.failedToRemove');
+
+            $baseResponseDto = BaseApiResponseDto::buildInternalServerErrorResponse();
+            $baseResponseDto->setMessage($message);
+
+            return $baseResponseDto->toJsonResponse();
+        }
+
+        return $baseResponseDto->toJsonResponse();
+    }
+
+    /**
      * Will return all webhooks
      *
      * @return JsonResponse

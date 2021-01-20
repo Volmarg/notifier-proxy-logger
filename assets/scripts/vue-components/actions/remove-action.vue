@@ -1,8 +1,8 @@
 <!-- Template -->
 <template>
-  <single-action @click="$emit('onEditActionClicked')" :classes="actionWrapperClasses">
+  <single-action @click="$emit('onRemoveActionClicked')" :classes="actionWrapperClasses">
     <template #buttonIcon>
-      <i class="far fa-edit action-icon"></i>
+        <i class="fas fa-trash-alt action-icon"></i>
     </template>
   </single-action>
 </template>
@@ -19,7 +19,7 @@ export default {
   data(){
     return {
       actionWrapperClasses: {
-        'btn-secondary' : true
+        'btn-danger-blackened' : true
       }
     }
   },
@@ -29,6 +29,7 @@ export default {
 <!-- Style -->
 <style>
 .action-icon {
-  margin-left: 3px;
+  padding-left: 1px;
+  padding-right: 2px;
 }
 </style>

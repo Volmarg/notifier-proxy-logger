@@ -10,3 +10,6 @@ mainPageComponents:
         cancel:
           label: Cancel
       update: Update
+      remove: Remove
+    texts:
+      removalConfirmation: Do you really want to remove this entry?

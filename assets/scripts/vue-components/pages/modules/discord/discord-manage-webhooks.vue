@@ -26,7 +26,12 @@
               <!-- default slot insertion -->
               <volt-cell>
                 <template #cellValue>
-                  <edit-action @on-edit-action-clicked="onEditActionClicked(discordWebhookDto.id)"/>
+                  <span class="action-button-wrapper">
+                    <edit-action @on-edit-action-clicked="onEditActionClicked(discordWebhookDto.id)"/>
+                  </span>
+                  <span class="action-button-wrapper" style="margin-left: 13px;">
+                    <remove-action  @on-remove-action-clicked="onRemoveActionClicked(discordWebhookDto.id)"/>
+                  </span>
                 </template>
               </volt-cell>
 
@@ -49,6 +54,17 @@
                   <!-- Description -->
                   <material-text-field :display-block="true" :label="descriptionTranslatedString" :value="discordWebhookDto.description" :ref="'materialEditModalDescriptionInput_' + discordWebhookDto.id"/>
                 </material-dialog>
+
+                <!-- Remove Dialog -->
+                <material-dialog
+                    :ref="'removeDialog_' + discordWebhookDto.id"
+                    :accept-button-translation-string="'mainPageComponents.dialog.buttons.remove'"
+                    :min-width="'300px'"
+                    @material-modal-confirm-button-click="onMaterialRemoveModalConfirmButtonClick(discordWebhookDto.id)"
+                >
+                  {{ removalConfirmationTranslatedString }}
+                </material-dialog>
+
               </section>
 
             </volt-table-row>
@@ -77,6 +93,7 @@ import MaterialTextFieldComponent       from '../../../../vue-components/form/co
 import MaterialDesignDialogComponent    from '../../../../vue-components/dialog-modal/material/dialog';
 import VoltTableRowComponent            from "../../../../vue-components/table/volt/table-row";
 import EditActionComponent              from '../../../actions/edit-action';
+import RemoveActionComponent            from '../../../actions/remove-action';
 
 import SymfonyRoutes                    from "../../../../core/symfony/SymfonyRoutes";
 import TranslationsService              from "../../../../core/services/TranslationsService";
@@ -95,6 +112,7 @@ export default {
     }
   },
   components: {
+    'remove-action'            : RemoveActionComponent,
     'edit-action'              : EditActionComponent,
     'volt-cell'                : VoltCellComponent,
     'volt-table'               : VoltTableComponent,
@@ -136,6 +154,9 @@ export default {
     },
     actionTranslatedString: function(){
       return translationsService.getTranslationForString('actions.label.general');
+    },
+    removalConfirmationTranslatedString: function(){
+      return translationsService.getTranslationForString('mainPageComponents.dialog.texts.removalConfirmation');
     }
   },
   methods: {
@@ -175,10 +196,21 @@ export default {
     },
     /**
      * @description will handle the edit action click for given index of webhook dto
-     **/
+     *
+     * @param webhookEntityId String
+     */
     onEditActionClicked(webhookEntityId){
       let editDialogRef = 'editDialog_' + webhookEntityId;
       this.$refs[editDialogRef].dialogInstance.open();
+    },
+    /**
+     * @description will handle the remove action click for given index of webhook dto
+     *
+     * @param webhookEntityId String
+     */
+    onRemoveActionClicked(webhookEntityId){
+      let removeDialogRef = 'removeDialog_' + webhookEntityId;
+      this.$refs[removeDialogRef].dialogInstance.open();
     },
     /**
      * @description creates tippy content for single data row - this means the popup visible upon hovering
@@ -296,6 +328,31 @@ export default {
       });
     },
     /**
+     * @description will handle the case where the `remove` button in modal is being clicked (for Removal modal)
+     *
+     * @param discordWebhookDtoEntityId String
+     */
+    onMaterialRemoveModalConfirmButtonClick(discordWebhookDtoEntityId){
+
+      let replacedParams = {
+        [SymfonyRoutes.REMOVE_DISCORD_WEBHOOK_PARAM_WEBHOOK_ID]: discordWebhookDtoEntityId,
+      }
+
+      let url = SymfonyRoutes.buildUrlWithReplacedParams(SymfonyRoutes.REMOVE_DISCORD_WEBHOOK, replacedParams);
+
+      this.axios.get(url). then( (response) => {
+        let baseApiResponse = BaseInternalApiResponseDto.fromAxiosResponse(response);
+
+        if(baseApiResponse.success){
+          notification.showGreenNotification(baseApiResponse.message);
+          this.getAllDiscordWebhooks()
+        }else{
+          notification.showRedNotification(baseApiResponse.message);
+        }
+
+      })
+    },
+    /**
      * @description will return dto for given entity id
      *
      * @param entityId  String
@@ -368,3 +425,10 @@ export default {
   },
 }
 </script>
+
+<!-- Styles -->
+<style scoped>
+.action-button-wrapper {
+  display: inline-block;
+}
+</style>
