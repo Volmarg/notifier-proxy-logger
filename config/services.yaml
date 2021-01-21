@@ -104,6 +104,7 @@ services:
             - setForms: ['@application.forms']
             - setRepositories: ['@controller.core.repositories']
             - setLoggerService: ['@services.internal.logger_service']
+            - setEntityManager: ['@doctrine.orm.default_entity_manager']
 
     App\Controller\Core\Controllers:
         calls:

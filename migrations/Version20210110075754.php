@@ -14,31 +14,15 @@ final class Version20210110075754 extends AbstractMigration
 {
     public function getDescription() : string
     {
-        return '';
+        return 'Add placeholder discord webhook for messages without parent webhook';
     }
 
     public function up(Schema $schema) : void
     {
-        // this up() migration is auto-generated, please modify it to your needs
+        // deleted is set to 1 to prevent ever seeing this placeholder in any place in code, gui etc.
         $this->addSql('
-            CREATE TABLE discord_message (
-                id INT AUTO_INCREMENT NOT NULL, 
-                discord_webhook_id INT NOT NULL, 
-                message_content LONGTEXT NOT NULL, 
-                message_title VARCHAR(250) NOT NULL, 
-                status VARCHAR(100) NOT NULL, 
-                source VARCHAR(50) NOT NULL, 
-                created DATETIME NOT NULL, 
-                INDEX IDX_F220142443246941 (discord_webhook_id), PRIMARY KEY(id)
-            ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
-        ');
-
-        $this->addSql('
-            ALTER TABLE discord_message ADD CONSTRAINT FK_F220142443246941 FOREIGN KEY (discord_webhook_id) REFERENCES discord_webhook (id)
-        ');
-
-        $this->addSql('
-            CREATE UNIQUE INDEX unique_name ON discord_webhook (webhook_name)
+            INSERT INTO discord_webhook(username, webhook_url, description, webhook_name, deleted)
+            VALUES("placeholder", "placeholder", "Placeholder for messages with deleted webhooks", "Placeholder for messages with deleted webhooks", 1)
         ');
 
     }

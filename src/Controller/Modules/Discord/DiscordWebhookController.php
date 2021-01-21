@@ -7,7 +7,9 @@ use App\Entity\Modules\Discord\DiscordWebhook;
 use App\Entity\SoftDeletableInterface;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use TypeError;
 
 class DiscordWebhookController extends AbstractController
 {
@@ -82,4 +84,47 @@ class DiscordWebhookController extends AbstractController
         $this->app->getRepositories()->getDiscordWebhookRepository()->save($discordWebhook);
     }
 
+    /**
+     * Will hard delete the entity, and assign them to placeholder webhook
+     *
+     * @param DiscordWebhook $discordWebhook
+     */
+    public function hardDelete(DiscordWebhook $discordWebhook): void
+    {
+        $this->app->beginTransaction();
+        {
+            try{
+                $placeholderWebhook = $this->getPlaceholderWebhook();
+                foreach($discordWebhook->getDiscordMessages() as $discordMessage){
+                    $discordMessage->setDiscordWebhook($placeholderWebhook);
+                    $this->app->getRepositories()->getDiscordMessageRepository()->saveEntity($discordMessage);
+                }
+
+                $this->app->getRepositories()->getDiscordWebhookRepository()->hardDelete($discordWebhook);
+            }catch(Exception|TypeError $e){
+                $this->app->rollbackTransaction();
+                $this->app->getLoggerService()->logThrowable($e);
+                throw $e;
+            }
+        }
+        $this->app->commitTransaction();
+
+    }
+
+    /**
+     * Will return placeholder webhook used to keep the messages despite the fact that parent webhooks are removed
+     * @throws Exception
+     */
+    public function getPlaceholderWebhook(): ?DiscordWebhook
+    {
+        $webhook = $this->app->getRepositories()->getDiscordWebhookRepository()->getPlaceholderWebhook();
+
+        if( empty($webhook) ){
+            $message = "Placeholder DiscordWebhook was not found!";
+            $this->app->getLoggerService()->getLogger()->emergency($message);
+            throw new Exception($message);
+        }
+
+        return $webhook;
+    }
 }

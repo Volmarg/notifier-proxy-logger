@@ -63,4 +63,25 @@ class DiscordWebhookRepository extends ServiceEntityRepository
         return $discordWebhook;
     }
 
+    /**
+     * Will hard delete the entity
+     * @param DiscordWebhook $entity
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function hardDelete(DiscordWebhook $entity): void
+    {
+        $this->_em->remove($entity);
+        $this->_em->flush();;
+    }
+
+    /**
+     * Will return placeholder webhook used to keep the messages despite the fact that parent webhooks are removed
+     */
+    public function getPlaceholderWebhook(): ?DiscordWebhook
+    {
+        return $this->findOneBy([
+           DiscordWebhook::FIELD_NAME_USERNAME => DiscordWebhook::PLACEHOLDER_WEBHOOK_USERNAME
+        ]);
+    }
 }

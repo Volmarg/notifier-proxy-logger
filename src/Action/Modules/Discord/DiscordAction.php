@@ -320,7 +320,7 @@ class DiscordAction extends AbstractController
                 return BaseApiResponseDto::buildBadRequestErrorResponse($message)->toJsonResponse();
             }
 
-            $this->controllers->getDiscordWebhookController()->softDelete($discordWebhook);
+            $this->controllers->getDiscordWebhookController()->hardDelete($discordWebhook);
 
             $successMessage = $this->app->trans('pages.discord.removeDiscordWebhook.messages.success');
             $baseResponseDto = new BaseApiResponseDto();

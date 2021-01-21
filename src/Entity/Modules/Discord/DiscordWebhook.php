@@ -20,6 +20,7 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
  */
 class DiscordWebhook implements EntityInterface, SoftDeletableInterface
 {
+    const PLACEHOLDER_WEBHOOK_USERNAME = "placeholder";
 
     const FIELD_NAME_WEBHOOK_NAME = "webhookName";
     const FIELD_NAME_WEBHOOK_URL  = "webhookUrl";

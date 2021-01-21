@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Controller\Core\Repositories;
 use App\Entity\User;
 use App\Services\Internal\LoggerService;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -30,6 +31,11 @@ class Application extends AbstractController
      * @var LoggerService $loggerService
      */
     private LoggerService $loggerService;
+
+    /**
+     * @var EntityManagerInterface $em
+     */
+    private EntityManagerInterface $em;
 
     /**
      * @return Forms
@@ -112,4 +118,26 @@ class Application extends AbstractController
         $this->loggerService = $loggerService;
     }
 
+    /**
+     * @param EntityManagerInterface $em
+     */
+    public function setEntityManager(EntityManagerInterface $em): void
+    {
+        $this->em = $em;
+    }
+
+    public function beginTransaction()
+    {
+        $this->em->beginTransaction();
+    }
+
+    public function commitTransaction()
+    {
+        $this->em->commit();
+    }
+
+    public function rollbackTransaction()
+    {
+        $this->em->rollback();
+    }
 }
