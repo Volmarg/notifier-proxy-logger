@@ -263,6 +263,15 @@ export default {
    * @description mostly setting the initial values
    */
   updated() {
+    /**
+     * @description original result is a data used for further manipulation
+     *              it's required to change it upon passing new value of `rowsData` (prop)
+     */
+    if( this.originalRowsData.length !== this.rowsData.length ){
+      this.originalRowsData = this.rowsData;
+      this.handleShowingTableDataForPaginationAndResult(this.currentResultPage);
+    }
+
     // deny working with the table if there is not data present to display
     if( !this.rowsData.length ){
       return;
@@ -285,15 +294,6 @@ export default {
     // set initial pagination count when opening page
     if (0 === this.paginationCount) {
       this.updatePaginationCount();
-    }
-
-    /**
-     * @description original result is a data used for further manipulation
-     *              it's required to change it upon passing new value of `rowsData` (prop)
-     */
-    if( this.originalRowsData.length !== this.rowsData.length ){
-      this.originalRowsData = this.rowsData;
-      this.handleShowingTableDataForPaginationAndResult(this.currentResultPage);
     }
   },
   watch: {

@@ -191,7 +191,6 @@ export default {
         this.isSpinnerVisible            = false;
 
         this.$refs.table.searchInput     = "";
-        this.$refs.table.handleShowingTableDataForPaginationAndResult(1);
       });
     },
     /**
