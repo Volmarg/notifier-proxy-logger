@@ -97,7 +97,8 @@ export default {
     },
   },
   emits: [
-      'pageNumberButton'
+      'paginationButtonClicked',
+      'handleShowingTableDataForPaginationAndResult',
   ],
   components: {
     'volt-table-head' : VoltTableHeadComponent,
@@ -315,5 +316,6 @@ export default {
   width: 37px;
   padding: 5px;
   margin: 3px;
+  color: #1c4e7f !important;
 }
 </style>

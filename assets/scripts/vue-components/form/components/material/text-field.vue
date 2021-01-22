@@ -2,7 +2,7 @@
 <template>
   <label class="mdc-text-field mdc-text-field--filled" :class="{'d-block': displayBlock}" ref="materialDesignTextField">
     <span class="mdc-text-field__ripple"></span>
-    <span class="mdc-floating-label" :class="{'mdc-floating-label--float-above': (textFieldValue.length > 0) }" id="my-label-id">{{label}}</span>
+    <span class="mdc-floating-label special-text-color" :class="{'mdc-floating-label--float-above': (textFieldValue.length > 0) }" id="my-label-id">{{label}}</span>
     <input class="mdc-text-field__input" type="text" aria-labelledby="my-label-id" v-model="textFieldValue">
     <span class="mdc-line-ripple"></span>
   </label>
@@ -43,3 +43,10 @@ export default {
   },
 }
 </script>
+
+<!-- Style -->
+<style scoped>
+.special-text-color:focus {
+  color: #1c4e7f !important;
+}
+</style>

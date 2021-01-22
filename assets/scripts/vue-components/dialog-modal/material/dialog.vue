@@ -9,11 +9,11 @@
         <div class="mdc-dialog__actions">
           <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="cancel">
             <div class="mdc-button__ripple"></div>
-            <span class="mdc-button__label">{{ cancelButtonTranslatedString }}</span>
+            <span class="mdc-button__label modal-action-button special-text-color">{{ cancelButtonTranslatedString }}</span>
           </button>
           <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="discard" @click="$emit('materialModalConfirmButtonClick')">
             <div class="mdc-button__ripple"></div>
-            <span class="mdc-button__label">{{ acceptButtonTranslatedString }}</span>
+            <span class="mdc-button__label modal-action-button special-text-color">{{ acceptButtonTranslatedString }}</span>
           </button>
         </div>
       </div>
@@ -32,6 +32,9 @@ let translationService = new TranslationsService();
 let dialog             = new Dialog();
 
 export default {
+  emits: [
+    'materialModalConfirmButtonClick',
+  ],
   props: {
     'cancelButtonTranslationString': {
       type     : String,
@@ -67,3 +70,14 @@ export default {
   }
 }
 </script>
+
+<!-- Style -->
+<style scoped lang="scss">
+.modal-action-button {
+  font-weight: bold;
+}
+
+.special-text-color {
+  color: #1c4e7f;
+}
+</style>

@@ -1,6 +1,6 @@
 <!-- Template -->
 <template>
-  <single-action @click="$emit('onEditActionClicked')" :classes="actionWrapperClasses">
+  <single-action @click="$emit('onEditActionClicked')" :tippy-content="editActionTranslatedString">
     <template #buttonIcon>
       <i class="far fa-edit action-icon"></i>
     </template>
@@ -9,20 +9,24 @@
 
 <!-- Script -->
 <script>
+import TranslationsService from "../../core/services/TranslationsService";
 
 import SingleActionWrapper from '../actions/components/single-action-wrapper';
 
+let translationsService = new TranslationsService();
+
 export default {
+  emits: [
+    'onEditActionClicked',
+  ],
   components: {
     "single-action": SingleActionWrapper,
   },
-  data(){
-    return {
-      actionWrapperClasses: {
-        'btn-secondary' : true
-      }
+  computed: {
+    editActionTranslatedString: function(){
+      return translationsService.getTranslationForString('actions.label.edit');
     }
-  },
+  }
 }
 </script>
 

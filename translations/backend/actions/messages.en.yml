@@ -1,3 +1,5 @@
 actions:
   label:
     general: Actions
+    edit: Edit
+    remove: Remove

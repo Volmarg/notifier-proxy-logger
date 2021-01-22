@@ -4,3 +4,9 @@
 @import "~@material/line-ripple/dist/mdc.line-ripple.min.css";
 @import "~@material/notched-outline/dist/mdc.notched-outline.min.css";
 @import "~@material/textfield/dist/mdc.textfield.min.css";
+
+// Some of the styles must be overwritten in here, the `vue` scoped directive won't work in this case
+$themeColor: rgb(28,78, 127);
+
+@import 'material/input_field.scss';
+@import 'material/dialog.scss';

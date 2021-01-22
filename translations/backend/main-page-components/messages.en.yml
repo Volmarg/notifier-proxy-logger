@@ -1,5 +1,5 @@
 mainPageComponents:
-  footer: 'Copyright © 2020 - <a href="https://github.com/Volmarg" target="_blank">Volmarg Reiso</a>'
+  footer: 'Copyright © 2021 - <a href="https://github.com/Volmarg" target="_blank" style="color: #1c4e7f; font-weight: bold;">Volmarg Reiso</a>'
   projectName: Notifier && Proxy Logger
   table:
     searchInput:

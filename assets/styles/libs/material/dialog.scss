@@ -1,0 +1,10 @@
+.mdc-dialog__button {
+  background-color: rgba(28,78, 127, 0.1) !important;
+}
+.mdc-button .mdc-button__ripple::before, .mdc-button .mdc-button__ripple::after{
+  background-color: rgba(28,78, 127, 0.55) !important;
+}
+
+.mdc-button .mdc-button__ripple:hover, .mdc-button .mdc-button__ripple:hover{
+  background-color: rgba(28,78, 127, 0.19) !important;
+}
