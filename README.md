@@ -32,9 +32,9 @@ planing i decided that I can still forward the messages to another internal proj
 <ol>
     <li><b style="display:inline"><img src="https://github.com/Volmarg/notifier-proxy-logger/blob/main/public/assets/images/icons/dashboard.png?raw=true" height="20px"/> Dashboard</b> - <span align="justify"><i>General overview via widgets</i>
         </span></li><br/>
-    <li><b style="display:inline"><img src="https://github.com/Volmarg/notifier-proxy-logger/blob/main/public/assets/images/icons/email.png?raw=true" height="20px"/> Mailing</b> - <span align="justify">Sent E-mails, alongside with possibility to test E-mail sending logic
+    <li><b style="display:inline"><img src="https://github.com/Volmarg/notifier-proxy-logger/blob/main/public/assets/images/icons/email.png?raw=true" height="20px"/> Mailing</b> - <span align="justify"><i>Sent E-mails, alongside with possibility to test E-mail sending logic </i>
         </span></li><br/>
-    <li><b style="display:inline"><img src="https://raw.githubusercontent.com/Volmarg/notifier-proxy-logger/main/public/assets/images/icons/discord.png" height="20px"/> Discord</b> - <span align="justify">Sent Discord messages, alongside with possibility to manage webhook endpoints 
+    <li><b style="display:inline"><img src="https://raw.githubusercontent.com/Volmarg/notifier-proxy-logger/main/public/assets/images/icons/discord.png" height="20px"/> Discord</b> - <span align="justify"><i>Sent Discord messages, alongside with possibility to manage webhook endpoints </i> 
 and messages sending logic.</span></li>
 </ol>
 
