@@ -1,7 +1,8 @@
-{% block link_button_row %}
+{% block link_button_widget %}
 
-    <a href="{{ href }}">
-        <button>{{ label }}</button>
+    {# This must be `<div> explicitly as Symfony form will otherwise submit form when the element is '<button>`#}
+    <a href="{{ href }}" target="{{ target }}">
+        <div {{ block('widget_attributes')}}>{{ label }}</div>
     </a>
 
 {% endblock %}

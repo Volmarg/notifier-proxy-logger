@@ -1,6 +1,7 @@
 {% set FIELD_USERNAME       = constant('App\\Form\\User\\UserLoginForm::FIELD_NAME_USERNAME') %}
 {% set FIELD_NAME_PASSWORD  = constant('App\\Form\\User\\UserLoginForm::FIELD_NAME_PASSWORD') %}
 {% set FIELD_NAME_SUBMIT    = constant('App\\Form\\User\\UserLoginForm::FIELD_NAME_SUBMIT') %}
+{% set FIELD_NAME_REGISTER  = constant('App\\Form\\User\\UserLoginForm::FIELD_NAME_REGISTER') %}
 
 <div class="text-center text-md-center mb-4 mt-md-0">
     <h1 class="mb-0 h3">{{ 'pages.login.header' | trans }}</h1>
@@ -48,6 +49,14 @@
     <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}" >
 
     {{ form_widget(userLoginForm[FIELD_NAME_SUBMIT], {
+        attr: {
+            "class": 'btn btn-block btn-primary'
+        }
+    }) }}
+
+    <br/>
+
+    {{ form_widget(userLoginForm[FIELD_NAME_REGISTER], {
         attr: {
             "class": 'btn btn-block btn-primary'
         }

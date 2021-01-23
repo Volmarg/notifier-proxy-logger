@@ -6,12 +6,12 @@ use App\Controller\Application;
 use App\Entity\User;
 use App\Form\ElementsTypes\LinkButtonType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class UserLoginForm extends AbstractType
 {
@@ -25,9 +25,15 @@ class UserLoginForm extends AbstractType
      */
     private Application $application;
 
-    public function __construct(Application $application)
+    /**
+     * @var UrlGeneratorInterface $urlGenerator
+     */
+    private UrlGeneratorInterface $urlGenerator;
+
+    public function __construct(Application $application, UrlGeneratorInterface $urlGenerator)
     {
-        $this->application = $application;
+        $this->urlGenerator = $urlGenerator;
+        $this->application  = $application;
     }
 
     /**
@@ -53,8 +59,8 @@ class UserLoginForm extends AbstractType
                 "label" => $this->application->trans('forms.loginForm.submit.label'),
             ])
             ->add(self::FIELD_NAME_REGISTER, LinkButtonType::class, [
-                "label" => $this->application->trans('forms.loginForm.register.label'),
-                "href"  => "http://www.google.com/",
+                "label"  => $this->application->trans('forms.loginForm.register.label'),
+                "href"   => $this->urlGenerator->generate('register'),
             ]);
     }
 
