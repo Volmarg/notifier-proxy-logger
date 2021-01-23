@@ -100,6 +100,13 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
             throw new CustomUserMessageAuthenticationException('Username could not be found.');
         }
 
+        // even though symfony validates the password later on, it returns unwanted messages, and there is no way to surprase it
+        $isPasswordValid = $this->checkCredentials($credentials, $user);
+        if(!$isPasswordValid){
+            $message = $this->application->trans('authentication.messages.invalidPassword');
+            throw new CustomUserMessageAuthenticationException($message);
+        }
+
         return $user;
     }
 

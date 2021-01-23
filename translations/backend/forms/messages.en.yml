@@ -20,6 +20,8 @@ forms:
       placeholder: Your Password
     submit:
       label: Sign in
+    register:
+      label: Register
   sendTestMailForm:
     receiver:
       label: Receiver
