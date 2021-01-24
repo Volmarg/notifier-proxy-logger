@@ -87,4 +87,28 @@ class DiscordMessageController extends AbstractController
         return $discordMessage;
     }
 
+    /**
+     * Will return all the messages that can be processed further
+     *
+     * @return DiscordMessage[]
+     */
+    public function getAllProcessableMessages(): array
+    {
+        return $this->app->getRepositories()->getDiscordMessageRepository()->getAllProcessableMessages();
+    }
+
+    /**
+     * Will set given status to the entity and will update it the database
+     *
+     * @param DiscordMessage $message
+     * @param string $status
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function updateStatus(DiscordMessage $message, string $status): void
+    {
+        $message->setStatus($status);
+        $this->saveEntity($message);
+    }
+
 }

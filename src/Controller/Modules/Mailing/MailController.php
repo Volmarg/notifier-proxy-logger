@@ -9,6 +9,9 @@ use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Notifier\Notification\Notification;
+use Symfony\Component\Notifier\NotifierInterface;
+use Symfony\Component\Notifier\Recipient\Recipient;
 
 class MailController extends AbstractController
 {
@@ -18,9 +21,15 @@ class MailController extends AbstractController
      */
     private Application $app;
 
-    public function __construct(Application $app)
+    /**
+     * @var NotifierInterface $notifier
+     */
+    private NotifierInterface $notifier;
+
+    public function __construct(Application $app, NotifierInterface $notifier)
     {
-        $this->app = $app;
+        $this->notifier = $notifier;
+        $this->app      = $app;
     }
 
     /**
@@ -76,4 +85,45 @@ class MailController extends AbstractController
         return $this->app->getRepositories()->getMailRepository()->saveEntity($mail);
     }
 
+    /**
+     * Will return all the emails that can be processed further
+     *
+     * @return Mail[]
+     */
+    public function getAllProcessableEmails(): array
+    {
+        return $this->app->getRepositories()->getMailRepository()->getAllProcessableEmails();
+    }
+
+    /**
+     * Will set given status to the entity and will update it the database
+     *
+     * @param Mail $mail
+     * @param string $status
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function updateStatus(Mail $mail, string $status): void
+    {
+        $mail->setStatus($status);
+        $this->saveEntity($mail);
+    }
+
+    /**
+     * Will send single email
+     *
+     * @param Mail $mail
+     */
+    public function sendSingleEmail(Mail $mail)
+    {
+        $notification = new Notification();
+        $notification->subject($mail->getSubject());
+        $notification->content($mail->getBody());
+
+        foreach($mail->getToEmails() as $singleEmailString){
+            $notificationRecipient = new Recipient($singleEmailString);
+            $this->notifier->send($notification, $notificationRecipient);
+        }
+
+    }
 }

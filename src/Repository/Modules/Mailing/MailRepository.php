@@ -5,6 +5,7 @@ namespace App\Repository\Modules\Mailing;
 use App\Entity\Modules\Mailing\Mail;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
@@ -76,6 +77,25 @@ class MailRepository extends ServiceEntityRepository
         $this->_em->flush();
 
         return $mail;
+    }
+
+    /**
+     * Will return all the emails that can be processed further
+     *
+     * @return Mail[]
+     */
+    public function getAllProcessableEmails(): array
+    {
+        $queryBuilder = $this->_em->createQueryBuilder();
+
+        $queryBuilder->select('m')
+            ->from(Mail::class, 'm')
+            ->where('m.status IN (:statuses)')
+            ->setParameter('statuses', Mail::PROCESSABLE_STATUSES, Connection::PARAM_STR_ARRAY);
+
+        $results = $queryBuilder->getQuery()->execute();
+
+        return $results;
     }
 
 }

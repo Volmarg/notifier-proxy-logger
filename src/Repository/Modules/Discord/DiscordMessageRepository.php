@@ -3,8 +3,10 @@
 namespace App\Repository\Modules\Discord;
 
 use App\Entity\Modules\Discord\DiscordMessage;
+use App\Entity\Modules\Discord\DiscordWebhook;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
@@ -76,6 +78,29 @@ class DiscordMessageRepository extends ServiceEntityRepository
         $this->_em->flush();
 
         return $discordMessage;
+    }
+
+    /**
+     * Will return all the messages that can be processed further
+     *
+     * @return DiscordMessage[]
+     */
+    public function getAllProcessableMessages(): array
+    {
+        $queryBuilder = $this->_em->createQueryBuilder();
+
+        $queryBuilder->select('dm')
+            ->from(DiscordMessage::class, 'dm')
+            ->join(DiscordWebhook::class, "dwh")
+            ->where('dm.status IN (:statuses)')
+            ->andWhere('dwh.webhookName != :webhookName')
+            ->andWhere('dwh.deleted = 0')
+            ->setParameter('statuses', DiscordMessage::PROCESSABLE_STATUSES, Connection::PARAM_STR_ARRAY)
+            ->setParameter('webhookName', DiscordWebhook::PLACEHOLDER_WEBHOOK_NAME);
+
+        $results = $queryBuilder->getQuery()->execute();
+
+        return $results;
     }
 
 }

@@ -81,7 +81,7 @@ class DiscordWebhookRepository extends ServiceEntityRepository
     public function getPlaceholderWebhook(): ?DiscordWebhook
     {
         return $this->findOneBy([
-           DiscordWebhook::FIELD_NAME_USERNAME => DiscordWebhook::PLACEHOLDER_WEBHOOK_USERNAME
+           DiscordWebhook::FIELD_NAME_WEBHOOK_NAME => DiscordWebhook::PLACEHOLDER_WEBHOOK_NAME
         ]);
     }
 }

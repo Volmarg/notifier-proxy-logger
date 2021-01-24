@@ -8,14 +8,13 @@ use App\DTO\API\BaseApiResponseDto;
 use App\DTO\API\Internal\GetAllEmailsResponseDto;
 use App\DTO\Modules\Mailing\MailDTO;
 use App\DTO\Modules\Mailing\SendTestMailDTO;
+use App\Entity\Modules\Mailing\Mail;
 use App\Services\Internal\FormService;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Notifier\Notification\Notification;
 use Symfony\Component\Notifier\NotifierInterface;
-use Symfony\Component\Notifier\Recipient\Recipient;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route("/modules/mailing", name: "modules_mailing_")]
@@ -71,12 +70,12 @@ class MailingAction extends AbstractController
                  */
                 $sendTestMailDto = $testMailForm->getData();
 
-                $notification = new Notification();
-                $notification->subject($sendTestMailDto->getMessageTitle());
-                $notification->content($sendTestMailDto->getMessageBody());
+                $mail = new Mail();
+                $mail->setBody($sendTestMailDto->getMessageBody());
+                $mail->setSubject($sendTestMailDto->getMessageTitle());
+                $mail->setToEmails([$sendTestMailDto->getReceiver()]);
 
-                $notificationRecipient = new Recipient($sendTestMailDto->getReceiver());
-                $this->notifier->send($notification, $notificationRecipient);
+                $this->controllers->getMailingController()->sendSingleEmail($mail);
             }elseif( $testMailForm->isSubmitted() && !$testMailForm->isValid() ){
                 $message = $this->application->trans('pages.mailing.sendTestMail.messages.fail');
                 $baseResponseDto->prefillBaseFieldsForBadRequestResponse();

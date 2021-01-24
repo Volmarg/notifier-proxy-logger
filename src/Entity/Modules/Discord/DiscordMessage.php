@@ -21,6 +21,11 @@ class DiscordMessage implements EntityInterface
     const STATUS_PENDING = "PENDING";
     const STATUS_ERROR   = "ERROR";
 
+    const PROCESSABLE_STATUSES = [
+        self::STATUS_PENDING,
+        self::STATUS_ERROR,
+    ];
+
     const ALL_STATUSES = [
         self::STATUS_SENT,
         self::STATUS_PENDING,
