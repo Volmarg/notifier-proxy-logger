@@ -75,6 +75,22 @@ export default class SymfonyRoutes {
     static readonly SEND_DISCORD_TEST_MESSAGE = "/modules/discord/send-test-message-discord"
 
     /**
+     * @description will add single discord webhook
+     */
+    static readonly ADD_MAIL_ACCOUNT = "/modules/mailing/add-mail-account";
+
+    /**
+     * @description will return all mail accounts
+     */
+    static readonly GET_ALL_MAIL_ACCOUNTS = "/modules/mailing/get-all-mails-accounts";
+
+    /**
+     * @description handles the removal of single account mail by the provided id
+     */
+    static readonly REMOVE_MAIL_ACCOUNT                  = "/modules/mailing/remove-mail-account/{mailAccountId}";
+    static readonly REMOVE_MAIL_ACCOUNT_PARAM_WEBHOOK_ID = "{mailAccountId}";
+
+    /**
      * @description will use the url with params and replace the params with values
      */
     public static buildUrlWithReplacedParams(processedUrl: string, replacedParamsWithValues: object): string

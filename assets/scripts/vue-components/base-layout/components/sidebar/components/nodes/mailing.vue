@@ -25,6 +25,11 @@
             <span>{{ historyTranslation }}</span>
           </router-link>
         </li>
+        <li class="nav-item" :class="{'active': ( this.$route.name === 'modules_mailing_settings' )}">
+          <router-link :to="{name: 'modules_mailing_settings'}" class="nav-link">
+            <span>{{ settings }}</span>
+          </router-link>
+        </li>
       </ul>
     </div>
   </li>
@@ -51,6 +56,11 @@ export default {
     historyTranslation : {
       get: function(){
         return translationService.getTranslationForString('sidebar.menu.nodes.mailing.history.label');
+      }
+    },
+    settings : {
+      get: function(){
+        return translationService.getTranslationForString('sidebar.menu.nodes.discord.settings.label');
       }
     }
   }

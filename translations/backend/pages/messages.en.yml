@@ -33,6 +33,32 @@ pages:
       messages:
         errors:
           couldNotGetAllSentEmails: Could not get all sent Emails
+    addMailAccount:
+      header:
+        main: Add mail account
+      messages:
+        success: Mail account has been added
+        invalidDataHasBeenProvided: Invalid data has been provided
+        fail: Could not add the mail account
+    manageMailAccounts:
+      headers:
+        main: Manage mail accounts
+      table:
+        headers:
+          client: Client
+          name: Name
+          login: Login
+          actions: Actions
+    getAllMailsAccount:
+      messages:
+        errors:
+          couldNotGetAllEmailsAccounts: Could not get all emails accounts
+    removeMailAccount:
+      messages:
+        success: Mail account has been removed
+        fail:
+          noMailAccountWasFound: No mail account was found for given id
+          failedToRemove: Failed to remove webhook
   discord:
     getAllWebhooks:
       messages:

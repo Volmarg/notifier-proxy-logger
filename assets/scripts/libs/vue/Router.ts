@@ -1,6 +1,7 @@
 import {createRouter, createWebHistory, RouterOptions}  from 'vue-router';
 import MailingModuleOverviewComponent                   from '../../vue-components/pages/modules/mailing/mailing-test-sending.vue';
 import MailingModuleHistoryComponent                    from '../../vue-components/pages/modules/mailing/mailing-history.vue';
+import MailSettingsComponent                            from '../../vue-components/pages/modules/mailing/mailing-settings.vue';
 import DashboardOverviewComponent                       from '../../vue-components/pages/modules/dashboard/overview.vue';
 import DiscordWebhookManagementComponent                from '../../vue-components/pages/modules/discord/discord-manage-webhooks.vue';
 import DiscordTestSendingComponent                      from '../../vue-components/pages/modules/discord/discord-test-sending.vue';
@@ -44,6 +45,11 @@ export default class Router {
             path      : "/modules/discord/history",
             component : DiscordHistoryComponent,
             name      : "modules_discord_history"
+        },
+        {
+            path      : "/modules/mailing/settings",
+            component : MailSettingsComponent,
+            name      : "modules_mailing_settings",
         }
     ];
 

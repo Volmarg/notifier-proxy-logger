@@ -5,7 +5,9 @@ namespace App\Action\Modules\Mailing;
 use App\Controller\Application;
 use App\Controller\Core\Controllers;
 use App\DTO\API\BaseApiResponseDto;
+use App\DTO\API\Internal\GetAllEmailsAccountsResponseDto;
 use App\DTO\API\Internal\GetAllEmailsResponseDto;
+use App\DTO\Modules\Mailing\MailAccountDTO;
 use App\DTO\Modules\Mailing\MailDTO;
 use App\DTO\Modules\Mailing\SendTestMailDTO;
 use App\Entity\Modules\Mailing\Mail;
@@ -133,4 +135,123 @@ class MailingAction extends AbstractController
             return $baseResponseDto->toJsonResponse();
         }
     }
+
+    /**
+     * Will return all mails accounts
+`     * @return JsonResponse
+     */
+    #[Route("/get-all-mails-accounts", name: "get_all_mails_accounts", methods: ["GET"])]
+    public function getAllMailsAccount(): JsonResponse
+    {
+        try{
+            $mailsAccounts = $this->controllers->getMailAccountController()->getAllMailAccounts();
+
+            $arrayOfDtosJsons = [];
+            foreach($mailsAccounts as $mailAccount){
+                $mailAccountDto = new MailAccountDTO();
+                $mailAccountDto->setId($mailAccount->getId());
+                $mailAccountDto->setName($mailAccount->getName());
+                $mailAccountDto->setClient($mailAccount->getClient());
+                $mailAccountDto->setLogin($mailAccount->getLogin());
+                $mailAccountDto->setPassword($mailAccount->getPassword()); // todo: encrypt that somewhere in future
+
+                $arrayOfDtosJsons[] = $mailAccountDto->toJson();
+            }
+
+            $responseDto = new GetAllEmailsAccountsResponseDto();
+            $responseDto->prefillBaseFieldsForSuccessResponse();
+            $responseDto->setEmailsAccountsJsons($arrayOfDtosJsons);
+
+            return $responseDto->toJsonResponse();
+        }catch(Exception $e){
+            $this->application->getLoggerService()->logThrowable($e);
+
+            $message = $this->application->trans('pages.mailing.getAllMailsAccount.messages.errors.couldNotGetAllEmailsAccounts');
+
+            $baseResponseDto = BaseApiResponseDto::buildInternalServerErrorResponse();
+            $baseResponseDto->setMessage($message);
+
+            return $baseResponseDto->toJsonResponse();
+        }
+    }
+
+    /**
+     * Handles the frontend (axios) request to add the mail account
+     *
+     * @param Request $request
+     * @return JsonResponse
+     * @throws Exception
+     */
+    #[Route("/add-mail-account", name: "add_mail_account", methods: ["POST"])]
+    public function addMailAccount(Request $request): JsonResponse
+    {
+        try{
+            $successMessage = $this->application->trans('pages.mailing.addMailAccount.messages.success');
+
+            $baseResponseDto = new BaseApiResponseDto();
+            $baseResponseDto->prefillBaseFieldsForSuccessResponse();
+            $baseResponseDto->setMessage($successMessage);
+
+            $addMailAccountForm = $this->application->getForms()->getAddMailAccount();
+            $this->formService->handlePostFormForAxiosCall($addMailAccountForm, $request);
+
+            if( $addMailAccountForm->isSubmitted() && $addMailAccountForm->isValid() ){
+                $mailAccount = $addMailAccountForm->getData();
+                $this->controllers->getMailAccountController()->saveMailAccount($mailAccount);
+            }else{
+                $failMessage = $this->application->trans('pages.mailing.addMailAccount.messages.invalidDataHasBeenProvided');
+
+                $baseResponseDto->prefillBaseFieldsForBadRequestResponse();
+                $baseResponseDto->setMessage($failMessage);
+            }
+        }catch(Exception $e){
+            $this->application->getLoggerService()->logThrowable($e);
+
+            $message = $this->application->trans('pages.mailing.addMailAccount.messages.fail');
+
+            $baseResponseDto = BaseApiResponseDto::buildInternalServerErrorResponse();
+            $baseResponseDto->setMessage($message);
+
+            return $baseResponseDto->toJsonResponse();
+        }
+
+        return $baseResponseDto->toJsonResponse();
+    }
+
+    /**
+     * Handles the removal of single mail account
+     *
+     * @param string mailAccountId
+     * @return JsonResponse
+     */
+    #[Route("/remove-mail-account/{mailAccountId}", name: "remove_mail_account", methods: [ "GET" ])]
+    public function removeMailAccount(string $mailAccountId): JsonResponse
+    {
+        try{
+            $mailAccount = $this->controllers->getMailAccountController()->getOneById($mailAccountId);
+            if( empty($mailAccount) ){
+                $message = $this->application->trans('pages.mailing.removeMailAccount.messages.fail.noMailAccountWasFound');
+                return BaseApiResponseDto::buildBadRequestErrorResponse($message)->toJsonResponse();
+            }
+
+            $this->controllers->getMailAccountController()->hardDelete($mailAccount);
+
+            $successMessage = $this->application->trans('pages.mailing.removeMailAccount.messages.success');
+            $baseResponseDto = new BaseApiResponseDto();
+            $baseResponseDto->prefillBaseFieldsForSuccessResponse();
+            $baseResponseDto->setMessage($successMessage);
+        }catch(Exception $e){
+            $this->application->getLoggerService()->logThrowable($e);
+
+            $message = $this->application->trans('pages.mailing.removeMailAccount.messages.fail.failedToRemove');
+
+            $baseResponseDto = BaseApiResponseDto::buildInternalServerErrorResponse();
+            $baseResponseDto->setMessage($message);
+
+            return $baseResponseDto->toJsonResponse();
+        }
+
+        return $baseResponseDto->toJsonResponse();
+    }
+
 }

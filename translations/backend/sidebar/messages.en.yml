@@ -17,3 +17,5 @@ sidebar:
           label: Manage webhooks
         history:
           label: History
+        settings:
+          label: Settings

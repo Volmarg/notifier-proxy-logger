@@ -49,6 +49,21 @@ forms:
       placeholder: Name of the user that will be show in chat
     submit:
       label: Submit
+  addMailAccountForm:
+    client:
+      label: Client
+      placeholder: Gmail, hotmail, etc. (provider name)
+    name:
+      label: Name
+      placeholder: Unique name of the entry in database
+    login:
+      label: Login
+      placeholder: Login for the mailbox
+    password:
+      label: Password
+      placeholder: Password used to login into the mailbox
+    submit:
+      label: Submit
   testDiscordMessageForm:
     webhooks:
       label: Webhooks

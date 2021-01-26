@@ -6,9 +6,11 @@ namespace App\Controller;
 
 use App\DTO\Modules\Mailing\SendTestMailDTO;
 use App\Entity\Modules\Discord\DiscordWebhook;
+use App\Entity\Modules\Mailing\MailAccount;
 use App\Entity\User;
 use App\Form\Modules\Discord\AddDiscordWebhookForm;
 use App\Form\Modules\Discord\SendTestDiscordMessageForm;
+use App\Form\Modules\Mailing\AddMailAccountForm;
 use App\Form\Modules\Mailing\SendTestMailForm;
 use App\Form\User\UserLoginForm;
 use App\Form\User\UserRegisterForm;
@@ -65,6 +67,16 @@ class Forms extends AbstractController
     public function getAddDiscordWebhookForm(?DiscordWebhook $discordWebhook = null, array $options = []): FormInterface
     {
         return $this->createForm(AddDiscordWebhookForm::class, $discordWebhook, $options);
+    }
+
+    /**
+     * @param MailAccount|null $mailAccount
+     * @param array $options
+     * @return FormInterface
+     */
+    public function getAddMailAccount(?MailAccount $mailAccount = null, array $options = []): FormInterface
+    {
+        return $this->createForm(AddMailAccountForm::class, $mailAccount, $options);
     }
 
 }
