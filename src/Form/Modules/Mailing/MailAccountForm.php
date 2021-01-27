@@ -12,7 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class AddMailAccountForm extends AbstractType
+class MailAccountForm extends AbstractType
 {
 
     const FIELD_NAME_CLIENT   = 'client';

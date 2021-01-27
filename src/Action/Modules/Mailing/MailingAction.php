@@ -11,7 +11,9 @@ use App\DTO\Modules\Mailing\MailAccountDTO;
 use App\DTO\Modules\Mailing\MailDTO;
 use App\DTO\Modules\Mailing\SendTestMailDTO;
 use App\Entity\Modules\Mailing\Mail;
+use App\Entity\Modules\Mailing\MailAccount;
 use App\Services\Internal\FormService;
+use App\Services\Internal\ValidationService;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -22,6 +24,12 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route("/modules/mailing", name: "modules_mailing_")]
 class MailingAction extends AbstractController
 {
+    const KEY_ID       = "id";
+    const KEY_CLIENT   = "client";
+    const KEY_NAME     = "name";
+    const KEY_LOGIN    = "login";
+    const KEY_PASSWORD = "password";
+
     /**
      * @var Application $application
      */
@@ -42,12 +50,24 @@ class MailingAction extends AbstractController
      */
     private Controllers $controllers;
 
-    public function __construct(Application $application, NotifierInterface $notifier, FormService $formService, Controllers $controllers)
+    /**
+     * @var ValidationService $validationService
+     */
+    private ValidationService $validationService;
+
+    public function __construct(
+        Application       $application,
+        NotifierInterface $notifier,
+        FormService       $formService,
+        Controllers       $controllers,
+        ValidationService $validationService
+    )
     {
-        $this->controllers = $controllers;
-        $this->application = $application;
-        $this->formService = $formService;
-        $this->notifier    = $notifier;
+        $this->validationService = $validationService;
+        $this->controllers       = $controllers;
+        $this->application       = $application;
+        $this->formService       = $formService;
+        $this->notifier          = $notifier;
     }
 
     /**
@@ -192,11 +212,11 @@ class MailingAction extends AbstractController
             $baseResponseDto->prefillBaseFieldsForSuccessResponse();
             $baseResponseDto->setMessage($successMessage);
 
-            $addMailAccountForm = $this->application->getForms()->getAddMailAccount();
-            $this->formService->handlePostFormForAxiosCall($addMailAccountForm, $request);
+            $mailAccountForm = $this->application->getForms()->getMailAccount();
+            $this->formService->handlePostFormForAxiosCall($mailAccountForm, $request);
 
-            if( $addMailAccountForm->isSubmitted() && $addMailAccountForm->isValid() ){
-                $mailAccount = $addMailAccountForm->getData();
+            if( $mailAccountForm->isSubmitted() && $mailAccountForm->isValid() ){
+                $mailAccount = $mailAccountForm->getData();
                 $this->controllers->getMailAccountController()->saveMailAccount($mailAccount);
             }else{
                 $failMessage = $this->application->trans('pages.mailing.addMailAccount.messages.invalidDataHasBeenProvided');
@@ -244,6 +264,69 @@ class MailingAction extends AbstractController
             $this->application->getLoggerService()->logThrowable($e);
 
             $message = $this->application->trans('pages.mailing.removeMailAccount.messages.fail.failedToRemove');
+
+            $baseResponseDto = BaseApiResponseDto::buildInternalServerErrorResponse();
+            $baseResponseDto->setMessage($message);
+
+            return $baseResponseDto->toJsonResponse();
+        }
+
+        return $baseResponseDto->toJsonResponse();
+    }
+
+    /**
+     * Handles the frontend (axios) request to update the mail account
+     *
+     * @param Request $request
+     * @param string $mailAccountId
+     * @return JsonResponse
+     */
+    #[Route("/update-mail-account/{mailAccountId}", name: "update_mail_account", methods: ["POST"])]
+    public function updateMailAccount(Request $request, string $mailAccountId): JsonResponse
+    {
+        try{
+            $mailAccountForm = $this->application->getForms()->getMailAccount();
+            $mailAccountForm = $this->formService->handlePostFormForAxiosCall($mailAccountForm, $request);
+
+            /** @var $updatedMailAccountData MailAccount */
+            if( $mailAccountForm->isSubmitted() && $mailAccountForm->isValid() ){
+
+                $mailAccount = $this->controllers->getMailAccountController()->getOneById($mailAccountId);
+                if( empty($mailAccount) ){
+                    $message = $this->application->trans('pages.mailing.updateMailAccount.messages.noMailAccountHasBeenFound');
+                    return BaseApiResponseDto::buildBadRequestErrorResponse($message)->toJsonResponse();
+                }
+
+                $updatedMailAccountData = $mailAccountForm->getData();
+                $violations             = $this->validationService->validateAndReturnInvalidFieldsWithMessagesForResponse($mailAccount);
+
+                if( !empty($violations) ){
+                    $message = $this->application->trans('api.internal.general.fieldsViolations', [
+                        '{{fieldsList}}' => $violations,
+                    ]);
+                    return BaseApiResponseDto::buildBadRequestErrorResponse($message)->toJsonResponse();
+                }
+
+                $mailAccount->setClient($updatedMailAccountData->getClient());
+                $mailAccount->setName($updatedMailAccountData->getName());
+                $mailAccount->setLogin($updatedMailAccountData->getLogin());
+                $mailAccount->setPassword($updatedMailAccountData->getPassword());
+
+                $this->controllers->getMailAccountController()->save($mailAccount);
+
+                $successMessage = $this->application->trans('pages.mailing.updateMailAccount.messages.success');
+                $baseResponseDto = new BaseApiResponseDto();
+                $baseResponseDto->prefillBaseFieldsForSuccessResponse();
+                $baseResponseDto->setMessage($successMessage);
+            }else{
+                $message = $this->application->trans('pages.mailing.updateMailAccount.messages.badRequest');
+                return BaseApiResponseDto::buildBadRequestErrorResponse($message)->toJsonResponse();
+            }
+
+        }catch(Exception $e){
+            $this->application->getLoggerService()->logThrowable($e);
+
+            $message = $this->application->trans('pages.mailing.updateMailAccount.messages.fail');
 
             $baseResponseDto = BaseApiResponseDto::buildInternalServerErrorResponse();
             $baseResponseDto->setMessage($message);

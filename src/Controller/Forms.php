@@ -10,7 +10,7 @@ use App\Entity\Modules\Mailing\MailAccount;
 use App\Entity\User;
 use App\Form\Modules\Discord\AddDiscordWebhookForm;
 use App\Form\Modules\Discord\SendTestDiscordMessageForm;
-use App\Form\Modules\Mailing\AddMailAccountForm;
+use App\Form\Modules\Mailing\MailAccountForm;
 use App\Form\Modules\Mailing\SendTestMailForm;
 use App\Form\User\UserLoginForm;
 use App\Form\User\UserRegisterForm;
@@ -74,9 +74,9 @@ class Forms extends AbstractController
      * @param array $options
      * @return FormInterface
      */
-    public function getAddMailAccount(?MailAccount $mailAccount = null, array $options = []): FormInterface
+    public function getMailAccount(?MailAccount $mailAccount = null, array $options = []): FormInterface
     {
-        return $this->createForm(AddMailAccountForm::class, $mailAccount, $options);
+        return $this->createForm(MailAccountForm::class, $mailAccount, $options);
     }
 
 }

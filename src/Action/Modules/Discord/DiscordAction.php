@@ -83,7 +83,7 @@ class DiscordAction extends AbstractController
         $dataArray              = json_decode($requestBodyContentJson, true);
 
         if( !array_key_exists(self::KEY_MESSAGE, $dataArray) ){
-            $message = $this->app->trans('pages.discord.testMessageSending.missingParameterInRequest', [
+            $message = $this->app->trans('api.internal.general.missingParameterInRequest', [
                 "{{parameterName}}" => self::KEY_MESSAGE
             ]);
             $responseDto = DiscordWebhookResponseDto::buildBadRequestErrorResponse();
@@ -93,7 +93,7 @@ class DiscordAction extends AbstractController
         }
 
         if( !array_key_exists(self::KEY_WEBHOOK_ID, $dataArray) ){
-            $message = $this->app->trans('pages.discord.testMessageSending.missingParameterInRequest', [
+            $message = $this->app->trans('api.internal.general.missingParameterInRequest', [
                 "{{parameterName}}" => self::KEY_WEBHOOK_ID
             ]);
             $responseDto = DiscordWebhookResponseDto::buildBadRequestErrorResponse();
@@ -103,7 +103,7 @@ class DiscordAction extends AbstractController
         }
 
         if( !array_key_exists(self::KEY_TITLE, $dataArray) ){
-            $message = $this->app->trans('pages.discord.testMessageSending.missingParameterInRequest', [
+            $message = $this->app->trans('api.internal.general.missingParameterInRequest', [
                 "{{parameterName}}" => self::KEY_TITLE
             ]);
             $responseDto = DiscordWebhookResponseDto::buildBadRequestErrorResponse();
@@ -115,6 +115,8 @@ class DiscordAction extends AbstractController
         $webhookId      = $dataArray[self::KEY_WEBHOOK_ID];
         $webhookMessage = $dataArray[self::KEY_MESSAGE];
         $webhookTitle   = $dataArray[self::KEY_TITLE];
+
+        // todo: remove up to this point, form should handle it
 
         try{
 
@@ -208,7 +210,7 @@ class DiscordAction extends AbstractController
     }
 
     /**
-     * Handles the frontend (axios) request to add the discord webhook
+     * Handles the frontend (axios) request to update the discord webhook
      *
      * @param Request $request
      * @return JsonResponse
@@ -220,7 +222,7 @@ class DiscordAction extends AbstractController
         try{
             $requestContentArray = json_decode($request->getContent(), true);
             if( !array_key_exists(self::KEY_WEBHOOK_URL, $requestContentArray) ){
-                $message = $this->app->trans('pages.discord.testMessageSending.missingParameterInRequest', [
+                $message = $this->app->trans('api.internal.general.missingParameterInRequest', [
                     '{{parameterName}}' => self::KEY_WEBHOOK_URL,
                 ]);
 
@@ -228,7 +230,7 @@ class DiscordAction extends AbstractController
             }
 
             if( !array_key_exists(self::KEY_WEBHOOK_NAME, $requestContentArray) ){
-                $message = $this->app->trans('pages.discord.testMessageSending.missingParameterInRequest', [
+                $message = $this->app->trans('api.internal.general.missingParameterInRequest', [
                     '{{parameterName}}' => self::KEY_WEBHOOK_NAME,
                 ]);
 
@@ -236,7 +238,7 @@ class DiscordAction extends AbstractController
             }
 
             if( !array_key_exists(self::KEY_USERNAME, $requestContentArray) ){
-                $message = $this->app->trans('pages.discord.testMessageSending.missingParameterInRequest', [
+                $message = $this->app->trans('api.internal.general.missingParameterInRequest', [
                     '{{parameterName}}' => self::KEY_USERNAME,
                 ]);
 
@@ -244,7 +246,7 @@ class DiscordAction extends AbstractController
             }
 
             if( !array_key_exists(self::KEY_DESCRIPTION, $requestContentArray) ){
-                $message = $this->app->trans('pages.discord.testMessageSending.missingParameterInRequest', [
+                $message = $this->app->trans('api.internal.general.missingParameterInRequest', [
                     '{{parameterName}}' => self::KEY_DESCRIPTION,
                 ]);
 
@@ -252,7 +254,7 @@ class DiscordAction extends AbstractController
             }
 
             if( !array_key_exists(self::KEY_ENTITY_ID, $requestContentArray) ){
-                $message = $this->app->trans('pages.discord.testMessageSending.missingParameterInRequest', [
+                $message = $this->app->trans('api.internal.general.missingParameterInRequest', [
                     '{{parameterName}}' => self::KEY_ENTITY_ID,
                 ]);
 
@@ -278,7 +280,7 @@ class DiscordAction extends AbstractController
 
             $violations = $this->validationService->validateAndReturnInvalidFieldsWithMessagesForResponse($discordWebhook);
             if( !empty($violations) ){
-                $message = $this->app->trans('api.external.general.messages.fieldsViolations', [
+                $message = $this->app->trans('api.internal.general.fieldsViolations', [
                     '{{fieldsList}}' => $violations,
                 ]);
                 return BaseApiResponseDto::buildBadRequestErrorResponse($message)->toJsonResponse();

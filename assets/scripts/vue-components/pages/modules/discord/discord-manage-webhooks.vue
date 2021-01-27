@@ -46,13 +46,13 @@
                 >
 
                   <!-- Webhook url -->
-                  <material-text-field :display-block="true" :label="webhookUrlTranslatedString"  :value="discordWebhookDto.webhookUrl"  :ref="'materialEditModalWebhookUrlInput_'  + discordWebhookDto.id"/>
+                  <material-input-field :display-block="true" :label="webhookUrlTranslatedString"  :value="discordWebhookDto.webhookUrl"  :ref="'materialEditModalWebhookUrlInput_'  + discordWebhookDto.id"/>
                   <!-- Webhook name -->
-                  <material-text-field :display-block="true" :label="webhookNameTranslatedString" :value="discordWebhookDto.webhookName" :ref="'materialEditModalWebhookNameInput_' + discordWebhookDto.id"/>
+                  <material-input-field :display-block="true" :label="webhookNameTranslatedString" :value="discordWebhookDto.webhookName" :ref="'materialEditModalWebhookNameInput_' + discordWebhookDto.id"/>
                   <!-- Username-->
-                  <material-text-field :display-block="true" :label="usernameTranslatedString"    :value="discordWebhookDto.username"    :ref="'materialEditModalUsernameInput_'    + discordWebhookDto.id"/>
+                  <material-input-field :display-block="true" :label="usernameTranslatedString"    :value="discordWebhookDto.username"    :ref="'materialEditModalUsernameInput_'    + discordWebhookDto.id"/>
                   <!-- Description -->
-                  <material-text-field :display-block="true" :label="descriptionTranslatedString" :value="discordWebhookDto.description" :ref="'materialEditModalDescriptionInput_' + discordWebhookDto.id"/>
+                  <material-input-field :display-block="true" :label="descriptionTranslatedString" :value="discordWebhookDto.description" :ref="'materialEditModalDescriptionInput_' + discordWebhookDto.id"/>
                 </material-dialog>
 
                 <!-- Remove Dialog -->
@@ -89,7 +89,7 @@ import VoltTableComponent               from '../../../table/volt/table';
 import VoltCellComponent                from '../../../table/volt/table-cell';
 import SemipolarSpinnerComponent        from '../../../../vue-components/libs/epic-spinners/semipolar-spinner'
 import AddDiscordWebhookFormComponent   from '../../../../vue-components/form/modules/discord/add-discord-webhook-form'
-import MaterialTextFieldComponent       from '../../../../vue-components/form/components/material/text-field';
+import MaterialInputFieldComponent      from '../../../form/components/material/input-field';
 import MaterialDesignDialogComponent    from '../../../../vue-components/dialog-modal/material/dialog';
 import VoltTableRowComponent            from "../../../../vue-components/table/volt/table-row";
 import EditActionComponent              from '../../../actions/edit-action';
@@ -118,7 +118,7 @@ export default {
     'volt-table'               : VoltTableComponent,
     'semipolar-spinner'        : SemipolarSpinnerComponent,
     'add-discord-webhook-form' : AddDiscordWebhookFormComponent,
-    'material-text-field'      : MaterialTextFieldComponent,
+    'material-input-field'     : MaterialInputFieldComponent,
     'material-dialog'          : MaterialDesignDialogComponent,
     'volt-table-row'           : VoltTableRowComponent,
   },
@@ -258,7 +258,7 @@ export default {
      * @description will handle edit modal confirmation button click
      * @param discordWebhookDtoEntityId       String
      */
-    onMaterialEditModalConfirmButtonClick(discordWebhookDtoEntityId){
+    async onMaterialEditModalConfirmButtonClick(discordWebhookDtoEntityId){
 
       if( !this.hasDtoEntityWithId(discordWebhookDtoEntityId, this.currentlyVisibleDataInTable) ){
         throw {

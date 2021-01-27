@@ -59,6 +59,14 @@ pages:
         fail:
           noMailAccountWasFound: No mail account was found for given id
           failedToRemove: Failed to remove webhook
+    updateMailAccount:
+      messages:
+        noMailAccountHasBeenFound: No mail account has been found
+        success: Mail account has been updated
+        fail: Failed to update
+        badRequest: Bad request
+      dialog:
+        password: Password
   discord:
     getAllWebhooks:
       messages:
@@ -81,7 +89,6 @@ pages:
         main: Test message sending
       success: Message has been sent
       fail: Could not send the message
-      missingParameterInRequest: "Missing parameter in request: {{parameterName}}"
       jsonReturnedFromDiscordServerIsMalformed: "Json returned from discord server is malformed"
       thereWasAnIssueWhileCallingTheDiscordWebhook: "There was an issue while calling discord webhook, got httpCode: {{httpCode}}"
     addDiscordWebhook:

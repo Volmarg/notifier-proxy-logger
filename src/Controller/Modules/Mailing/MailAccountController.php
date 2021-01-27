@@ -79,4 +79,17 @@ class MailAccountController extends AbstractController
         $this->app->getRepositories()->getMailAccountRepository()->hardDelete($entity);
     }
 
+    /**
+     * Will save entity if it's a new one, or update already existing
+     *
+     * @param MailAccount $mailAccount
+     * @return MailAccount
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function save(MailAccount $mailAccount): MailAccount
+    {
+        return $this->app->getRepositories()->getMailAccountRepository()->save($mailAccount);
+    }
+
 }

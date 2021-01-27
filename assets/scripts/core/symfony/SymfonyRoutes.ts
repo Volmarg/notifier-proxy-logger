@@ -87,8 +87,14 @@ export default class SymfonyRoutes {
     /**
      * @description handles the removal of single account mail by the provided id
      */
-    static readonly REMOVE_MAIL_ACCOUNT                  = "/modules/mailing/remove-mail-account/{mailAccountId}";
-    static readonly REMOVE_MAIL_ACCOUNT_PARAM_WEBHOOK_ID = "{mailAccountId}";
+    static readonly REMOVE_MAIL_ACCOUNT                       = "/modules/mailing/remove-mail-account/{mailAccountId}";
+    static readonly REMOVE_MAIL_ACCOUNT_PARAM_MAIL_ACCOUNT_ID = "{mailAccountId}";
+
+    /**
+     * @description handles updating the entity in the backend
+     */
+    static readonly UPDATE_MAIL                  = '/modules/mailing/update-mail-account/{mailAccountId}';
+    static readonly UPDATE_MAIL_PARAM_ACCOUNT_ID = '{mailAccountId}';
 
     /**
      * @description will use the url with params and replace the params with values

@@ -7,3 +7,8 @@ api:
         internalServerError: Internal server error
         badRequest: Bad request
         fieldsViolations: 'Fields violations: {{fieldsList}}'
+  internal:
+    general:
+      messages:
+      missingParameterInRequest: "Missing parameter in request: {{parameterName}}"
+      fieldsViolations: 'Fields violations: {{fieldsList}}'

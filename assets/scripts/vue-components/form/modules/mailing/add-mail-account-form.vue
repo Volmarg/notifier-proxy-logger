@@ -162,7 +162,7 @@ export default {
     },
     getCsrfToken(){
       let urlReplacementParams = {
-        [SymfonyRoutes.GET_CSRF_TOKEN_PARAM_FORM_NAME]: SymfonyForms.ADD_MAIL_ACCOUNT_FORM_BLOCK_NAME
+        [SymfonyRoutes.GET_CSRF_TOKEN_PARAM_FORM_NAME]: SymfonyForms.MAIL_ACCOUNT_FORM_BLOCK_NAME
       }
 
       let url = SymfonyRoutes.buildUrlWithReplacedParams(SymfonyRoutes.GET_CSRF_TOKEN, urlReplacementParams)

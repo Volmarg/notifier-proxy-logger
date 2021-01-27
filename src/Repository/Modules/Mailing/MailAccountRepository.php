@@ -83,4 +83,20 @@ class MailAccountRepository extends ServiceEntityRepository
         $this->_em->flush();;
     }
 
+    /**
+     * Will save entity if it's a new one, or update already existing
+     *
+     * @param MailAccount $mailAccount
+     * @return MailAccount
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function save(MailAccount $mailAccount): MailAccount
+    {
+        $this->_em->persist($mailAccount);
+        $this->_em->flush();
+
+        return $mailAccount;
+    }
+
 }
