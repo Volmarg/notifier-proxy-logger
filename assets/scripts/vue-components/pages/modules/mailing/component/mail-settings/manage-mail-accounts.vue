@@ -109,7 +109,7 @@ export default {
      * @description
      *
      **/
-    'trigger-mail-accounts-fetch-flag': {
+    'triggerMailAccountsFetchFlag': {
       type      : Number,
       required  : true,
       default   : 1
@@ -219,6 +219,7 @@ export default {
           notification.showRedNotification(baseApiResponseDto.message)
         }else{
           notification.showGreenNotification(baseApiResponseDto.message)
+          this.getAllMailAccounts();
         }
       })
     },
@@ -263,6 +264,8 @@ export default {
 
         this.originalAllEmailsAccounts   = allMailAccountsDto;
         this.currentlyVisibleDataInTable = allMailAccountsDto;
+
+        this.$refs.table.searchInput = "";
       });
 
     },
@@ -330,5 +333,10 @@ export default {
   beforeMount(){
     this.getAllMailAccounts();
   },
+  watch:{
+    triggerMailAccountsFetchFlag(old, newOne){
+      this.getAllMailAccounts();
+    }
+  }
 }
 </script>

@@ -71,7 +71,11 @@ export default {
     this.tippyInstance = tippy.applyForElement(this.$refs.tableRow);
   },
   updated(){
-    if(null !== this.tippyInstance){
+    if(
+            null        !== this.tippyInstance
+        &&  "undefined" !== typeof this.tippyInstance
+    ){
+      console.log(this.tippyInstance);
       this.tippyInstance.setContent(this.tippyRowBodyContent);
     }
   }

@@ -35,8 +35,8 @@
         "
         class="btn btn-light ml-1 mt-1 pagination-button"
         :class="{
-        'text-danger': (pageNumber == currentResultPage)
-      }"
+          'text-danger': (pageNumber == currentResultPage)
+         }"
         @click="$emit('paginationButtonClicked', pageNumber)"
         :ref="'pageNumberButton' + pageNumber"
     >
@@ -207,7 +207,7 @@ export default {
         dataArrayToSearchIn = this.searchResultRows;
       }
 
-      if( dataArrayToSearchIn.length >= this.getEndOffsetForCurrentPageNumber(this.currentResultPage) ){
+      if( dataArrayToSearchIn.length >= this.getEndOffsetForCurrentPageNumber(1) ){
         // there are more results in general than offset for current page
         this.paginationCount = Math.ceil(dataArrayToSearchIn.length / this.maxResultPerPage);
       }else if( dataArrayToSearchIn.length >= 1){
@@ -316,6 +316,6 @@ export default {
   width: 37px;
   padding: 5px;
   margin: 3px;
-  color: #1c4e7f !important;
+  color: #1c4e7f;
 }
 </style>

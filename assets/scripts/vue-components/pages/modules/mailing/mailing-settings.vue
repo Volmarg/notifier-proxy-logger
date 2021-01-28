@@ -1,7 +1,7 @@
 <!-- Template -->
 <template>
-  <manage-mail-account/>
-  <add-mail-account/>
+  <manage-mail-account :trigger-mail-accounts-fetch-flag="triggerFetchMailAccounts"/>
+  <add-mail-account @add-mail-account-form-submitted="onAddMailAccountFormSubmitted"/>
 </template>
 
 <!-- Script -->
@@ -13,13 +13,18 @@ import TranslationsService             from "../../../../core/services/Translati
 let translationService = new TranslationsService();
 
 export default {
+  data(){
+    return {
+      triggerFetchMailAccounts: 1,
+    }
+  },
   components: {
     'add-mail-account'    : AddMailAccountFormComponent,
     'manage-mail-account' : ManageMailAccountsComponent,
   },
   methods: {
     onAddMailAccountFormSubmitted: function(){
-
+      this.triggerFetchMailAccounts++;
     }
   }
 }
