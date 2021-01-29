@@ -2,11 +2,11 @@
 
 namespace App\Controller;
 
+use App\Controller\Core\ConfigLoaders;
 use App\Controller\Core\Repositories;
 use App\Entity\User;
 use App\Services\Internal\LoggerService;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -36,6 +36,11 @@ class Application extends AbstractController
      * @var EntityManagerInterface $em
      */
     private EntityManagerInterface $em;
+
+    /**
+     * @var ConfigLoaders $configLoaders
+     */
+    private ConfigLoaders $configLoaders;
 
     /**
      * @return Forms
@@ -124,6 +129,22 @@ class Application extends AbstractController
     public function setEntityManager(EntityManagerInterface $em): void
     {
         $this->em = $em;
+    }
+
+    /**
+     * @return ConfigLoaders
+     */
+    public function getConfigLoaders(): ConfigLoaders
+    {
+        return $this->configLoaders;
+    }
+
+    /**
+     * @param ConfigLoaders $configLoaders
+     */
+    public function setConfigLoaders(ConfigLoaders $configLoaders): void
+    {
+        $this->configLoaders = $configLoaders;
     }
 
     public function beginTransaction()

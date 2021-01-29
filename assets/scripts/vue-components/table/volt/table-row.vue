@@ -1,6 +1,6 @@
 <!-- Template -->
 <template>
-  <tr class="volt-table-row" :data-tippy-content="tippyRowBodyContent" ref="tableRow">
+  <tr class="volt-table-row" :class="additionalRowClasses" :data-tippy-content="tippyRowBodyContent" ref="tableRow">
     <table-cell v-for="(value, key, index) in rowData" :key="index" :do-show="0 !== value.length && !isKeySkipped(key)">
       <template #cellValue>
         <raw-content :content="value" />
@@ -47,6 +47,11 @@ export default {
       type     : Array,
       required : false,
       default  : [],
+    },
+    "additionalRowClasses": {
+      type     : String,
+      required : false,
+      default  : {},
     }
   },
   methods: {

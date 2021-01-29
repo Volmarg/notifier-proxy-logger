@@ -13,3 +13,6 @@ mainPageComponents:
       remove: Remove
     texts:
       removalConfirmation: Do you really want to remove this entry?
+      removalConfirmationDefault: |
+        Do you really want to remove this entry?<br/>
+        This is a <span class="text-danger">default</span> mailbox!

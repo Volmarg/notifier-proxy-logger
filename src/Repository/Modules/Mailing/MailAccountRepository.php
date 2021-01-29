@@ -40,9 +40,9 @@ class MailAccountRepository extends ServiceEntityRepository
     /**
      * Wil return the default mail account
      *
-     * @return MailAccount
+     * @return null|MailAccount
      */
-    public function getDefaultMailAccount(): MailAccount
+    public function getDefaultMailAccount(): ?MailAccount
     {
         return $this->findOneBy([
             MailAccount::FIELD_NAME => MailAccount::DEFAULT_CONNECTION_NAME,

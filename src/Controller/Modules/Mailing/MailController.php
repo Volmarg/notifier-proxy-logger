@@ -10,6 +10,7 @@ use Doctrine\ORM\ORMException;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Notifier\Notification\Notification;
+use Symfony\Component\Notifier\Notifier;
 use Symfony\Component\Notifier\NotifierInterface;
 use Symfony\Component\Notifier\Recipient\Recipient;
 
@@ -113,16 +114,18 @@ class MailController extends AbstractController
      * Will send single email
      *
      * @param Mail $mail
+     * @param Notifier $notifier
      */
-    public function sendSingleEmail(Mail $mail)
+    public function sendSingleEmailViaNotifier(Mail $mail, Notifier $notifier)
     {
         $notification = new Notification();
         $notification->subject($mail->getSubject());
         $notification->content($mail->getBody());
+        $notification->channels([MailAccountController::MAIL_CHANNEL_NAME]);
 
         foreach($mail->getToEmails() as $singleEmailString){
             $notificationRecipient = new Recipient($singleEmailString);
-            $this->notifier->send($notification, $notificationRecipient);
+            $notifier->send($notification, $notificationRecipient);
         }
 
     }

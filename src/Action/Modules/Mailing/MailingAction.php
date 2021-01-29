@@ -97,7 +97,8 @@ class MailingAction extends AbstractController
                 $mail->setSubject($sendTestMailDto->getMessageTitle());
                 $mail->setToEmails([$sendTestMailDto->getReceiver()]);
 
-                $this->controllers->getMailingController()->sendSingleEmail($mail);
+                $notifier = $this->controllers->getMailAccountController()->getDefaultNotifierForSendingMailNotifications();
+                $this->controllers->getMailingController()->sendSingleEmailViaNotifier($mail, $notifier);
             }elseif( $testMailForm->isSubmitted() && !$testMailForm->isValid() ){
                 $message = $this->application->trans('pages.mailing.sendTestMail.messages.fail');
                 $baseResponseDto->prefillBaseFieldsForBadRequestResponse();

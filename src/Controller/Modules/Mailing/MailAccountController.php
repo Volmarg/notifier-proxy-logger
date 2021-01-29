@@ -8,19 +8,33 @@ use App\Controller\Application;
 use App\Entity\Modules\Mailing\MailAccount;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Mailer\Transport;
+use Symfony\Component\Notifier\Channel\EmailChannel;
+use Symfony\Component\Notifier\Notifier;
+use Symfony\Component\Stopwatch\Stopwatch;
 
 class MailAccountController extends AbstractController
 {
+    const MAIL_CHANNEL_NAME = "email";
 
     /**
      * @var Application $app
      */
     private Application $app;
 
-    public function __construct(Application $app)
+    /**
+     * @var EventDispatcherInterface $eventDispatcher
+     */
+    private EventDispatcherInterface $eventDispatcher;
+
+    public function __construct(Application $app, EventDispatcherInterface $eventDispatcher)
     {
-        $this->app = $app;
+        $this->eventDispatcher = $eventDispatcher;
+        $this->app             = $app;
     }
 
     /**
@@ -40,10 +54,16 @@ class MailAccountController extends AbstractController
      * Wil return the default mail account
      *
      * @return MailAccount
+     * @throws Exception
      */
     public function getDefaultMailAccount(): MailAccount
     {
-        return $this->app->getRepositories()->getMailAccountRepository()->getDefaultMailAccount();
+        $mailAccount = $this->app->getRepositories()->getMailAccountRepository()->getDefaultMailAccount();
+        if( empty($mailAccount) ){
+            throw new Exception("Default mail account was not found in the database!");
+        }
+
+        return $mailAccount;
     }
 
     /**
@@ -90,6 +110,51 @@ class MailAccountController extends AbstractController
     public function save(MailAccount $mailAccount): MailAccount
     {
         return $this->app->getRepositories()->getMailAccountRepository()->save($mailAccount);
+    }
+
+    /**
+     * Will return texter instance which uses the default mail account for sending messages
+     *
+     * @throws Exception
+     * @return Notifier
+     */
+    public function getDefaultNotifierForSendingMailNotifications(): Notifier
+    {
+        $defaultMailAccount = $this->getDefaultMailAccount();
+        $notifier           = $this->getNotifierForSendingMailNotifications($defaultMailAccount);
+
+        return $notifier;
+    }
+
+    /**
+     * Will return notifier instance for sending mail messages, uses MailAccount configuration
+     *
+     * @param MailAccount $mailAccount
+     * @return Notifier
+     */
+    public function getNotifierForSendingMailNotifications(MailAccount $mailAccount): Notifier
+    {
+        $fromMail = $this->app->getConfigLoaders()->getSystemDataConfigLoader()->getFromMail();
+
+        $dsnConnectionString = $this->buildSymfonyMailerDsnConnectionString($mailAccount);
+        $stopWatch           = new Stopwatch(true);
+        $dispatcher          = new TraceableEventDispatcher($this->eventDispatcher, $stopWatch);
+        $transport           = Transport::fromDsn($dsnConnectionString, $dispatcher);
+        $mailChannel         = new EmailChannel($transport, null, $fromMail);
+        $notifier            = new Notifier([self::MAIL_CHANNEL_NAME => $mailChannel]);
+        return $notifier;
+    }
+
+    /**
+     * Will build the mailer (MAILER_DSN) connection string used internally by symfony
+     *
+     * @param MailAccount $mailAccount
+     * @return string
+     */
+    private function buildSymfonyMailerDsnConnectionString(MailAccount $mailAccount): string
+    {
+        $dsnConnectionString = "{$mailAccount->getClient()}://{$mailAccount->getLogin()}:{$mailAccount->getPassword()}@localhost";
+        return $dsnConnectionString;
     }
 
 }

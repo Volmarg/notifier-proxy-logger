@@ -4,6 +4,7 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
+    mail.sender: 'volmarg@localhost'
 
 services:
     # default configuration for services in *this* file
@@ -118,6 +119,7 @@ services:
             - setRepositories: ['@controller.core.repositories']
             - setLoggerService: ['@services.internal.logger_service']
             - setEntityManager: ['@doctrine.orm.default_entity_manager']
+            - setConfigLoaders: ['@config_loaders']
 
     App\Controller\Core\Controllers:
         calls:
@@ -127,3 +129,20 @@ services:
             - setDiscordWebhookController: ['@controller.discord_webhook_controller']
             - setDiscordMessageController: ['@controller.discord_message_controller']
             - setMailAccountController: ['@controller.mailing_account_controller']
+
+    App\Services\Internal\ConfigLoaders\SystemDataConfigLoader:
+        public: true
+        calls:
+            - setFromMail: ['%mail.sender%']
+
+    config_loader.system_data:
+        alias: App\Services\Internal\ConfigLoaders\SystemDataConfigLoader
+
+    App\Controller\Core\ConfigLoaders:
+        public: true
+        calls:
+            - setSystemDataConfigLoader: ['@config_loader.system_data']
+
+    config_loaders:
+        alias: App\Controller\Core\ConfigLoaders
+#        deprecated: true

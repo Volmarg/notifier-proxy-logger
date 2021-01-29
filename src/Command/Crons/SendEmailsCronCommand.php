@@ -79,7 +79,8 @@ class SendEmailsCronCommand extends Command
             foreach($allEmailsToProcess as $email){
 
                 try{
-                    $this->controllers->getMailingController()->sendSingleEmail($email);
+                    $notifier = $this->controllers->getMailAccountController()->getDefaultNotifierForSendingMailNotifications();
+                    $this->controllers->getMailingController()->sendSingleEmailViaNotifier($email, $notifier);
                     $this->controllers->getMailingController()->updateStatus($email, Mail::STATUS_SENT);
                 }catch(Exception|TypeError $e){
                     $this->controllers->getMailingController()->updateStatus($email, Mail::STATUS_ERROR);

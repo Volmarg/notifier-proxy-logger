@@ -27,6 +27,7 @@ final class Version20210125044106 extends AbstractMigration
                 name VARCHAR(100) NOT NULL, 
                 login VARCHAR(100) NOT NULL, 
                 password VARCHAR(100) NOT NULL, 
+                CONSTRAINT `unique_name` UNIQUE(name),  
                 PRIMARY KEY(id)
           ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB'
         );
