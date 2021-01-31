@@ -1,11 +1,14 @@
 <!-- Template -->
 <template>
+  <!-- TODO: editing data is not updated in view -->
   <semipolar-spinner v-show="isSpinnerVisible"/>
 
   <div class="row">
     <div class="col-12 col-xl-12">
       <div class="card card-body bg-white border-light shadow-sm mb-4">
         <h2 class="h5 mb-4"> {{ headerTranslatedString }} </h2>
+
+        <information-text-for-component :displayed-text="informationTranslatedTextString" />
 
         <section class="">
 
@@ -80,17 +83,18 @@
 
 <!-- Script -->
 <script>
-import VoltTable                        from '../../../../../table/volt/table';
-import VoltTableHead                    from '../../../../../table/volt/table-head';
-import VoltTableBody                    from '../../../../../table/volt/table-body';
-import VoltTableRow                     from '../../../../../table/volt/table-row';
-import VoltCellComponent                from "../../../../../table/volt/table-cell";
-import SemipolarSpinnerComponent        from '../../../../../../vue-components/libs/epic-spinners/semipolar-spinner';
-import MaterialInputFieldComponent      from "../../../../../form/components/material/input-field";
-import MaterialDesignDialogComponent    from "../../../../../dialog-modal/material/dialog";
-import RemoveActionComponent            from "../../../../../actions/remove-action";
-import EditActionComponent              from "../../../../../actions/edit-action";
-import rawContentComponent              from "../../../../../other/raw-content";
+import VoltTable                         from '../../../../../table/volt/table';
+import VoltTableHead                     from '../../../../../table/volt/table-head';
+import VoltTableBody                     from '../../../../../table/volt/table-body';
+import VoltTableRow                      from '../../../../../table/volt/table-row';
+import VoltCellComponent                 from "../../../../../table/volt/table-cell";
+import SemipolarSpinnerComponent         from '../../../../../../vue-components/libs/epic-spinners/semipolar-spinner';
+import MaterialInputFieldComponent       from "../../../../../form/components/material/input-field";
+import MaterialDesignDialogComponent     from "../../../../../dialog-modal/material/dialog";
+import RemoveActionComponent             from "../../../../../actions/remove-action";
+import EditActionComponent               from "../../../../../actions/edit-action";
+import rawContentComponent               from "../../../../../other/raw-content";
+import InformationTextForBlockComponent  from "../../../../../pages/components/information-text-for-block";
 
 import GetAllEmailsAccountsResponseDto  from "../../../../../../core/dto/api/internal/GetAllEmailsAccountsResponseDto";
 import BaseInternalApiResponseDto       from "../../../../../../core/dto/api/internal/BaseInternalApiResponseDto";
@@ -118,17 +122,18 @@ export default {
     }
   },
   components: {
-    'edit-action'           : EditActionComponent,
-    'remove-action'         : RemoveActionComponent,
-    "volt-table-body"       : VoltTableBody,
-    "volt-table-head"       : VoltTableHead,
-    "volt-table-row"        : VoltTableRow,
-    "volt-table"            : VoltTable,
-    'volt-cell'             : VoltCellComponent,
-    "semipolar-spinner"     : SemipolarSpinnerComponent,
-    'material-input-field'  : MaterialInputFieldComponent,
-    'material-dialog'       : MaterialDesignDialogComponent,
-    'raw-content-component' : rawContentComponent,
+    'edit-action'                    : EditActionComponent,
+    'remove-action'                  : RemoveActionComponent,
+    "volt-table-body"                : VoltTableBody,
+    "volt-table-head"                : VoltTableHead,
+    "volt-table-row"                 : VoltTableRow,
+    "volt-table"                     : VoltTable,
+    'volt-cell'                      : VoltCellComponent,
+    "semipolar-spinner"              : SemipolarSpinnerComponent,
+    'material-input-field'           : MaterialInputFieldComponent,
+    'material-dialog'                : MaterialDesignDialogComponent,
+    'raw-content-component'          : rawContentComponent,
+    'information-text-for-component' : InformationTextForBlockComponent,
   },
   data(){
     return {
@@ -178,6 +183,9 @@ export default {
     },
     actionsTranslatedString(){
       return translationService.getTranslationForString('pages.mailing.manageMailAccounts.table.headers.actions');
+    },
+    informationTranslatedTextString(){
+      return translationService.getTranslationForString('pages.mailing.addMailAccount.texts.general');
     }
   },
   methods: {

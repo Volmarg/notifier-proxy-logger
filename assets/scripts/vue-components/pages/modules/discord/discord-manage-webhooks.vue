@@ -6,6 +6,9 @@
     <div class="col-12 col-xl-12">
       <div class="card card-body bg-white border-light shadow-sm mb-4">
         <h2 class="h5 mb-4"> {{ mainHeaderDiscordWebhooksTranslation }}  </h2>
+
+        <information-text-for-block :displayed-text="tableManagementInformationTranslatedString"/>
+
         <section class="">
           <volt-table
               :headers="tableHeadersTranslations"
@@ -94,6 +97,7 @@ import MaterialDesignDialogComponent    from '../../../../vue-components/dialog-
 import VoltTableRowComponent            from "../../../../vue-components/table/volt/table-row";
 import EditActionComponent              from '../../../actions/edit-action';
 import RemoveActionComponent            from '../../../actions/remove-action';
+import InformationTextForBlockComponent from "../../../pages/components/information-text-for-block";
 
 import SymfonyRoutes                    from "../../../../core/symfony/SymfonyRoutes";
 import TranslationsService              from "../../../../core/services/TranslationsService";
@@ -112,15 +116,16 @@ export default {
     }
   },
   components: {
-    'remove-action'            : RemoveActionComponent,
-    'edit-action'              : EditActionComponent,
-    'volt-cell'                : VoltCellComponent,
-    'volt-table'               : VoltTableComponent,
-    'semipolar-spinner'        : SemipolarSpinnerComponent,
-    'add-discord-webhook-form' : AddDiscordWebhookFormComponent,
-    'material-input-field'     : MaterialInputFieldComponent,
-    'material-dialog'          : MaterialDesignDialogComponent,
-    'volt-table-row'           : VoltTableRowComponent,
+    'information-text-for-block' : InformationTextForBlockComponent,
+    'remove-action'              : RemoveActionComponent,
+    'edit-action'                : EditActionComponent,
+    'volt-cell'                  : VoltCellComponent,
+    'volt-table'                 : VoltTableComponent,
+    'semipolar-spinner'          : SemipolarSpinnerComponent,
+    'add-discord-webhook-form'   : AddDiscordWebhookFormComponent,
+    'material-input-field'       : MaterialInputFieldComponent,
+    'material-dialog'            : MaterialDesignDialogComponent,
+    'volt-table-row'             : VoltTableRowComponent,
   },
   computed: {
     skippedDtoProperties: function(){
@@ -157,6 +162,9 @@ export default {
     },
     removalConfirmationTranslatedString: function(){
       return translationsService.getTranslationForString('mainPageComponents.dialog.texts.removalConfirmation');
+    },
+    tableManagementInformationTranslatedString: function(){
+      return translationsService.getTranslationForString('pages.discord.getAllWebhooks.allWebhooksTable.texts.general');
     }
   },
   methods: {

@@ -4,6 +4,9 @@
     <div class="col-12 col-xl-12">
       <div class="card card-body bg-white border-light shadow-sm mb-4">
         <h2 class="h5 mb-4"> {{ mainHeaderAddDiscordWebhookTranslation }}  </h2>
+
+        <information-text-for-block :displayed-text="formInformationTranslatedString"/>
+
         <section class="">
 
           <form ref="form" method="POST" @submit.prevent="submitNewWebhook">
@@ -72,15 +75,16 @@
 
 <!-- Script -->
 <script>
-import TranslationsService        from '../../../../core/services/TranslationsService';
-import SymfonyRoutes              from "../../../../core/symfony/SymfonyRoutes";
-import Notification               from "../../../../libs/mdb5/Notification";
+import TranslationsService              from '../../../../core/services/TranslationsService';
+import SymfonyRoutes                    from "../../../../core/symfony/SymfonyRoutes";
+import Notification                     from "../../../../libs/mdb5/Notification";
 
-import BaseInternalApiResponseDto from "../../../../core/dto/api/internal/BaseInternalApiResponseDto";
-import CsrfTokenComponent         from "../../../../vue-components/form/components/csrf-token-input";
-import SymfonyForms               from "../../../../core/symfony/SymfonyForms";
+import BaseInternalApiResponseDto       from "../../../../core/dto/api/internal/BaseInternalApiResponseDto";
+import CsrfTokenComponent               from "../../../../vue-components/form/components/csrf-token-input";
+import SymfonyForms                     from "../../../../core/symfony/SymfonyForms";
+import InformationTextForBlockComponent from "../../../../vue-components/pages/components/information-text-for-block";
 
-import CsrfTokenResponseDto       from "../../../../core/dto/api/internal/CsrfTokenResponseDto";
+import CsrfTokenResponseDto             from "../../../../core/dto/api/internal/CsrfTokenResponseDto";
 
 let translationsService = new TranslationsService();
 let notification        = new Notification();
@@ -122,6 +126,13 @@ export default {
     mainHeaderAddDiscordWebhookTranslation: function(){
       return translationsService.getTranslationForString('pages.discord.addDiscordWebhook.header.main');
     },
+    formInformationTranslatedString: function(){
+      return translationsService.getTranslationForString('pages.discord.addDiscordWebhook.texts.general');
+    }
+  },
+  components: {
+    "csrf-token"                 : CsrfTokenComponent,
+    "information-text-for-block" : InformationTextForBlockComponent,
   },
   emits: [
       'discordManageWebhookAddWebhookFormSubmitted'
@@ -165,9 +176,6 @@ export default {
   },
   beforeMount(){
     this.getCsrfToken();
-  },
-  components: {
-    "csrf-token": CsrfTokenComponent
   }
 }
 </script>

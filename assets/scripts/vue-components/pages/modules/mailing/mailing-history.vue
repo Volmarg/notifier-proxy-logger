@@ -7,6 +7,8 @@
       <div class="card card-body bg-white border-light shadow-sm mb-4">
         <h2 class="h5 mb-4"> {{ sentEmailsLabel }}  </h2>
 
+        <information-text-for-block :displayed-text="informationTextTranslatedString"/>
+
         <section class="">
 
           <volt-table
@@ -36,11 +38,12 @@
 
 <!-- Script -->
 <script>
-import VoltTable                 from '../../../table/volt/table';
-import VoltTableHead             from '../../../table/volt/table-head';
-import VoltTableBody             from '../../../table/volt/table-body';
-import VoltTableRow              from '../../../table/volt/table-row';
-import SemipolarSpinnerComponent from '../../../../vue-components/libs/epic-spinners/semipolar-spinner';
+import VoltTable                        from '../../../table/volt/table';
+import VoltTableHead                    from '../../../table/volt/table-head';
+import VoltTableBody                    from '../../../table/volt/table-body';
+import VoltTableRow                     from '../../../table/volt/table-row';
+import SemipolarSpinnerComponent        from '../../../../vue-components/libs/epic-spinners/semipolar-spinner';
+import InformationTextForBlockComponent from '../../../../vue-components/pages/components/information-text-for-block';
 
 import TranslationsService     from "../../../../core/services/TranslationsService";
 import SymfonyRoutes           from "../../../../core/symfony/SymfonyRoutes";
@@ -51,11 +54,12 @@ let translationService = new TranslationsService();
 
 export default {
   components: {
-    "volt-table-body"   : VoltTableBody,
-    "volt-table-head"   : VoltTableHead,
-    "volt-table-row"    : VoltTableRow,
-    "volt-table"        : VoltTable,
-    "semipolar-spinner" : SemipolarSpinnerComponent
+    "volt-table-body"            : VoltTableBody,
+    "volt-table-head"            : VoltTableHead,
+    "volt-table-row"             : VoltTableRow,
+    "volt-table"                 : VoltTable,
+    "semipolar-spinner"          : SemipolarSpinnerComponent,
+    "information-text-for-block" : InformationTextForBlockComponent,
   },
   created(){
     this.retrieveAllEmails();
@@ -99,6 +103,9 @@ export default {
       return [
         "body",
       ];
+    },
+    informationTextTranslatedString: function(){
+      return translationService.getTranslationForString('pages.mailing.history.texts.general');
     }
   },
   methods: {

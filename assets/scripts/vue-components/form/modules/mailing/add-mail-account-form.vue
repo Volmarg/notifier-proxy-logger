@@ -4,6 +4,9 @@
     <div class="col-12 col-xl-12">
       <div class="card card-body bg-white border-light shadow-sm mb-4">
         <h2 class="h5 mb-4"> {{ mainHeaderAddMailAccountTranslated }} </h2>
+
+        <information-text-for-block :displayed-text="translatedInformationTextString"/>
+
         <section class="">
 
           <form ref="form" method="POST" @submit.prevent="submitNewMailAccount">
@@ -86,11 +89,12 @@
 import TranslationsService        from '../../../../core/services/TranslationsService';
 import SymfonyRoutes              from "../../../../core/symfony/SymfonyRoutes";
 import Notification               from "../../../../libs/mdb5/Notification";
-
-import BaseInternalApiResponseDto from "../../../../core/dto/api/internal/BaseInternalApiResponseDto";
 import SymfonyForms               from "../../../../core/symfony/SymfonyForms";
 
 import CsrfTokenResponseDto       from "../../../../core/dto/api/internal/CsrfTokenResponseDto";
+import BaseInternalApiResponseDto from "../../../../core/dto/api/internal/BaseInternalApiResponseDto";
+
+import InformationTextForBlockComponent from "../../../../vue-components/pages/components/information-text-for-block";
 
 let translationsService = new TranslationsService();
 let notification        = new Notification();
@@ -132,6 +136,12 @@ export default {
     mainHeaderAddMailAccountTranslated: function(){
       return translationsService.getTranslationForString('pages.mailing.addMailAccount.header.main');
     },
+    translatedInformationTextString: function(){
+      return translationsService.getTranslationForString('pages.mailing.manageMailAccounts.texts.general');
+    }
+  },
+  components: {
+    'information-text-for-block' : InformationTextForBlockComponent,
   },
   emits: [
       'addMailAccountFormSubmitted'

@@ -11,6 +11,9 @@ pages:
       messages:
         success: "Test mail has been sent"
         fail: "Could not send test mail"
+      texts:
+        general: >
+          <i>Allows to test given sending email directly without saving it in the database (default connection is used).<i>
     history:
       labels:
         main: Sent Emails - History
@@ -33,6 +36,9 @@ pages:
       messages:
         errors:
           couldNotGetAllSentEmails: Could not get all sent Emails
+      texts:
+        general: >
+          <i>Contains all the mails in the system - in all statuses.<i>
     addMailAccount:
       header:
         main: Add mail account
@@ -40,6 +46,11 @@ pages:
         success: Mail account has been added
         invalidDataHasBeenProvided: Invalid data has been provided
         fail: Could not add the mail account
+      texts:
+        general: >
+          <i>
+            Allows to manage the defined mail accounts.
+          <i>
     manageMailAccounts:
       headers:
         main: Manage mail accounts
@@ -49,6 +60,13 @@ pages:
           name: Name
           login: Login
           actions: Actions
+      texts:
+        general: >
+          <i>
+            Allows to define the mail account for sending the emails. The account type must be compatible with definition on
+            <a href="https://symfony.com/doc/current/mailer.html#using-a-3rd-party-transport">this</a> page. <br/>
+            With currently implemented logic, only the <span class="text-danger">default</span> connection is used.
+          <i>
     getAllMailsAccount:
       messages:
         errors:
@@ -84,6 +102,11 @@ pages:
           tippy:
             description: Description
             username: Username
+        texts:
+          general: >
+            <i>Management of existing webhooks definitions. Each message inserted to the database has a relation to the
+            webhook. Upon removing the webhook, messages related to the hook are reassigned to the placeholder webhook,
+            and are additionally marked as deleted, thus will never be sent by cron.<i>
     testMessageSending:
       header:
         main: Test message sending
@@ -91,6 +114,9 @@ pages:
       fail: Could not send the message
       jsonReturnedFromDiscordServerIsMalformed: "Json returned from discord server is malformed"
       thereWasAnIssueWhileCallingTheDiscordWebhook: "There was an issue while calling discord webhook, got httpCode: {{httpCode}}"
+      texts:
+        general: >
+          <i>Allows to test given webhook by sending message directly without saving it in the database.<i>
     addDiscordWebhook:
       header:
         main: Add discord webhook
@@ -98,6 +124,9 @@ pages:
         fail: Failed to add new discord webhook
         invalidDataHasBeenProvided: Invalid data has been provided
         success: New webhook has been added
+      texts:
+        general: >
+          <i>Allows to define webhook end point. With this messages can be sent to specified channel.<i>
     updateDiscordWebhook:
       messages:
         success: Discord webhook has been updated
@@ -112,7 +141,7 @@ pages:
           failedToRemove: Failed to remove webhook
     history:
       labels:
-        main: Sent Discord Messages - History
+        main: Discord Messages - History
       table:
         headers:
           messageTitle:
@@ -131,6 +160,9 @@ pages:
       messages:
         errors:
           couldNotGetAllMessages: Could not get all messages
+      texts:
+        general: >
+          <i>Contains all the discord messages in the system - in all statuses.<i>
   dashboard:
     overview:
       widgets:

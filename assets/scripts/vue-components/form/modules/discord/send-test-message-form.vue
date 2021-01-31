@@ -5,6 +5,8 @@
       <div class="col-md-10 mb-3">
         <div>
 
+          <information-text-for-block :displayed-text="informationTextTranslatedString"/>
+
           <label for="webhook_select">{{ webhookSelectLabelTranslation }}</label>
           <select class="form-control" id="webhook_select" required ref="webhookSelect">
             <option value=""></option>
@@ -58,6 +60,8 @@ import TranslationsService              from "../../../../core/services/Translat
 import Notification                     from "../../../../libs/mdb5/Notification";
 import SymfonyForms                     from "../../../../core/symfony/SymfonyForms";
 
+import InformationTextForBlockComponent from "../../../pages/components/information-text-for-block";
+
 let translationsService = new TranslationsService();
 let notification        = new Notification();
 
@@ -90,6 +94,12 @@ export default {
     submitButtonTranslation: function(){
       return translationsService.getTranslationForString('forms.testDiscordMessageForm.submit.label');
     },
+    informationTextTranslatedString: function(){
+      return translationsService.getTranslationForString('pages.discord.testMessageSending.texts.general');
+    }
+  },
+  components: {
+    "information-text-for-block" : InformationTextForBlockComponent,
   },
   methods: {
     /**

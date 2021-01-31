@@ -62,6 +62,8 @@ class DiscordExternalApiAction extends AbstractController
                 return $baseApiResponseDto->toJsonResponse();
             }
 
+            //todo: adjust, now it's needed to provided the webhook name
+
             $discordMessageDto = DiscordMessageDTO::fromJson($json);
             $discordMessage    = $this->controllers->getDiscordMessageController()->buildDiscordMessageEntityFromDto($discordMessageDto);
 
