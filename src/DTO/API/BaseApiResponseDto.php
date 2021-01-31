@@ -16,9 +16,10 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class BaseApiResponseDto extends AbstractDTO
 {
-    const KEY_CODE    = "code";
-    const KEY_MESSAGE = "message";
-    const KEY_SUCCESS = "success";
+    const KEY_CODE           = "code";
+    const KEY_MESSAGE        = "message";
+    const KEY_SUCCESS        = "success";
+    const KEY_INVALID_FIELDS = "invalidFields";
 
     const DEFAULT_CODE    = Response::HTTP_BAD_REQUEST;
     const DEFAULT_MESSAGE = "Bad request";
@@ -37,6 +38,11 @@ class BaseApiResponseDto extends AbstractDTO
      * @var bool $success
      */
     private bool $success = false;
+
+    /**
+     * @var array $invalidFields
+     */
+    private array $invalidFields = [];
 
     /**
      * @return int
@@ -89,12 +95,29 @@ class BaseApiResponseDto extends AbstractDTO
     /**
      * @return array
      */
+    public function getInvalidFields(): array
+    {
+        return $this->invalidFields;
+    }
+
+    /**
+     * @param array $invalidFields
+     */
+    public function setInvalidFields(array $invalidFields): void
+    {
+        $this->invalidFields = $invalidFields;
+    }
+
+    /**
+     * @return array
+     */
     public function toArray(): array
     {
         return [
-            self::KEY_CODE    => $this->getCode(),
-            self::KEY_MESSAGE => $this->getMessage(),
-            self::KEY_SUCCESS => $this->isSuccess(),
+            self::KEY_CODE           => $this->getCode(),
+            self::KEY_MESSAGE        => $this->getMessage(),
+            self::KEY_SUCCESS        => $this->isSuccess(),
+            self::KEY_INVALID_FIELDS => json_encode($this->getInvalidFields()),
         ];
     }
 
@@ -144,6 +167,24 @@ class BaseApiResponseDto extends AbstractDTO
         $dto->setCode(Response::HTTP_BAD_REQUEST);
         $dto->setSuccess(false);
         $dto->setMessage($message);
+
+        return $dto;
+    }
+
+    /**
+     * Will build internal server error response
+     *
+     * @param string $message
+     * @param array  $invalidFields
+     * @return static
+     */
+    public static function buildInvalidFieldsRequestErrorResponse(string $message = "", array $invalidFields = []): static
+    {
+        $dto = new static();
+        $dto->setCode(Response::HTTP_BAD_REQUEST);
+        $dto->setSuccess(false);
+        $dto->setMessage($message);
+        $dto->setInvalidFields($invalidFields);
 
         return $dto;
     }

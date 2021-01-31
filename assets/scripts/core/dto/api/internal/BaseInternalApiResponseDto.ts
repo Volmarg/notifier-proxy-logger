@@ -5,6 +5,7 @@ export default class BaseInternalApiResponseDto {
     private _code: number;
     private _message: string;
     private _success: boolean;
+    private _invalidFields: Array<any>;
 
     get code(): number {
         return this._code;
@@ -30,6 +31,14 @@ export default class BaseInternalApiResponseDto {
         this._success = value;
     }
 
+    get invalidFields(): Array<any> {
+        return this._invalidFields;
+    }
+
+    set invalidFields(value: Array<any>) {
+        this._invalidFields = value;
+    }
+
     /**
      * @description will create object from the json (delivered from response)
      *
@@ -51,6 +60,10 @@ export default class BaseInternalApiResponseDto {
         dto.success = object.success;
         dto.message = object.message;
         dto.code    = object.code;
+
+        if( "undefined" !== typeof object.invalidFields ){
+            dto.invalidFields = JSON.parse(object.invalidFields);
+        }
 
         return dto;
     }

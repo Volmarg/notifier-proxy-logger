@@ -80,7 +80,6 @@ export default {
             null        !== this.tippyInstance
         &&  "undefined" !== typeof this.tippyInstance
     ){
-      console.log(this.tippyInstance);
       this.tippyInstance.setContent(this.tippyRowBodyContent);
     }
   }

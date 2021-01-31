@@ -4,6 +4,8 @@ namespace App\Entity\Modules\Mailing;
 
 use App\Repository\Modules\Mailing\MailAccountRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 /**
  * @ORM\Entity(repositoryClass=MailAccountRepository::class)
@@ -12,6 +14,9 @@ class MailAccount
 {
     const DEFAULT_CONNECTION_NAME = "default";
     const FIELD_NAME              = "name";
+    const FIELD_CLIENT            = "client";
+    const FIELD_LOGIN             = "login";
+    const FIELD_PASSWORD          = "password";
 
     /**
      * @ORM\Id
@@ -91,5 +96,16 @@ class MailAccount
         $this->name = $name;
 
         return $this;
+    }
+
+    /**
+     * @param ClassMetadata $metadata
+     */
+    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    {
+        $metadata->addPropertyConstraint(self::FIELD_CLIENT, new NotBlank());
+        $metadata->addPropertyConstraint(self::FIELD_NAME, new NotBlank());
+        $metadata->addPropertyConstraint(self::FIELD_PASSWORD, new NotBlank());
+        $metadata->addPropertyConstraint(self::FIELD_LOGIN, new NotBlank());
     }
 }

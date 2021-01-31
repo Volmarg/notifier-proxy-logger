@@ -44,18 +44,46 @@
                 <material-dialog
                     :ref="'editDialog_' + discordWebhookDto.id"
                     :accept-button-translation-string="'mainPageComponents.dialog.buttons.update'"
+                    :hide-on-error="false"
                     :min-width="'600px'"
                     @material-modal-confirm-button-click="onMaterialEditModalConfirmButtonClick(discordWebhookDto.id)"
                 >
 
                   <!-- Webhook url -->
-                  <material-input-field :display-block="true" :label="webhookUrlTranslatedString"  :value="discordWebhookDto.webhookUrl"  :ref="'materialEditModalWebhookUrlInput_'  + discordWebhookDto.id"/>
+                  <material-input-field
+                      :display-block="true"
+                      :label="webhookUrlTranslatedString"
+                      :value="discordWebhookDto.webhookUrl"
+                      :ref="'materialEditModalWebhookUrlInput_'  + discordWebhookDto.id"
+                      :error-message="urlErrorMessage"
+                  />
                   <!-- Webhook name -->
-                  <material-input-field :display-block="true" :label="webhookNameTranslatedString" :value="discordWebhookDto.webhookName" :ref="'materialEditModalWebhookNameInput_' + discordWebhookDto.id"/>
+                  <material-input-field
+                      :display-block="true"
+                      :margin-top="3"
+                      :label="webhookNameTranslatedString"
+                      :value="discordWebhookDto.webhookName"
+                      :ref="'materialEditModalWebhookNameInput_' + discordWebhookDto.id"
+                      :error-message="nameErrorMessage"
+                  />
                   <!-- Username-->
-                  <material-input-field :display-block="true" :label="usernameTranslatedString"    :value="discordWebhookDto.username"    :ref="'materialEditModalUsernameInput_'    + discordWebhookDto.id"/>
+                  <material-input-field
+                      :display-block="true"
+                      :margin-top="3"
+                      :label="usernameTranslatedString"
+                      :value="discordWebhookDto.username"
+                      :ref="'materialEditModalUsernameInput_'    + discordWebhookDto.id"
+                      :error-message="usernameErrorMessage"
+                  />
                   <!-- Description -->
-                  <material-input-field :display-block="true" :label="descriptionTranslatedString" :value="discordWebhookDto.description" :ref="'materialEditModalDescriptionInput_' + discordWebhookDto.id"/>
+                  <material-input-field
+                      :display-block="true"
+                      :margin-top="3"
+                      :label="descriptionTranslatedString"
+                      :value="discordWebhookDto.description"
+                      :ref="'materialEditModalDescriptionInput_' + discordWebhookDto.id"
+                      :error-message="descriptionErrorMessage"
+                  />
                 </material-dialog>
 
                 <!-- Remove Dialog -->
@@ -113,6 +141,10 @@ export default {
       discordWebhooksDtos         : [],
       discordWebhooksTableData    : [],
       currentlyVisibleDataInTable : [],
+      urlErrorMessage             : "",
+      nameErrorMessage            : "",
+      usernameErrorMessage        : "",
+      descriptionErrorMessage     : "",
     }
   },
   components: {
@@ -209,6 +241,7 @@ export default {
     onEditActionClicked(webhookEntityId){
       let editDialogRef = 'editDialog_' + webhookEntityId;
       this.$refs[editDialogRef].dialogInstance.open();
+      this.clearEditDialogErrorMessages();
     },
     /**
      * @description will handle the remove action click for given index of webhook dto
@@ -277,10 +310,10 @@ export default {
       let indexOfEntityInVisibleDataDtos = this.getDtoIndexForEntityWithId(discordWebhookDtoEntityId, this.currentlyVisibleDataInTable);
       let indexOfEntityInAllDtosArray    = this.getDtoIndexForEntityWithId(discordWebhookDtoEntityId);
 
-      let changedWebhookUrl   = this.$refs['materialEditModalWebhookUrlInput_'  + discordWebhookDtoEntityId].textFieldValue;
-      let changedWebhookName  = this.$refs['materialEditModalWebhookNameInput_' + discordWebhookDtoEntityId].textFieldValue;
-      let changedUsername     = this.$refs['materialEditModalUsernameInput_'    + discordWebhookDtoEntityId].textFieldValue;
-      let changedDescription  = this.$refs['materialEditModalDescriptionInput_' + discordWebhookDtoEntityId].textFieldValue;
+      let changedWebhookUrl  = this.$refs['materialEditModalWebhookUrlInput_'  + discordWebhookDtoEntityId].textFieldValue;
+      let changedWebhookName = this.$refs['materialEditModalWebhookNameInput_' + discordWebhookDtoEntityId].textFieldValue;
+      let changedUsername    = this.$refs['materialEditModalUsernameInput_'    + discordWebhookDtoEntityId].textFieldValue;
+      let changedDescription = this.$refs['materialEditModalDescriptionInput_' + discordWebhookDtoEntityId].textFieldValue;
 
       let dataBag = {
         entityId    : discordWebhookDtoEntityId,
@@ -295,6 +328,10 @@ export default {
 
         if( !baseApiResponse.success ){
           notification.showRedNotification(baseApiResponse.message);
+          this.nameErrorMessage        = ( "undefined" === typeof baseApiResponse.invalidFields.webhookName ? "" : baseApiResponse.invalidFields.webhookName);
+          this.urlErrorMessage         = ( "undefined" === typeof baseApiResponse.invalidFields.webhookUrl  ? "" : baseApiResponse.invalidFields.webhookUrl);
+          this.usernameErrorMessage    = ( "undefined" === typeof baseApiResponse.invalidFields.username    ? "" : baseApiResponse.invalidFields.username);
+          this.descriptionErrorMessage = ( "undefined" === typeof baseApiResponse.invalidFields.description ? "" : baseApiResponse.invalidFields.description);
           return;
         }
 
@@ -425,6 +462,15 @@ export default {
         }
       }
       return indexOfDto;
+    },
+    /**
+     * @description will clear the error messages for edit dialog
+     */
+    clearEditDialogErrorMessages(){
+      this.urlErrorMessage         = "";
+      this.nameErrorMessage        = "";
+      this.usernameErrorMessage    = "";
+      this.descriptionErrorMessage = "";
     }
   },
   created(){

@@ -11,7 +11,7 @@
             <div class="mdc-button__ripple"></div>
             <span class="mdc-button__label modal-action-button special-text-color">{{ cancelButtonTranslatedString }}</span>
           </button>
-          <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="discard" @click="$emit('materialModalConfirmButtonClick')">
+          <button type="button" class="mdc-button mdc-dialog__button" :data-mdc-dialog-action="dialogDiscardAction" @click="$emit('materialModalConfirmButtonClick')">
             <div class="mdc-button__ripple"></div>
             <span class="mdc-button__label modal-action-button special-text-color">{{ acceptButtonTranslatedString }}</span>
           </button>
@@ -49,11 +49,17 @@ export default {
       type     : String,
       required : false,
       default  : '300px',
+    },
+    'hideOnError' : {
+      type     : Boolean,
+      required : false,
+      default  : true,
     }
   },
   data(){
     return {
-      dialogInstance : null,
+      dialogInstance      : null,
+      dialogDiscardAction : '',
     }
   },
   computed: {
@@ -67,6 +73,10 @@ export default {
   mounted(){
     let editActionDialogDomElement = this.$refs.dialog;
     this.dialogInstance            = dialog.initForDomElement(editActionDialogDomElement);
+
+    if(this.hideOnError){
+      this.dialogDiscardAction = "discard";
+    }
   }
 }
 </script>

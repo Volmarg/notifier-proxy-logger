@@ -221,6 +221,8 @@ class DiscordAction extends AbstractController
     {
         try{
             $requestContentArray = json_decode($request->getContent(), true);
+
+            // todo: use violations array instead of all the ifs
             if( !array_key_exists(self::KEY_WEBHOOK_URL, $requestContentArray) ){
                 $message = $this->app->trans('api.internal.general.missingParameterInRequest', [
                     '{{parameterName}}' => self::KEY_WEBHOOK_URL,
@@ -278,12 +280,10 @@ class DiscordAction extends AbstractController
             $discordWebhook->setWebhookName($webhookName);
             $discordWebhook->setWebhookUrl($webhookUrl);
 
-            $violations = $this->validationService->validateAndReturnInvalidFieldsWithMessagesForResponse($discordWebhook);
+            $violations = $this->validationService->validateAndReturnArrayOfInvalidFieldsWithMessages($discordWebhook);
             if( !empty($violations) ){
-                $message = $this->app->trans('api.internal.general.fieldsViolations', [
-                    '{{fieldsList}}' => $violations,
-                ]);
-                return BaseApiResponseDto::buildBadRequestErrorResponse($message)->toJsonResponse();
+                $message = $this->app->trans('pages.discord.updateDiscordWebhook.messages.fail.failedToUpdate');
+                return BaseApiResponseDto::buildInvalidFieldsRequestErrorResponse($message, $violations)->toJsonResponse();
             }
 
             $this->controllers->getDiscordWebhookController()->save($discordWebhook);

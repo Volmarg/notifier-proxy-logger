@@ -3,26 +3,22 @@
 
 namespace App\Services\Internal;
 
-use Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ValidationService
 {
     /**
-     * Creates instance of @see ValidatorInterface
-     *
-     * @return ValidatorInterface
+     * @var ValidatorInterface $validator
      */
-    private function buildValidator(): ValidatorInterface
+    private ValidatorInterface $validator;
+
+    public function __construct(ValidatorInterface $validator)
     {
-        $validator = Validation::createValidator();
-        return $validator;
+        $this->validator = $validator;
     }
 
     /**
-     * todo: only prepared base logic, the violations need to be extracted later on
-     *  this method is not ready to be used
-     *
      * Validates the object and returns the array of violations
      *
      * @param object $object
@@ -30,23 +26,14 @@ class ValidationService
      */
     public function validateAndReturnArrayOfInvalidFieldsWithMessages(object $object): array
     {
-        $validator  = $this->buildValidator();
-        $violations = $validator->validate($object);
+        $violations             = $this->validator->validate($object);
+        $violationsWithMessages = [];
 
-        return [];
+        /**@var $constraintViolation ConstraintViolation*/
+        foreach($violations as $constraintViolation){
+            $violationsWithMessages[$constraintViolation->getPropertyPath()] = $constraintViolation->getMessage();
+        }
+
+        return $violationsWithMessages;
     }
-
-    /**
-     * @param object $object
-     * @return string
-     */
-    public function validateAndReturnInvalidFieldsWithMessagesForResponse(object $object): string
-    {
-        // todo:
-
-        return "";
-    }
-
-
-
 }

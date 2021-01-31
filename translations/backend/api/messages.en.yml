@@ -11,4 +11,7 @@ api:
     general:
       messages:
       missingParameterInRequest: "Missing parameter in request: {{parameterName}}"
-      fieldsViolations: 'Fields violations: {{fieldsList}}'
+      fieldsViolations: >
+        Fields violations:
+        <br/>
+        {{fieldsList}}

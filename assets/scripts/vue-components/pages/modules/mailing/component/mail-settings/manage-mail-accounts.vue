@@ -46,16 +46,47 @@
                       :ref="'editDialog_' + mailAccountDto.id"
                       :accept-button-translation-string="'mainPageComponents.dialog.buttons.update'"
                       :min-width="'600px'"
+                      :hide-on-error="false"
                       @material-modal-confirm-button-click="onMaterialEditModalConfirmButtonClick(mailAccountDto.id)"
                   >
                     <!-- Client -->
-                    <material-input-field :display-block="true" :label="clientTranslatedString"    :value="mailAccountDto.client"    :ref="'materialEditModalClientInput_'  + mailAccountDto.id"/>
+                    <material-input-field
+                        :display-block="true"
+                        :label="clientTranslatedString"
+                        :value="mailAccountDto.client"
+                        :ref="'materialEditModalClientInput_' + mailAccountDto.id"
+                        :error-message="clientErrorMessage"
+                    />
+
                     <!-- Name -->
-                    <material-input-field :display-block="true" :label="nameTranslatedString"      :value="mailAccountDto.name"      :ref="'materialEditModalNameInput_' + mailAccountDto.id"/>
+                    <material-input-field
+                        :display-block="true"
+                        :margin-top="3"
+                        :label="nameTranslatedString"
+                        :value="mailAccountDto.name"
+                        :ref="'materialEditModalNameInput_' + mailAccountDto.id"
+                        :error-message="nameErrorMessage"
+                    />
+
                     <!-- Login -->
-                    <material-input-field :display-block="true" :label="loginTranslatedString"     :value="mailAccountDto.login"     :ref="'materialEditModalLoginInput_'    + mailAccountDto.id"/>
+                    <material-input-field
+                        :display-block="true"
+                        :margin-top="3"
+                        :label="loginTranslatedString"
+                        :value="mailAccountDto.login"
+                        :ref="'materialEditModalLoginInput_' + mailAccountDto.id"
+                        :error-message="loginErrorMessage"
+                    />
+
                     <!-- Password -->
-                    <material-input-field :display-block="true" :label="passwordTranslatedString"  :value="mailAccountDto.password"  :ref="'materialEditModalPasswordInput_' + mailAccountDto.id" :type="'password'"/>
+                    <material-input-field
+                        :display-block="true"
+                        :margin-top="3"
+                        :label="passwordTranslatedString"
+                        :value="mailAccountDto.password"
+                        :ref="'materialEditModalPasswordInput_' + mailAccountDto.id" :type="'password'"
+                        :error-message="passwordErrorMessage"
+                    />
                   </material-dialog>
 
                   <!-- Remove Dialog -->
@@ -141,6 +172,10 @@ export default {
       originalAllEmailsAccounts   : [],
       currentlyVisibleDataInTable : [],
       isSpinnerVisible            : true,
+      clientErrorMessage          : '',
+      nameErrorMessage            : '',
+      loginErrorMessage           : '',
+      passwordErrorMessage        : '',
     }
   },
   computed: {
@@ -202,20 +237,28 @@ export default {
     onEditActionClicked(mailAccountDtoId){
       let editDialogRef = 'editDialog_' + mailAccountDtoId;
       this.$refs[editDialogRef].dialogInstance.open();
+      this.resetEditDialogErrors();
     },
     /**
      * @description triggered when user clicks confirm in the edit dialog
      */
     async onMaterialEditModalConfirmButtonClick(mailAccountDtoId){
-      let csrfToken = await this.getCsrfToken();
-      let promise   = this.sendMailAccountUpdateRequest(csrfToken, mailAccountDtoId);
+      let baseApiResponseDto = null;
 
-      promise.catch( (result) => {
+      try{
+        var csrfToken      = await this.getCsrfToken();
+        baseApiResponseDto = await this.sendMailAccountUpdateRequest(csrfToken, mailAccountDtoId);
+      }catch(Exception){
         console.warn({
           "message": "Could not update the data on the server",
-          "result" : result,
+          "result" : Exception,
         })
-      });
+      }
+
+      this.clientErrorMessage   = ( "undefined" === typeof baseApiResponseDto.invalidFields.client   ? "" : baseApiResponseDto.invalidFields.client);
+      this.nameErrorMessage     = ( "undefined" === typeof baseApiResponseDto.invalidFields.name     ? "" : baseApiResponseDto.invalidFields.name);
+      this.loginErrorMessage    = ( "undefined" === typeof baseApiResponseDto.invalidFields.login    ? "" : baseApiResponseDto.invalidFields.login);
+      this.passwordErrorMessage = ( "undefined" === typeof baseApiResponseDto.invalidFields.password ? "" : baseApiResponseDto.invalidFields.password);
     },
     /**
      * @description handles the logic when user clicks the `confirm` button in the modal shown upon clicking `remove action`
@@ -316,7 +359,7 @@ export default {
      * @param mailAccountDtoId {String}
      * @return {Promise}
      */
-    sendMailAccountUpdateRequest(csrfToken, mailAccountDtoId){
+    async sendMailAccountUpdateRequest(csrfToken, mailAccountDtoId){
       let ajaxData = {
         client   : this.$refs['materialEditModalClientInput_'   + mailAccountDtoId].textFieldValue,
         name     : this.$refs['materialEditModalNameInput_'     + mailAccountDtoId].textFieldValue,
@@ -329,7 +372,7 @@ export default {
         [SymfonyRoutes.UPDATE_MAIL_PARAM_ACCOUNT_ID]: mailAccountDtoId
       };
 
-      let url     = SymfonyRoutes.buildUrlWithReplacedParams(SymfonyRoutes.UPDATE_MAIL, urlReplacementParams);
+      let url = SymfonyRoutes.buildUrlWithReplacedParams(SymfonyRoutes.UPDATE_MAIL, urlReplacementParams);
       let promise = this.axios.post(url, ajaxData).then( (result) => {
         let baseApiResponseDto = BaseInternalApiResponseDto.fromAxiosResponse(result);
 
@@ -338,7 +381,8 @@ export default {
         }else{
           notification.showGreenNotification(baseApiResponseDto.message);
         }
-        console.log({baseApiResponseDto});
+
+        return baseApiResponseDto;
       });
 
       return promise;
@@ -362,6 +406,15 @@ export default {
       }else{
         return this.removalConfirmationTranslatedString;
       }
+    },
+    /**
+     * @description will reset the errors in the edit dialog
+     */
+    resetEditDialogErrors(){
+      this.clientErrorMessage   = '';
+      this.nameErrorMessage     = '';
+      this.loginErrorMessage    = '';
+      this.passwordErrorMessage = '';
     }
   },
   beforeMount(){
