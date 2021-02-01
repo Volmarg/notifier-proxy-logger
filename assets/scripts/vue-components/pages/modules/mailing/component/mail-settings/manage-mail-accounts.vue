@@ -1,6 +1,5 @@
 <!-- Template -->
 <template>
-  <!-- TODO: editing data is not updated in view -->
   <semipolar-spinner v-show="isSpinnerVisible"/>
 
   <div class="row">
@@ -14,7 +13,7 @@
 
           <volt-table
               :headers="tableHeaders"
-              :rows-data="originalAllEmailsAccounts"
+              :rows-data="allEmails"
               @pagination-button-clicked="onPaginationButtonClickedHandler"
               @handle-showing-table-data-for-pagination-and-result="handleDataForPaginationAndSearch"
               @search-for-string-in-table-cells="searchForStringInTableCells"
@@ -137,6 +136,8 @@ import SymfonyRoutes                    from "../../../../../../core/symfony/Sym
 import Notification                     from "../../../../../../libs/mdb5/Notification";
 import SymfonyForms                     from "../../../../../../core/symfony/SymfonyForms";
 
+import DtoMixin                         from "../../../../../../core/mixins/dto-mixin";
+
 let translationService = new TranslationsService();
 let notification       = new Notification();
 
@@ -178,6 +179,9 @@ export default {
       passwordErrorMessage        : '',
     }
   },
+  mixins: [
+    DtoMixin
+  ],
   computed: {
     tableHeaders: {
       get: function () {
@@ -255,10 +259,51 @@ export default {
         })
       }
 
+      let client   = this.$refs['materialEditModalClientInput_'   + mailAccountDtoId].textFieldValue;
+      let name     = this.$refs['materialEditModalNameInput_'     + mailAccountDtoId].textFieldValue;
+      let login    = this.$refs['materialEditModalLoginInput_'    + mailAccountDtoId].textFieldValue;
+      let password = this.$refs['materialEditModalPasswordInput_' + mailAccountDtoId].textFieldValue;
+
       this.clientErrorMessage   = ( "undefined" === typeof baseApiResponseDto.invalidFields.client   ? "" : baseApiResponseDto.invalidFields.client);
       this.nameErrorMessage     = ( "undefined" === typeof baseApiResponseDto.invalidFields.name     ? "" : baseApiResponseDto.invalidFields.name);
       this.loginErrorMessage    = ( "undefined" === typeof baseApiResponseDto.invalidFields.login    ? "" : baseApiResponseDto.invalidFields.login);
       this.passwordErrorMessage = ( "undefined" === typeof baseApiResponseDto.invalidFields.password ? "" : baseApiResponseDto.invalidFields.password);
+
+      let indexOfEntityInVisibleDataDtos = this.getDtoIndexForEntityWithId(mailAccountDtoId, this.currentlyVisibleDataInTable);
+      let indexOfEntityInAllDtosArray    = this.getDtoIndexForEntityWithId(mailAccountDtoId, this.allEmails);
+
+      let currentlyProcessedMailAccountDtoForTable = this.getDtoForEntityWithId(mailAccountDtoId, this.allEmails, MailAccountDto);
+      let currentlyProcessedMailAccountDto         = this.allEmails[indexOfEntityInAllDtosArray];
+
+      // whole data
+      currentlyProcessedMailAccountDto.client   = client;
+      currentlyProcessedMailAccountDto.name     = name;
+      currentlyProcessedMailAccountDto.login    = login;
+      currentlyProcessedMailAccountDto.password = password;
+
+      // data used only in table
+      currentlyProcessedMailAccountDtoForTable.client   = client;
+      currentlyProcessedMailAccountDtoForTable.name     = name;
+      currentlyProcessedMailAccountDtoForTable.login    = login;
+      currentlyProcessedMailAccountDtoForTable.password = password;
+
+      let currentlyVisibleDataInTableNewData = this.currentlyVisibleDataInTable;
+      let allEmailsNewData                   = this.allEmails;
+
+      /**
+       * @description table reset is required to trigger vue reactivity in this case,
+       *              simply setting new modified array to variable won't work,
+       *              it has to be explicitly cleared
+       */
+
+      this.currentlyVisibleDataInTable = [];
+      this.allEmails                   = [];
+
+      currentlyVisibleDataInTableNewData[indexOfEntityInVisibleDataDtos] = currentlyProcessedMailAccountDtoForTable;
+      allEmailsNewData[indexOfEntityInAllDtosArray]                      = currentlyProcessedMailAccountDto;
+
+      this.currentlyVisibleDataInTable = currentlyVisibleDataInTableNewData;
+      this.allEmails                   = allEmailsNewData;
     },
     /**
      * @description handles the logic when user clicks the `confirm` button in the modal shown upon clicking `remove action`
@@ -320,6 +365,7 @@ export default {
         });
 
         this.originalAllEmailsAccounts   = allMailAccountsDto;
+        this.allEmails                   = allMailAccountsDto;
         this.currentlyVisibleDataInTable = allMailAccountsDto;
 
         this.$refs.table.searchInput = "";

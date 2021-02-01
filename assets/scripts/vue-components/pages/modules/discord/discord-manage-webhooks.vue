@@ -131,6 +131,8 @@ import SymfonyRoutes                    from "../../../../core/symfony/SymfonyRo
 import TranslationsService              from "../../../../core/services/TranslationsService";
 import Notification                     from "../../../../libs/mdb5/Notification";
 
+import DtoMixin                         from "../../../../core/mixins/dto-mixin";
+
 let translationsService = new TranslationsService();
 let notification        = new Notification();
 
@@ -159,6 +161,9 @@ export default {
     'material-dialog'            : MaterialDesignDialogComponent,
     'volt-table-row'             : VoltTableRowComponent,
   },
+  mixins: [
+    DtoMixin
+  ],
   computed: {
     skippedDtoProperties: function(){
       return [
@@ -301,14 +306,14 @@ export default {
      */
     async onMaterialEditModalConfirmButtonClick(discordWebhookDtoEntityId){
 
-      if( !this.hasDtoEntityWithId(discordWebhookDtoEntityId, this.currentlyVisibleDataInTable) ){
+      if( !this.hasDtoEntityWithId(discordWebhookDtoEntityId, this.currentlyVisibleDataInTable, DiscordWebhookDto) ){
         throw {
           "message"          : "Tried to update the discordWebhookDto via the edit dialog but no dto with given entity id was found",
           "expectedEntityId" : discordWebhookDtoEntityId,
         }
       }
       let indexOfEntityInVisibleDataDtos = this.getDtoIndexForEntityWithId(discordWebhookDtoEntityId, this.currentlyVisibleDataInTable);
-      let indexOfEntityInAllDtosArray    = this.getDtoIndexForEntityWithId(discordWebhookDtoEntityId);
+      let indexOfEntityInAllDtosArray    = this.getDtoIndexForEntityWithId(discordWebhookDtoEntityId, this.discordWebhooksDtos);
 
       let changedWebhookUrl  = this.$refs['materialEditModalWebhookUrlInput_'  + discordWebhookDtoEntityId].textFieldValue;
       let changedWebhookName = this.$refs['materialEditModalWebhookNameInput_' + discordWebhookDtoEntityId].textFieldValue;
@@ -335,7 +340,7 @@ export default {
           return;
         }
 
-        let currentlyProcessedDiscordWebhookDtoForTable = this.getDtoForEntityWithId(discordWebhookDtoEntityId);
+        let currentlyProcessedDiscordWebhookDtoForTable = this.getDtoForEntityWithId(discordWebhookDtoEntityId, this.discordWebhooksDtos, DiscordWebhookDto);
         let currentlyProcessedDiscordWebhookDto         = this.discordWebhooksDtos[indexOfEntityInVisibleDataDtos];
 
         // whole data
@@ -355,7 +360,7 @@ export default {
 
         /**
          * @description table reset is required to trigger vue reactivity in this case,
-         *              simply setting new modified array to variable won't work,getTippyBodyContentForSingleRow
+         *              simply setting new modified array to variable won't work,
          *              it has to be explicitly cleared
          */
 
@@ -395,73 +400,6 @@ export default {
         }
 
       })
-    },
-    /**
-     * @description will return dto for given entity id
-     *
-     * @param entityId  String
-     * @param dataArray Array
-     * @return Boolean
-     */
-    hasDtoEntityWithId(entityId, dataArray){
-      return !(null === this.getDtoForEntityWithId(entityId));
-    },
-    /**
-     * @description will return dto for given entity id, or null if nothing is found
-     *
-     * @param entityId  String
-     * @param dataArray Array
-     * @return ?DiscordWebhookDto
-     */
-    getDtoForEntityWithId(entityId, dataArray){
-      if( "undefined" === typeof dataArray){
-        dataArray = this.discordWebhooksDtos;
-      }
-
-      let foundEntities = dataArray.filter( (discordDto) => {
-        return (discordDto.id === entityId);
-      }, dataArray)
-
-      if(0 === foundEntities.length){
-        return null;
-      }
-
-      let foundEntity = foundEntities[0];
-
-      // new object is created to prevent modifying original one, as this is object
-      let webhookDto = new DiscordWebhookDto();
-      webhookDto.description = foundEntity.description;
-      webhookDto.id          = foundEntity.id;
-      webhookDto.username    = foundEntity.username;
-      webhookDto.webhookName = foundEntity.webhookName;
-      webhookDto.webhookUrl  = foundEntity.webhookUrl;
-
-      return webhookDto;
-    },
-    /**
-     * @description Will return the index of element in the dtos array, for given entityId
-     *              null is returned if nothing is found
-     *
-     * @param entityId String
-     * @param dataArray Array
-     * @return ?Number
-     */
-    getDtoIndexForEntityWithId(entityId, dataArray){
-      if( "undefined" === typeof dataArray){
-        dataArray = this.discordWebhooksDtos;
-      }
-
-      let indexOfDto    = null
-      let indexesOfDtos = Object.keys(dataArray);
-
-      for(let index of indexesOfDtos){
-        let dto = dataArray[index];
-        if(entityId == dto.id){
-          indexOfDto = index;
-          break;
-        }
-      }
-      return indexOfDto;
     },
     /**
      * @description will clear the error messages for edit dialog

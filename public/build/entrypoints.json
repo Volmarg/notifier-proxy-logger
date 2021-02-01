@@ -1,0 +1,32 @@
+{
+  "entrypoints": {
+    "volt-theme": {
+      "js": [
+        "/build/runtime.d94b3b43.js",
+        "/build/1.81c3baff.js",
+        "/build/volt-theme.89d0f199.js"
+      ],
+      "css": [
+        "/build/1.df0a2f6e.css",
+        "/build/volt-theme.b78fd225.css"
+      ]
+    },
+    "app": {
+      "js": [
+        "/build/runtime.d94b3b43.js",
+        "/build/0.b03b5f96.js",
+        "/build/app.56073473.js"
+      ],
+      "css": [
+        "/build/0.678dfb1c.css",
+        "/build/app.c0179c6d.css"
+      ]
+    },
+    "external-libs": {
+      "js": [
+        "/build/runtime.d94b3b43.js",
+        "/build/external-libs.c22f2e5a.js"
+      ]
+    }
+  }
+}
