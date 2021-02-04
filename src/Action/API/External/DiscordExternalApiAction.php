@@ -7,6 +7,7 @@ use App\Controller\Application;
 use App\Controller\Core\Controllers;
 use App\DTO\API\BaseApiResponseDto;
 use App\DTO\Modules\Discord\DiscordMessageDTO;
+use App\Entity\Modules\Discord\DiscordWebhook;
 use App\Exception\NoEntityWasFoundException;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -48,6 +49,10 @@ class DiscordExternalApiAction extends AbstractController
     public function insertDiscordMessage(Request $request): JsonResponse
     {
         try{
+            $this->app->getLoggerService()->getLogger()->info("API method has been called: ", [
+                __CLASS__ . "::" . __METHOD__,
+            ]);
+
             $baseApiResponseDto  = new BaseApiResponseDto();
             $baseApiResponseDto->prefillBaseFieldsForSuccessResponse();
 
@@ -55,6 +60,10 @@ class DiscordExternalApiAction extends AbstractController
 
             json_decode($json, true);
             if( JSON_ERROR_NONE !== json_last_error() ){
+                $this->app->getLoggerService()->getLogger()->info("Provided json has invalid syntax", [
+                    "json_error" => json_last_error_msg(),
+                    "json"       => $json,
+                ]);
                 $message = $this->app->trans("api.external.general.messages.invalidJsonSyntax");
                 $baseApiResponseDto->prefillBaseFieldsForBadRequestResponse();
                 $baseApiResponseDto->setMessage($message);
@@ -72,10 +81,13 @@ class DiscordExternalApiAction extends AbstractController
             $message = $this->app->trans("api.external.general.messages.ok");
             $baseApiResponseDto->setMessage($message);
 
+            $this->app->getLoggerService()->getLogger()->info("Api call finished with success");
             return $baseApiResponseDto->toJsonResponse();
         }catch(NoEntityWasFoundException $noEntityExc){
             $this->app->getLoggerService()->logThrowable($noEntityExc);
-            $message = $this->app->trans('api.external.general.messages.badRequest');
+            $message = $this->app->trans('api.external.general.messages.noEntityHasBeenFound', [
+                "{{entityClass}}" => DiscordWebhook::class
+            ]);
 
             $responseDto = BaseApiResponseDto::buildBadRequestErrorResponse();
             $responseDto->setMessage($message);

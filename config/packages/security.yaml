@@ -14,6 +14,10 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+        api:
+            pattern: ^/api/external
+            anonymous: true
+            security: false
         main:
             anonymous: true
             lazy: true

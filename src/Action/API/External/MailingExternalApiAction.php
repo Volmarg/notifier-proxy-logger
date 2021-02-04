@@ -47,6 +47,10 @@ class MailingExternalApiAction extends AbstractController
     public function insertMail(Request $request): JsonResponse
     {
         try{
+            $this->app->getLoggerService()->getLogger()->info("API method has been called: ", [
+                __CLASS__ . "::" . __METHOD__,
+            ]);
+
             $baseApiResponseDto  = new BaseApiResponseDto();
             $baseApiResponseDto->prefillBaseFieldsForSuccessResponse();
 
@@ -54,6 +58,10 @@ class MailingExternalApiAction extends AbstractController
 
             json_decode($json, true);
             if( JSON_ERROR_NONE !== json_last_error() ){
+                $this->app->getLoggerService()->getLogger()->info("Provided json has invalid syntax", [
+                    "json_error" => json_last_error_msg(),
+                    "json"       => $json,
+                ]);
                 $message = $this->app->trans("api.external.general.messages.invalidJsonSyntax");
                 $baseApiResponseDto->prefillBaseFieldsForBadRequestResponse();
                 $baseApiResponseDto->setMessage($message);
@@ -69,6 +77,7 @@ class MailingExternalApiAction extends AbstractController
             $message = $this->app->trans("api.external.general.messages.ok");
             $baseApiResponseDto->setMessage($message);
 
+            $this->app->getLoggerService()->getLogger()->info("Api call finished with success");
             return $baseApiResponseDto->toJsonResponse();
         }catch(Exception| TypeError $e){
             $this->app->getLoggerService()->logThrowable($e, [
