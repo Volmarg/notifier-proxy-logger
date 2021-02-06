@@ -197,8 +197,9 @@ class DiscordMessageDTO extends AbstractDTO
         $dto = new DiscordMessageDTO();
         $dto->setWebhookName($webhookName);
         $dto->setMessageContent($messageContent);
+        $dto->setSource($source);
         $dto->setMessageTitle($messageTitle);
-        $dto->setMessageContent($source);
+        $dto->setMessageContent($messageContent);
         $dto->setStatus($status);
         $dto->setCreated($created);
 
