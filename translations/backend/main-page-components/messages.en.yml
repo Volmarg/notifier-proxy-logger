@@ -9,6 +9,8 @@ mainPageComponents:
       main:
         cancel:
           label: Cancel
+        ok:
+          label: Ok
       update: Update
       remove: Remove
     texts:
@@ -16,3 +18,23 @@ mainPageComponents:
       removalConfirmationDefault: |
         Do you really want to remove this entry?<br/>
         This is a <span class="text-danger">default</span> mailbox!
+      demoText:
+        Hello, <br/><br/>
+
+        <p>
+        Seems like this is the first time that You are logging into the project.
+        </p>
+
+        <p>
+        Please keep in mind that the <b>Demo</b> mode is turned on, thus the <b>Discord webhooks</b> and <b>E-mails</b>
+        accounts are generated automatically and are fake ones (won't work), so If You want to test the project You
+        need to define working / correct api endopoints or mail accounts data.
+        </p>
+
+        <p>
+        This popup is shown only upon first login.
+        </p>
+
+        <p>
+        Have a nice day,
+        </p>

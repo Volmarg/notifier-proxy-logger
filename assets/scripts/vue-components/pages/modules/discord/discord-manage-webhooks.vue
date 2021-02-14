@@ -245,7 +245,7 @@ export default {
      */
     onEditActionClicked(webhookEntityId){
       let editDialogRef = 'editDialog_' + webhookEntityId;
-      this.$refs[editDialogRef].dialogInstance.open();
+      this.$refs[editDialogRef].showDialog();
       this.clearEditDialogErrorMessages();
     },
     /**
@@ -255,7 +255,7 @@ export default {
      */
     onRemoveActionClicked(webhookEntityId){
       let removeDialogRef = 'removeDialog_' + webhookEntityId;
-      this.$refs[removeDialogRef].dialogInstance.open();
+      this.$refs[removeDialogRef].showDialog();
     },
     /**
      * @description creates tippy content for single data row - this means the popup visible upon hovering

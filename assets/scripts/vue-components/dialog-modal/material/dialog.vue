@@ -7,7 +7,7 @@
           <slot></slot>
         </div>
         <div class="mdc-dialog__actions">
-          <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="cancel">
+          <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="cancel" v-if="showCancelButton">
             <div class="mdc-button__ripple"></div>
             <span class="mdc-button__label modal-action-button special-text-color">{{ cancelButtonTranslatedString }}</span>
           </button>
@@ -26,6 +26,7 @@
 <!-- Script -->
 <script>
 import Dialog               from "../../../libs/material/Dialog";
+import {MDCDialog}          from "@material/dialog/component";
 import TranslationsService  from "../../../core/services/TranslationsService";
 
 let translationService = new TranslationsService();
@@ -43,7 +44,8 @@ export default {
     },
     'acceptButtonTranslationString': {
       type     : String,
-      required : true
+      required : false,
+      default  : 'mainPageComponents.dialog.buttons.main.ok.label',
     },
     'minWidth': {
       type     : String,
@@ -54,12 +56,24 @@ export default {
       type     : Boolean,
       required : false,
       default  : true,
+    },
+    'showCancelButton' : {
+      type     : Boolean,
+      required : false,
+      default  : true,
     }
   },
   data(){
     return {
-      dialogInstance      : null,
+      dialogInstance      : null | MDCDialog,
       dialogDiscardAction : '',
+    }
+  },
+  methods: {
+    showDialog(){
+      if (null != this.dialogInstance) {
+        this.dialogInstance.open();
+      }
     }
   },
   computed: {

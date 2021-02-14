@@ -3,7 +3,8 @@ import LoggedInUserDataDto  from "../dto/api/internal/LoggedInUserDataDto";
 
 export default class LocalStorageService {
 
-    static readonly SESSION_KEY_LOGGED_USER  = "loggedUser";
+    static readonly SESSION_KEY_LOGGED_USER    = "loggedUser";
+    static readonly SESSION_KEY_IS_FIRST_LOGIN = "firstLogin";
 
     /**
      * @description will set the logged in user dto in local storage
@@ -35,6 +36,22 @@ export default class LocalStorageService {
     {
         let json = localStorage.getItem(LocalStorageService.SESSION_KEY_LOGGED_USER);
         return !StringUtils.isEmptyString(json)
+    }
+
+    /**
+     * @description will check if this is the first time that user logs in
+     */
+    public isFirstLogin(): boolean
+    {
+        let isFirstLogin = localStorage.getItem(LocalStorageService.SESSION_KEY_IS_FIRST_LOGIN);
+        return StringUtils.isEmptyString(isFirstLogin);
+    }
+
+    /**
+     * @description will set the first login to true
+     */
+    public setFirstLogin(): void {
+        localStorage.setItem(LocalStorageService.SESSION_KEY_IS_FIRST_LOGIN, 'true');
     }
 
 }

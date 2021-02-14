@@ -233,14 +233,14 @@ export default {
      */
     onRemoveActionClicked(mailAccountDtoId){
       let removeDialogRef = 'removeDialog_' + mailAccountDtoId;
-      this.$refs[removeDialogRef].dialogInstance.open();
+      this.$refs[removeDialogRef].showDialog();
     },
     /**
      * @description handle the logic on the moment that user clicks on the edit action button
      */
     onEditActionClicked(mailAccountDtoId){
       let editDialogRef = 'editDialog_' + mailAccountDtoId;
-      this.$refs[editDialogRef].dialogInstance.open();
+      this.$refs[editDialogRef].showDialog();
       this.resetEditDialogErrors();
     },
     /**
