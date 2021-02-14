@@ -1,12 +1,17 @@
-const APP_ENV_DEV  = "DEV";
-const APP_ENV_PROD = "PROD";
-
+import SymfonyRoutes            from "./core/symfony/SymfonyRoutes";
+import DotenvIsDemoResponseDto  from "./core/dto/api/internal/DotenvIsDemoResponseDto";
+let axios = require('axios');
 let VUE_APP_DEFAULT_STRING_BEFORE_TRANSLATING = "...";
-let VUE_APP_ENV                               = APP_ENV_DEV;
 
-function isDev()
+/**
+ * @description return information if the demo mode is on
+ */
+async function isDemo(): Promise<boolean>
 {
-    return ( VUE_APP_ENV === APP_ENV_DEV );
+    return axios.get(SymfonyRoutes.ENV_IS_DEMO).then( (response) => {
+        let isDemoResponseDto = DotenvIsDemoResponseDto.fromAxiosResponse(response);
+        return isDemoResponseDto.isDemo;
+    })
 }
 
-export {VUE_APP_DEFAULT_STRING_BEFORE_TRANSLATING, isDev};
+export {VUE_APP_DEFAULT_STRING_BEFORE_TRANSLATING, isDemo};

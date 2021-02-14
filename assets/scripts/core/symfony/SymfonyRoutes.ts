@@ -97,6 +97,11 @@ export default class SymfonyRoutes {
     static readonly UPDATE_MAIL_PARAM_ACCOUNT_ID = '{mailAccountId}';
 
     /**
+     * @description returns the information if system demo mode is on or not
+     */
+    static readonly ENV_IS_DEMO = "/api-internal/env/is-demo";
+
+    /**
      * @description will use the url with params and replace the params with values
      */
     public static buildUrlWithReplacedParams(processedUrl: string, replacedParamsWithValues: object): string
