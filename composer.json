@@ -27,7 +27,7 @@
         "symfony/intl": "5.2.*",
         "symfony/mailer": "5.2.*",
         "symfony/mime": "5.2.*",
-        "symfony/monolog-bundle": "^3.1",
+        "symfony/monolog-bundle": "^3.6",
         "symfony/notifier": "5.2.*",
         "symfony/process": "5.2.*",
         "symfony/property-access": "5.2.*",

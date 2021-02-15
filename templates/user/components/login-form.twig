@@ -56,9 +56,12 @@
 
     <br/>
 
-    {{ form_widget(userLoginForm[FIELD_NAME_REGISTER], {
-        attr: {
-            "class": 'btn btn-block btn-primary'
-        }
-    }) }}
+{% if not isDemo() %}
+    <a href="{{ path('register') }}" target="_self">
+        <div id="user_login_form_register" name="user_login_form[register]" class="btn btn-block btn-primary">
+            {{ 'forms.loginForm.register.label' | trans }}
+        </div>
+    </a>
+{% endif %}
+
 {{ form_end(userLoginForm) }}

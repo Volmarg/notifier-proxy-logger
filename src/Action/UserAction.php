@@ -4,6 +4,7 @@ namespace App\Action;
 
 use App\Controller\Application;
 use App\Controller\Core\Controllers;
+use App\Controller\Core\Env;
 use App\Entity\User;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -74,6 +75,10 @@ class UserAction extends AbstractController
     #[Route("/register", name: "register", methods: ["GET", "POST"])]
     public function register(Request $request): Response
     {
+        if( Env::isDemo() ){
+            return $this->redirectToRoute("login");
+        }
+
         $userRegisterForm = $this->application->getForms()->getUserRegisterForm();
         $userRegisterForm->handleRequest($request);
 
