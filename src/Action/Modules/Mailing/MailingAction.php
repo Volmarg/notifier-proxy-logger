@@ -18,6 +18,7 @@ use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Notifier\NotifierInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -105,6 +106,15 @@ class MailingAction extends AbstractController
             }
 
             $baseResponseDto->setMessage($message);
+            return $baseResponseDto->toJsonResponse();
+        }catch(NotFoundHttpException $nfe){
+            $this->application->getLoggerService()->logThrowable($nfe);
+
+            $message = $this->application->trans('pages.mailing.sendTestMail.messages.defaultAccountIsNotDefined');
+
+            $baseResponseDto = BaseApiResponseDto::buildBadRequestErrorResponse();
+            $baseResponseDto->setMessage($message);
+
             return $baseResponseDto->toJsonResponse();
         }catch(Exception $e){
             $this->application->getLoggerService()->logThrowable($e);

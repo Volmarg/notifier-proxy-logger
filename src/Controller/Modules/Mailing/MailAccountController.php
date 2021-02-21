@@ -12,6 +12,7 @@ use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Notifier\Channel\EmailChannel;
 use Symfony\Component\Notifier\Notifier;
@@ -60,7 +61,7 @@ class MailAccountController extends AbstractController
     {
         $mailAccount = $this->app->getRepositories()->getMailAccountRepository()->getDefaultMailAccount();
         if( empty($mailAccount) ){
-            throw new Exception("Default mail account was not found in the database!");
+            throw new NotFoundHttpException("Default mail account was not found in the database!");
         }
 
         return $mailAccount;

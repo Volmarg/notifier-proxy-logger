@@ -12,6 +12,7 @@ pages:
       messages:
         success: "Test mail has been sent"
         fail: "Could not send test mail"
+        defaultAccountIsNotDefined: "Default account is not defined"
       texts:
         general: >
           <i>Allows to test given sending email directly without saving it in the database (default connection is used).<i>
