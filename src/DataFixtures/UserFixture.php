@@ -37,10 +37,10 @@ class UserFixture extends Fixture
      */
     public function load(ObjectManager $manager)
     {
-        $user            = new User();
-        $encodedPassword = $this->securityController->hashPassword(self::USER_RAW_PASSWORD);
+        $user        = new User();
+        $securityDto = $this->securityController->hashPassword(self::USER_RAW_PASSWORD);
 
-        $user->setPassword($encodedPassword);
+        $user->setPassword($securityDto->getHashedPassword());
         $user->setUsername(self::USER_LOGIN);
         $user->setDisplayedUsername(self::USER_LOGIN);;
 
