@@ -42,7 +42,8 @@ class UserFixture extends Fixture
 
         $user->setPassword($securityDto->getHashedPassword());
         $user->setUsername(self::USER_LOGIN);
-        $user->setDisplayedUsername(self::USER_LOGIN);;
+        $user->setRoles([User::ROLE_SUPER_ADMIN]);
+        $user->setDisplayedUsername(self::USER_LOGIN);
 
         $manager->persist($user);
         $manager->flush();
