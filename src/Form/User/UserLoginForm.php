@@ -3,6 +3,8 @@
 namespace App\Form\User;
 
 use App\Controller\Application;
+use App\Controller\Core\Env;
+use App\DataFixtures\UserFixture;
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -44,13 +46,13 @@ class UserLoginForm extends AbstractType
         $builder
             ->add(self::FIELD_NAME_USERNAME, TextType::class, [
                 "attr" => [
-                    "placeholder" => $this->application->trans('forms.loginForm.username.placeholder'),
+                    "placeholder" => (Env::isDemo() ? UserFixture::USER_LOGIN : $this->application->trans('forms.loginForm.username.placeholder')),
                 ],
                 "label" => $this->application->trans('forms.loginForm.username.label'),
             ])
             ->add(self::FIELD_NAME_PASSWORD, PasswordType::class, [
                 "attr" => [
-                    "placeholder" => $this->application->trans('forms.loginForm.password.placeholder'),
+                    "placeholder" => (Env::isDemo() ? UserFixture::USER_RAW_PASSWORD : $this->application->trans('forms.loginForm.password.placeholder')),
                 ],
                 "label" => $this->application->trans('forms.loginForm.password.label'),
             ])

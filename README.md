@@ -7,6 +7,10 @@
 <h1 align="center">Notifier/Proxy Logger</h1>
 <p align="center"><i>Central Point for Messaging & Logging </i></p>
 
+<p align="center"><b>Demo</b> - click <a href="http://notifier-proxy-logger.com.pl/login"><b>here </b></a></p>
+<p align="center"><b>Login:</b> admin</p>
+<p align="center"><b>Password:</b> admin</p>
+
 <h3>Description</h3>
 <hr>
 <p align="justify">

@@ -3,6 +3,7 @@ pages:
     header: Register
   login:
     header: Login
+    githubProject: Github Project
   mailing:
     overview:
       headers:

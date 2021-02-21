@@ -2,4 +2,14 @@
 
 {% block content %}
     {% include 'user/components/login-form.twig' %}
+
+    {# Links #}
+    {% set rowStyle  = "text-align: center;display: flex;justify-content: center; height: 25px; margin-top: 10px;"%}
+    {% set linkStyle = "text-decoration: none; color: #4a5073;text-align: center; " %}
+    <div class="row" style="{{ rowStyle }}">
+        <p>
+            <i class="fab fa-github" aria-hidden="true"></i>
+            <a href="https://github.com/Volmarg/notifier-proxy-logger" style="{{ linkStyle }}" target="_blank"> {{ 'pages.login.githubProject' | trans }}</a>
+        </p>
+    </div>
 {% endblock %}
