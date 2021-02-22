@@ -4,6 +4,7 @@ namespace App\Action\Modules\Mailing;
 
 use App\Controller\Application;
 use App\Controller\Core\Controllers;
+use App\Controller\Core\Env;
 use App\DTO\API\BaseApiResponseDto;
 use App\DTO\API\Internal\GetAllEmailsAccountsResponseDto;
 use App\DTO\API\Internal\GetAllEmailsResponseDto;
@@ -98,7 +99,10 @@ class MailingAction extends AbstractController
                 $mail->setSubject($sendTestMailDto->getMessageTitle());
                 $mail->setToEmails([$sendTestMailDto->getReceiver()]);
 
-                $notifier = $this->controllers->getMailAccountController()->getDefaultNotifierForSendingMailNotifications();
+                $notifier = $this->controllers->getMailAccountController()->getNotifierForSendingMailNotificationsByUsingLocalSendmail();
+                if( !Env::isDemo() ){
+                    $notifier = $this->controllers->getMailAccountController()->getDefaultNotifierForSendingMailNotifications();
+                }
                 $this->controllers->getMailingController()->sendSingleEmailViaNotifier($mail, $notifier);
             }elseif( $testMailForm->isSubmitted() && !$testMailForm->isValid() ){
                 $message = $this->application->trans('pages.mailing.sendTestMail.messages.fail');

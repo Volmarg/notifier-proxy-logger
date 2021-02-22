@@ -20,7 +20,8 @@ use Symfony\Component\Stopwatch\Stopwatch;
 
 class MailAccountController extends AbstractController
 {
-    const MAIL_CHANNEL_NAME = "email";
+    const MAIL_CHANNEL_NAME      = "email";
+    const LOCALHOST_SENDMAIL_DSN = "sendmail://default";
 
     /**
      * @var Application $app
@@ -135,14 +136,19 @@ class MailAccountController extends AbstractController
      */
     public function getNotifierForSendingMailNotifications(MailAccount $mailAccount): Notifier
     {
-        $fromMail = $this->app->getConfigLoaders()->getSystemDataConfigLoader()->getFromMail();
-
         $dsnConnectionString = $this->buildSymfonyMailerDsnConnectionString($mailAccount);
-        $stopWatch           = new Stopwatch(true);
-        $dispatcher          = new TraceableEventDispatcher($this->eventDispatcher, $stopWatch);
-        $transport           = Transport::fromDsn($dsnConnectionString, $dispatcher);
-        $mailChannel         = new EmailChannel($transport, null, $fromMail);
-        $notifier            = new Notifier([self::MAIL_CHANNEL_NAME => $mailChannel]);
+        $notifier            = $this->buildNotifierForDsnString($dsnConnectionString);
+        return $notifier;
+    }
+
+    /**
+     * Will return notifier instance for sending mail messages by using local sendmail package
+     *
+     * @return Notifier
+     */
+    public function getNotifierForSendingMailNotificationsByUsingLocalSendmail(): Notifier
+    {
+        $notifier = $this->buildNotifierForDsnString(self::LOCALHOST_SENDMAIL_DSN);
         return $notifier;
     }
 
@@ -156,6 +162,25 @@ class MailAccountController extends AbstractController
     {
         $dsnConnectionString = "{$mailAccount->getClient()}://{$mailAccount->getLogin()}:{$mailAccount->getPassword()}@localhost";
         return $dsnConnectionString;
+    }
+
+    /**
+     * Will build the mailer (MAILER_DSN) connection string used internally by symfony
+     *
+     * @param string $dsnString
+     * @return Notifier
+     */
+    private function buildNotifierForDsnString(string $dsnString): Notifier
+    {
+        $fromMail = $this->app->getConfigLoaders()->getSystemDataConfigLoader()->getFromMail();
+
+        $stopWatch   = new Stopwatch(true);
+        $dispatcher  = new TraceableEventDispatcher($this->eventDispatcher, $stopWatch);
+        $transport   = Transport::fromDsn($dsnString, $dispatcher);
+        $mailChannel = new EmailChannel($transport, null, $fromMail);
+        $notifier    = new Notifier([self::MAIL_CHANNEL_NAME => $mailChannel]);
+
+        return $notifier;
     }
 
 }
