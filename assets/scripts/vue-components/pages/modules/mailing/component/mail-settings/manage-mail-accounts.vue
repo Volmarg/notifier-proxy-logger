@@ -29,17 +29,19 @@
                 <!-- default slot insertion -->
                 <volt-cell>
                   <template #cellValue>
-                    <span class="action-button-wrapper">
-                      <edit-action @on-edit-action-clicked="onEditActionClicked(mailAccountDto.id)"/>
-                    </span>
-                    <span class="action-button-wrapper" style="margin-left: 13px;">
-                      <remove-action  @on-remove-action-clicked="onRemoveActionClicked(mailAccountDto.id)"/>
+                    <span v-if="!(mailAccountDto.name === defaultAccountName && isDemo)">
+                      <span class="action-button-wrapper">
+                        <edit-action @on-edit-action-clicked="onEditActionClicked(mailAccountDto.id)"/>
+                      </span>
+                      <span class="action-button-wrapper" style="margin-left: 13px;">
+                        <remove-action  @on-remove-action-clicked="onRemoveActionClicked(mailAccountDto.id)"/>
+                      </span>
                     </span>
                   </template>
                 </volt-cell>
 
                 <!-- Dialogs -->
-                <section>
+                <section v-if="!(mailAccountDto.name === defaultAccountName && isDemo)">
                   <!-- Edit Dialog -->
                   <material-dialog
                       :ref="'editDialog_' + mailAccountDto.id"
@@ -130,6 +132,7 @@ import GetAllEmailsAccountsResponseDto  from "../../../../../../core/dto/api/int
 import BaseInternalApiResponseDto       from "../../../../../../core/dto/api/internal/BaseInternalApiResponseDto";
 import CsrfTokenResponseDto             from "../../../../../../core/dto/api/internal/CsrfTokenResponseDto";
 import MailAccountDto                   from "../../../../../../core/dto/modules/mailing/MailAccountDto";
+import DotenvIsDemoResponseDto          from "../../../../../../core/dto/api/internal/DotenvIsDemoResponseDto";
 
 import TranslationsService              from "../../../../../../core/services/TranslationsService";
 import SymfonyRoutes                    from "../../../../../../core/symfony/SymfonyRoutes";
@@ -177,6 +180,7 @@ export default {
       nameErrorMessage            : '',
       loginErrorMessage           : '',
       passwordErrorMessage        : '',
+      isDemo                      : false,
     }
   },
   mixins: [
@@ -186,12 +190,12 @@ export default {
     tableHeaders: {
       get: function () {
         return [
-          this.nameTranslatedString,
           this.clientTranslatedString,
+          this.nameTranslatedString,
           this.loginTranslatedString,
           this.actionsTranslatedString,
         ];
-      },
+      }
     },
     skippedDtoProperties: function(){
       return [
@@ -225,6 +229,9 @@ export default {
     },
     informationTranslatedTextString(){
       return translationService.getTranslationForString('pages.mailing.addMailAccount.texts.general');
+    },
+    defaultAccountName(){
+      return "default";
     }
   },
   methods: {
@@ -461,9 +468,19 @@ export default {
       this.nameErrorMessage     = '';
       this.loginErrorMessage    = '';
       this.passwordErrorMessage = '';
+    },
+    /**
+     * @description will check is app is currently in demo mode
+     */
+    checkIsDemo(){
+      this.axios.get(SymfonyRoutes.ENV_IS_DEMO).then( (response) => {
+        let dotenvIsDemoResponseDto = DotenvIsDemoResponseDto.fromAxiosResponse(response);
+        this.isDemo                 = dotenvIsDemoResponseDto.isDemo;
+      })
     }
   },
   beforeMount(){
+    this.checkIsDemo();
     this.getAllMailAccounts();
   },
   watch:{

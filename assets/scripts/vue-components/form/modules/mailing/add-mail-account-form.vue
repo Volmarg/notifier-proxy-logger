@@ -43,12 +43,12 @@
             <div class="row">
               <div class="col-md-10 mb-3">
                 <div class="form-group">
-                  <label for="add_mail_account_login">{{ passwordLabelTranslated }}</label>
+                  <label for="add_mail_account_login">{{ loginLabelTranslated }}</label>
                   <input id="add_mail_account_login"
                          class="form-control"
                          required=""
                          type="text"
-                         :placeholder="passwordPlaceholderTranslated"
+                         :placeholder="loginPlaceholderTranslated"
                          ref="login"
                   />
                 </div>
@@ -58,12 +58,12 @@
             <div class="row">
               <div class="col-md-10 mb-3">
                 <div class="form-group">
-                  <label for="add_mail_account_password">{{ loginLabelTranslated }}</label>
+                  <label for="add_mail_account_password">{{ passwordLabelTranslated }}</label>
                   <input type="password"
                          id="add_mail_account_password"
                          class="form-control"
                          required=""
-                         :placeholder="loginPlaceholderTranslated"
+                         :placeholder="passwordPlaceholderTranslated"
                          ref="password"
                   />
                 </div>

@@ -72,7 +72,7 @@ pages:
         general: >
           <i>
             Allows to define the mail account for sending the emails. The account type must be compatible with definition on
-            <a href="https://symfony.com/doc/current/mailer.html#using-a-3rd-party-transport">this</a> page. <br/>
+            <b><a href="https://symfony.com/doc/current/mailer.html#using-a-3rd-party-transport">this</a></b> page. <br/>
             With currently implemented logic, only the <span class="text-danger">default</span> connection is used.
           <i>
     getAllMailsAccount:
