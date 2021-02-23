@@ -84,13 +84,6 @@ export default {
     submitTestMailForm(){
       let csrfRequestPromise = this.getCsrfToken();
 
-      let ajaxFormData = {
-        receiver     : this.emailInput,
-        messageTitle : this.titleInput,
-        messageBody  : this.bodyTextArea,
-        _token       : this.csrfToken,
-      };
-
       csrfRequestPromise.then( (response) => {
         let csrfTokenResponseDto = CsrfTokenResponseDto.fromAxiosResponse(response);
         this.csrfToken           = csrfTokenResponseDto.csrToken;
@@ -99,6 +92,13 @@ export default {
           notification.showRedNotification(csrfTokenResponseDto.message);
           return;
         }
+
+        let ajaxFormData = {
+          receiver     : this.emailInput,
+          messageTitle : this.titleInput,
+          messageBody  : this.bodyTextArea,
+          _token       : this.csrfToken,
+        };
 
         this.axios({
           method : "POST",
