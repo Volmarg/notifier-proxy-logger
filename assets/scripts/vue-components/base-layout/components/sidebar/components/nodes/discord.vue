@@ -1,7 +1,7 @@
 <!-- Template -->
 <template>
-  <li class="nav-item">
-    <span class="nav-link d-flex justify-content-between align-items-center collapsed" data-toggle="collapse" data-target="#submenu-discord" aria-expanded="false">
+  <li class="nav-item" :class="{'active': isParentNodeActive}">
+    <span class="nav-link d-flex justify-content-between align-items-center collapsed" data-toggle="collapse" data-target="#submenu-discord" aria-expanded="false" ref="parentNodeArrowSpan">
       <span>
         <span class="sidebar-icon">
           <span class="fab fa-lg fa-discord"></span>
@@ -13,7 +13,7 @@
       </span>
     </span>
 
-    <div class="multi-level collapse" role="list" id="submenu-discord" aria-expanded="false" style="">
+    <div class="multi-level collapse" role="list" id="submenu-discord" aria-expanded="false" ref="childNodesListWrapper">
       <ul class="flex-column nav">
         <li class="nav-item" :class="{'active' : ( this.$route.name === 'modules_discord_test_sending' )}">
           <router-link :to="{ name: 'modules_discord_test_sending' }" class="nav-link">
@@ -40,6 +40,7 @@
 <!-- Script -->
 <script>
 import TranslationsService from "../../../../../../core/services/TranslationsService";
+import SidebarNavMixing    from "../../../../../../core/mixins/sidebar-nav-mixin";
 
 let translationService = new TranslationsService();
 
@@ -64,7 +65,17 @@ export default {
       get: function(){
         return translationService.getTranslationForString('sidebar.menu.nodes.discord.history.label');
       }
+    },
+    nodesNames: function(){
+      return [
+        'modules_discord_test_sending',
+        'modules_discord_webhooks_manage',
+        'modules_discord_history',
+      ];
     }
-  }
+  },
+  mixins: [
+    SidebarNavMixing
+  ]
 }
 </script>
