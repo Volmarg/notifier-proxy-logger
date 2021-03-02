@@ -22,11 +22,11 @@ export default {
       this.isParentNodeActive = this.nodesNames.includes(route.name);
 
       if(this.isParentNodeActive){
-        this.$refs.parentNodeArrowSpan.attributes['aria-expanded'] = true;
+        this.$refs.parentNodeArrowSpan.attributes['aria-expanded'].nodeValue = true;
         this.$refs.parentNodeArrowSpan.classList.remove('collapsed');
         this.$refs.childNodesListWrapper.classList.add('show');
       }else{
-        this.$refs.parentNodeArrowSpan.attributes['aria-expanded'] = false;
+        this.$refs.parentNodeArrowSpan.attributes['aria-expanded'].nodeValue = false;
         this.$refs.parentNodeArrowSpan.classList.add('collapsed');
         this.$refs.childNodesListWrapper.classList.remove('show');
       }
