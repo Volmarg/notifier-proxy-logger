@@ -23,6 +23,9 @@ forms:
     register:
       label: Register
   sendTestMailForm:
+    account:
+      label: Account
+      placeholder: Select account to test sending, if none is selected then default one will be used
     receiver:
       label: Receiver
       placeholder: E-mail of this message receiver

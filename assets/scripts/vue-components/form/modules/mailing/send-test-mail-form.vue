@@ -1,6 +1,17 @@
 <!-- Template -->
 <template>
   <form @submit.prevent="submitTestMailForm" v-bind:action="formActionUrl" ref="form" method="POST">
+
+    <div class="row">
+      <div class="col-md-10 mb-3">
+        <label for="account_select">{{ selectMailAccountLabelTranslation }}</label>
+        <select class="form-control" id="account_select" ref="webhookSelect" v-model="mailAccountSelect">
+          <option value="">{{ selectMailAccountPlaceholderTranslation }}</option>
+          <option v-for="emailAccountDto in allEmailsAccounts" :value="emailAccountDto.id" >{{ emailAccountDto.name }} ( {{ emailAccountDto.client }} )</option>
+        </select>
+      </div>
+    </div>
+
     <div class="row">
       <div class="col-md-10 mb-3">
         <div>
@@ -48,14 +59,16 @@
 </template>
 
 <!-- Script -->
-<script>
-import TranslationsService        from "../../../../core/services/TranslationsService";
-import SymfonyRoutes              from "../../../../core/symfony/SymfonyRoutes";
-import SymfonyForms               from "../../../../core/symfony/SymfonyForms";
-import CsrfTokenResponseDto       from "../../../../core/dto/api/internal/CsrfTokenResponseDto";
-import CsrfTokenInputComponent    from "../../components/csrf-token-input";
-import Notification               from '../../../../libs/mdb5/Notification';
-import BaseInternalApiResponseDto from "../../../../core/dto/api/internal/BaseInternalApiResponseDto";
+<script type="ts">
+import TranslationsService             from "../../../../core/services/TranslationsService";
+import SymfonyRoutes                   from "../../../../core/symfony/SymfonyRoutes";
+import SymfonyForms                    from "../../../../core/symfony/SymfonyForms";
+import CsrfTokenResponseDto            from "../../../../core/dto/api/internal/CsrfTokenResponseDto";
+import CsrfTokenInputComponent         from "../../components/csrf-token-input";
+import Notification                    from '../../../../libs/mdb5/Notification';
+import BaseInternalApiResponseDto      from "../../../../core/dto/api/internal/BaseInternalApiResponseDto";
+import GetAllEmailsAccountsResponseDto from "../../../../core/dto/api/internal/GetAllEmailsAccountsResponseDto";
+import MailAccountDto from "../../../../core/dto/modules/mailing/MailAccountDto";
 
 let translationService = new TranslationsService();
 let notification       = new Notification();
@@ -63,18 +76,22 @@ let notification       = new Notification();
 export default {
   data(){
     return {
-      receiverLabelTranslation          : translationService.getTranslationForString('forms.sendTestMailForm.receiver.label'),
-      receiverPlaceholderTranslation    : translationService.getTranslationForString('forms.sendTestMailForm.receiver.placeholder'),
-      messageTitleLabelTranslation      : translationService.getTranslationForString('forms.sendTestMailForm.messageTitle.label'),
-      messageTitleLabelPlaceholder      : translationService.getTranslationForString('forms.sendTestMailForm.messageTitle.placeholder'),
-      messageBodyLabelTranslation       : translationService.getTranslationForString('forms.sendTestMailForm.messageBody.label'),
-      messageBodyPlaceholderTranslation : translationService.getTranslationForString('forms.sendTestMailForm.messageBody.placeholder'),
-      submitButtonTranslation           : translationService.getTranslationForString('forms.sendTestMailForm.submit.label'),
-      formActionUrl                     : SymfonyRoutes.SEND_TEST_MAIL,
-      emailInput                        : "",
-      titleInput                        : "",
-      bodyTextArea                      : "",
-      csrfToken                         : "",
+      receiverLabelTranslation                : translationService.getTranslationForString('forms.sendTestMailForm.receiver.label'),
+      receiverPlaceholderTranslation          : translationService.getTranslationForString('forms.sendTestMailForm.receiver.placeholder'),
+      messageTitleLabelTranslation            : translationService.getTranslationForString('forms.sendTestMailForm.messageTitle.label'),
+      messageTitleLabelPlaceholder            : translationService.getTranslationForString('forms.sendTestMailForm.messageTitle.placeholder'),
+      messageBodyLabelTranslation             : translationService.getTranslationForString('forms.sendTestMailForm.messageBody.label'),
+      messageBodyPlaceholderTranslation       : translationService.getTranslationForString('forms.sendTestMailForm.messageBody.placeholder'),
+      submitButtonTranslation                 : translationService.getTranslationForString('forms.sendTestMailForm.submit.label'),
+      selectMailAccountLabelTranslation       : translationService.getTranslationForString('forms.sendTestMailForm.account.label'),
+      selectMailAccountPlaceholderTranslation : translationService.getTranslationForString('forms.sendTestMailForm.account.placeholder'),
+      formActionUrl                           : SymfonyRoutes.SEND_TEST_MAIL,
+      mailAccountSelect                       : null,
+      emailInput                              : "",
+      titleInput                              : "",
+      bodyTextArea                            : "",
+      csrfToken                               : "",
+      allEmailsAccounts                       : []
     }
   },
   methods: {
@@ -97,6 +114,7 @@ export default {
           receiver     : this.emailInput,
           messageTitle : this.titleInput,
           messageBody  : this.bodyTextArea,
+          account      : this.mailAccountSelect,
           _token       : this.csrfToken,
         };
 
@@ -131,7 +149,22 @@ export default {
       });
 
       return promise;
+    },
+    /**
+     * @description will fetch all the mails accounts
+     */
+    getAllEmailsAccounts(){
+      this.axios.get(SymfonyRoutes.GET_ALL_MAIL_ACCOUNTS).then( (response) => {
+
+        let emailsAccountsJsons = GetAllEmailsAccountsResponseDto.fromAxiosResponse(response).emailsAccountsJsons;
+        this.allEmailsAccounts  = emailsAccountsJsons.map( (json) => {
+          return MailAccountDto.fromJson(json);
+        })
+      })
     }
+  },
+  beforeMount(){
+    this.getAllEmailsAccounts();
   },
   components: {
     CsrfTokenInputComponent

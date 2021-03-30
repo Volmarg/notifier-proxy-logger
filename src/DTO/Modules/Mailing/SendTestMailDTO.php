@@ -33,6 +33,11 @@ class SendTestMailDTO
     private string $submit = "";
 
     /**
+     * @var ?string $account
+     */
+    private ?string $account = null;
+
+    /**
      * @return string
      */
     public function getReceiver(): string
@@ -94,6 +99,22 @@ class SendTestMailDTO
     public function setSubmit(string $submit): void
     {
         $this->submit = $submit;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getAccount(): ?string
+    {
+        return $this->account;
+    }
+
+    /**
+     * @param string|null $account
+     */
+    public function setAccount(?string $account): void
+    {
+        $this->account = $account;
     }
 
     /**

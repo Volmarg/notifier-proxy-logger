@@ -5,13 +5,13 @@ import BaseInternalApiResponseDto from "./BaseInternalApiResponseDto";
  */
 export default class GetAllEmailsAccountsResponseDto extends BaseInternalApiResponseDto
 {
-    private _emailsAccountsJsons = "{}";
+    private _emailsAccountsJsons: Array<string> = [];
 
-    get emailsAccountsJsons(): string {
+    get emailsAccountsJsons(): Array<string> {
         return this._emailsAccountsJsons;
     }
 
-    set emailsAccountsJsons(value: string) {
+    set emailsAccountsJsons(value: Array<string>) {
         this._emailsAccountsJsons = value;
     }
 

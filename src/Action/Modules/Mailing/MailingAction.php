@@ -26,11 +26,6 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route("/modules/mailing", name: "modules_mailing_")]
 class MailingAction extends AbstractController
 {
-    const KEY_ID       = "id";
-    const KEY_CLIENT   = "client";
-    const KEY_NAME     = "name";
-    const KEY_LOGIN    = "login";
-    const KEY_PASSWORD = "password";
 
     /**
      * @var Application $application
@@ -101,7 +96,20 @@ class MailingAction extends AbstractController
 
                 $notifier = $this->controllers->getMailAccountController()->getNotifierForSendingMailNotificationsByUsingLocalSendmail();
                 if( !Env::isDemo() ){
-                    $notifier = $this->controllers->getMailAccountController()->getDefaultNotifierForSendingMailNotifications();
+                    if( empty($sendTestMailDto->getAccount()) ){
+                        $notifier = $this->controllers->getMailAccountController()->getDefaultNotifierForSendingMailNotifications();
+                    }else{
+                        $mailAccount = $this->controllers->getMailAccountController()->getOneById($sendTestMailDto->getAccount());
+                        $notifier    = $this->controllers->getMailAccountController()->getNotifierForSendingMailNotifications($mailAccount);
+                    }
+
+                    if( empty($notifier) ){
+                        $message = $this->application->trans('pages.mailing.sendTestMail.messages.fail');
+                        $baseResponseDto->prefillBaseFieldsForBadRequestResponse();
+                        $this->application->getLoggerService()->getLogger()->critical("No email account has been found for given account id", [
+                            "accountId" => $sendTestMailDto->getAccount(),
+                        ]);
+                    }
                 }
                 $this->controllers->getMailingController()->sendSingleEmailViaNotifier($mail, $notifier);
             }elseif( $testMailForm->isSubmitted() && !$testMailForm->isValid() ){

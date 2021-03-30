@@ -53,7 +53,8 @@ export default class BaseInternalApiResponseDto {
         }catch(Exception){
             throw{
                 "message"   : "Could not parse the json for: BaseInternalApiResponseDto",
-                "exception" : Exception
+                "exception" : Exception,
+                "json"      : json,
             }
         }
 
