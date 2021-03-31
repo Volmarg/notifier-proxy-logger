@@ -15,7 +15,7 @@ pages:
         defaultAccountIsNotDefined: "Default account is not defined"
       texts:
         general: >
-          <i>Allows to test given sending email directly without saving it in the database (default connection is used).<i>
+          <i>Allows to test given sending email directly without saving it in the database.<i>
         demo: >
           <i>
             Allows to test given sending email directly without saving it in the database (default connection is used).

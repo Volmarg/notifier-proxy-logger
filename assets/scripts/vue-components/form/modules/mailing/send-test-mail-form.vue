@@ -4,9 +4,9 @@
 
     <div class="row">
       <div class="col-md-10 mb-3">
-        <label for="account_select">{{ selectMailAccountLabelTranslation }}</label>
+        <label for="account_select">{{ selectMailAccountLabelTranslation }} <small>({{selectMailAccountSubtextTranslation}})</small></label>
         <select class="form-control" id="account_select" ref="webhookSelect" v-model="mailAccountSelect">
-          <option value="">{{ selectMailAccountPlaceholderTranslation }}</option>
+          <option value=""></option>
           <option v-for="emailAccountDto in allEmailsAccounts" :value="emailAccountDto.id" >{{ emailAccountDto.name }} ( {{ emailAccountDto.client }} )</option>
         </select>
       </div>
@@ -84,7 +84,7 @@ export default {
       messageBodyPlaceholderTranslation       : translationService.getTranslationForString('forms.sendTestMailForm.messageBody.placeholder'),
       submitButtonTranslation                 : translationService.getTranslationForString('forms.sendTestMailForm.submit.label'),
       selectMailAccountLabelTranslation       : translationService.getTranslationForString('forms.sendTestMailForm.account.label'),
-      selectMailAccountPlaceholderTranslation : translationService.getTranslationForString('forms.sendTestMailForm.account.placeholder'),
+      selectMailAccountSubtextTranslation     : translationService.getTranslationForString('forms.sendTestMailForm.account.subtext'),
       formActionUrl                           : SymfonyRoutes.SEND_TEST_MAIL,
       mailAccountSelect                       : null,
       emailInput                              : "",

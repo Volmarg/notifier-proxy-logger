@@ -25,7 +25,7 @@ forms:
   sendTestMailForm:
     account:
       label: Account
-      placeholder: Select account to test sending, if none is selected then default one will be used
+      subtext: If no account is selected then default one will be used
     receiver:
       label: Receiver
       placeholder: E-mail of this message receiver
