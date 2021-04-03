@@ -73,10 +73,13 @@ Everything is by default tested on Ubuntu 20.x.
 </ul>
 
 <h2>Configuration information</h2>
+
 1. This project partially requires `sendmail` being installed (at least on demo the `default` connection will always send emails 
    by using the `sendmail`. This logic is however disabled on the `prod` version)
     - https://kenfavors.com/code/how-to-install-and-configure-sendmail-on-ubuntu/
+
 2. Depending on the environment configuration it might be required to create a file `./public/.htaccess`
+
 with a content:
 ```apacheconf
 <IfModule mod_rewrite.c>
