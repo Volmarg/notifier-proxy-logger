@@ -6,6 +6,7 @@ api:
         ok: Ok
         internalServerError: Internal server error
         badRequest: Bad request
+        notFound: Not found
         noEntityHasBeenFound: "No entity has been found for request: {{entityClass}}"
         fieldsViolations: 'Fields violations: {{fieldsList}}'
   internal:

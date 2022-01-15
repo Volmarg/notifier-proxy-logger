@@ -129,4 +129,16 @@ class MailController extends AbstractController
         }
 
     }
+
+    /**
+     * Will either return {@see Mail} entity for an id or null if nothing is found
+     *
+     * @param int $id
+     * @return Mail|null
+     */
+    public function findOne(int $id): ?Mail
+    {
+        return $this->app->getRepositories()->getMailRepository()->find($id);
+    }
+
 }

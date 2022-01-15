@@ -6,7 +6,10 @@ use App\Attributes\IsApiRoute;
 use App\Controller\Application;
 use App\Controller\Core\Controllers;
 use App\DTO\API\BaseApiResponseDto;
+use App\DTO\API\Internal\Email\GetEmailStatusResponseDto;
+use App\DTO\API\Internal\Email\InsertEmailResponseDto;
 use App\DTO\Modules\Mailing\MailDTO;
+use App\Entity\Modules\Mailing\Mail;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -51,8 +54,8 @@ class MailingExternalApiAction extends AbstractController
                 __CLASS__ . "::" . __METHOD__,
             ]);
 
-            $baseApiResponseDto  = new BaseApiResponseDto();
-            $baseApiResponseDto->prefillBaseFieldsForSuccessResponse();
+            $responseDto  = new InsertEmailResponseDto();
+            $responseDto->prefillBaseFieldsForSuccessResponse();
 
             $json = $request->getContent();
 
@@ -63,22 +66,22 @@ class MailingExternalApiAction extends AbstractController
                     "json"       => $json,
                 ]);
                 $message = $this->app->trans("api.external.general.messages.invalidJsonSyntax");
-                $baseApiResponseDto->prefillBaseFieldsForBadRequestResponse();
-                $baseApiResponseDto->setMessage($message);
+                $responseDto->prefillBaseFieldsForBadRequestResponse();
+                $responseDto->setMessage($message);
 
-                return $baseApiResponseDto->toJsonResponse();
+                return $responseDto->toJsonResponse();
             }
 
             $mailDto = MailDTO::fromJson($json);
             $mail    = $this->controllers->getMailingController()->buildMailEntityFromMailDto($mailDto);
-
-            $this->controllers->getMailingController()->saveEntity($mail);
+            $mail    = $this->controllers->getMailingController()->saveEntity($mail);
 
             $message = $this->app->trans("api.external.general.messages.ok");
-            $baseApiResponseDto->setMessage($message);
+            $responseDto->setMessage($message);
+            $responseDto->setId($mail->getId());
 
             $this->app->getLoggerService()->getLogger()->info("Api call finished with success");
-            return $baseApiResponseDto->toJsonResponse();
+            return $responseDto->toJsonResponse();
         }catch(Exception| TypeError $e){
             $this->app->getLoggerService()->logThrowable($e, [
                 "info" => "Issue occurred while handling external API method for inserting mail"
@@ -86,6 +89,51 @@ class MailingExternalApiAction extends AbstractController
             $message = $this->app->trans('api.external.general.messages.internalServerError');
 
             $responseDto = BaseApiResponseDto::buildInternalServerErrorResponse();
+            $responseDto->setMessage($message);
+
+            return $responseDto->toJsonResponse();
+        }
+    }
+
+    /**
+     * Will return email status {@see Mail::ALL_STATUSES}
+     *
+     * @param int $id
+     *
+     * @return JsonResponse
+     */
+    #[IsApiRoute]
+    #[Route("/mailing/get-mail-status/{id}", name: "mailing_get_mail_status", requirements: ["id" => "\d+"], methods: [Request::METHOD_GET])]
+    public function getMailStatus(int $id): JsonResponse
+    {
+        try{
+            $this->app->getLoggerService()->getLogger()->info("API method has been called: ", [
+                __CLASS__ . "::" . __METHOD__,
+            ]);
+
+            $responseDto  = new GetEmailStatusResponseDto();
+            $responseDto->prefillBaseFieldsForSuccessResponse();
+
+            $email = $this->controllers->getMailingController()->findOne($id);
+            if (empty($email) ){
+                $message = $this->app->trans("api.external.general.messages.notFound");
+                return GetEmailStatusResponseDto::buildBadRequestErrorResponse($message)->toJsonResponse();
+            }
+
+            $message = $this->app->trans("api.external.general.messages.ok");
+            $responseDto->setMessage($message);
+            $responseDto->setStatus($email->getStatus());
+
+            $this->app->getLoggerService()->getLogger()->info("Api call finished with success");
+
+            return $responseDto->toJsonResponse();
+        }catch(Exception | TypeError $e){
+            $this->app->getLoggerService()->logThrowable($e, [
+                "info" => "Issue occurred while handling external API method for getting E-Mail status"
+            ]);
+            $message = $this->app->trans('api.external.general.messages.internalServerError');
+
+            $responseDto = GetEmailStatusResponseDto::buildInternalServerErrorResponse();
             $responseDto->setMessage($message);
 
             return $responseDto->toJsonResponse();
