@@ -5,6 +5,7 @@ namespace App\Action\Modules\Mailing;
 use App\Controller\Application;
 use App\Controller\Core\Controllers;
 use App\Controller\Core\Env;
+use App\Controller\Modules\Mailing\Type\NotificationMailController;
 use App\DTO\API\BaseApiResponseDto;
 use App\DTO\API\Internal\GetAllEmailsAccountsResponseDto;
 use App\DTO\API\Internal\GetAllEmailsResponseDto;
@@ -52,19 +53,26 @@ class MailingAction extends AbstractController
      */
     private ValidationService $validationService;
 
+    /**
+     * @var NotificationMailController $notificationMailController
+     */
+    private NotificationMailController $notificationMailController;
+
     public function __construct(
-        Application       $application,
-        NotifierInterface $notifier,
-        FormService       $formService,
-        Controllers       $controllers,
-        ValidationService $validationService
+        Application                $application,
+        NotifierInterface          $notifier,
+        FormService                $formService,
+        Controllers                $controllers,
+        ValidationService          $validationService,
+        NotificationMailController $notificationMailController
     )
     {
-        $this->validationService = $validationService;
-        $this->controllers       = $controllers;
-        $this->application       = $application;
-        $this->formService       = $formService;
-        $this->notifier          = $notifier;
+        $this->notificationMailController = $notificationMailController;
+        $this->validationService           = $validationService;
+        $this->controllers                 = $controllers;
+        $this->application                 = $application;
+        $this->formService                 = $formService;
+        $this->notifier                    = $notifier;
     }
 
     /**
@@ -94,13 +102,13 @@ class MailingAction extends AbstractController
                 $mail->setSubject($sendTestMailDto->getMessageTitle());
                 $mail->setToEmails([$sendTestMailDto->getReceiver()]);
 
-                $notifier = $this->controllers->getMailAccountController()->getNotifierForSendingMailNotificationsByUsingLocalSendmail();
+                $notifier = $this->notificationMailController->getNotifierForSendingMailNotificationsByUsingLocalSendmail();
                 if( !Env::isDemo() ){
                     if( empty($sendTestMailDto->getAccount()) ){
-                        $notifier = $this->controllers->getMailAccountController()->getDefaultNotifierForSendingMailNotifications();
+                        $notifier = $this->notificationMailController->getDefaultNotifierForSendingMailNotifications();
                     }else{
                         $mailAccount = $this->controllers->getMailAccountController()->getOneById($sendTestMailDto->getAccount());
-                        $notifier    = $this->controllers->getMailAccountController()->getNotifierForSendingMailNotifications($mailAccount);
+                        $notifier    = $this->notificationMailController->getNotifierForSendingMailNotifications($mailAccount);
                     }
 
                     if( empty($notifier) ){

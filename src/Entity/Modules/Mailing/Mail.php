@@ -7,6 +7,7 @@ use App\Repository\Modules\Mailing\MailRepository;
 use App\Validation\Constraint\ArrayOfEmailsConstraint;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Notifier\Notification\Notification;
 use Symfony\Component\Validator\Constraints\Choice;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -17,6 +18,9 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
  */
 class Mail implements EntityInterface
 {
+    private const TYPE_NOTIFICATION = "NOTIFICATION";
+    private const TYPE_PLAIN        = "PLAIN";
+
     const FIELD_NAME_STATUS = "status";
 
     const STATUS_SENT    = "SENT";
@@ -72,6 +76,11 @@ class Mail implements EntityInterface
      * @ORM\Column(type="string", length=50)
      */
     private $source;
+
+    /**
+     * @ORM\Column(type="string", length=50)
+     */
+    private string $type;
 
     /**
      * @ORM\Column(type="json")
@@ -171,6 +180,44 @@ class Mail implements EntityInterface
         $this->toEmails = $toEmails;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $type
+     */
+    public function setType(string $type): void
+    {
+        $this->type = $type;
+    }
+
+    /**
+     * Will check if mail is of type notification,
+     * E-Mails of this type are utilizing the: {@see Notification}
+     *
+     * @return bool
+     */
+    public function isNotificationEmail(): bool
+    {
+        return ($this->getType() === self::TYPE_NOTIFICATION);
+    }
+
+    /**
+     * Return information if E-mail is plain type, which means it just sends whatever there is to be sent,
+     * no extra symfony based formatting
+     *
+     * @return bool
+     */
+    public function isPlainEmail(): bool
+    {
+       return ($this->getType() === self::TYPE_PLAIN);
     }
 
     /**

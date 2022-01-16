@@ -3,6 +3,7 @@
 namespace App\Controller\Modules\Mailing;
 
 use App\Controller\Application;
+use App\Controller\Modules\Mailing\Type\NotificationMailController;
 use App\DTO\Modules\Mailing\MailDTO;
 use App\Entity\Modules\Mailing\Mail;
 use Doctrine\ORM\OptimisticLockException;
@@ -14,6 +15,9 @@ use Symfony\Component\Notifier\Notifier;
 use Symfony\Component\Notifier\NotifierInterface;
 use Symfony\Component\Notifier\Recipient\Recipient;
 
+/**
+ * Handles general logic related to CRUD on {@see Mail} + generic sending logic
+ */
 class MailController extends AbstractController
 {
 
@@ -121,7 +125,7 @@ class MailController extends AbstractController
         $notification = new Notification();
         $notification->subject($mail->getSubject());
         $notification->content($mail->getBody());
-        $notification->channels([MailAccountController::MAIL_CHANNEL_NAME]);
+        $notification->channels([NotificationMailController::MAIL_CHANNEL_NAME]);
 
         foreach($mail->getToEmails() as $singleEmailString){
             $notificationRecipient = new Recipient($singleEmailString);

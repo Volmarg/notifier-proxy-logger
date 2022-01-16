@@ -2,9 +2,9 @@
 
 namespace App\Command\Crons;
 
-
 use App\Controller\Application;
 use App\Controller\Core\Controllers;
+use App\Controller\Modules\Mailing\Type\NotificationMailController;
 use App\Entity\Modules\Mailing\Mail;
 use Exception;
 use Symfony\Component\Console\Command\Command;
@@ -38,10 +38,22 @@ class SendEmailsCronCommand extends Command
      */
     private $io = null;
 
-    public function __construct(Application $app, Controllers $controllers, string $name = null) {
+    /**
+     * @var NotificationMailController $notificationMailController
+     */
+    private NotificationMailController $notificationMailController;
+
+    /**
+     * @param Application                $app
+     * @param Controllers                $controllers
+     * @param NotificationMailController $notificationMailController
+     * @param string|null                $name
+     */
+    public function __construct(Application $app, Controllers $controllers, NotificationMailController $notificationMailController, string $name = null) {
         parent::__construct($name);
-        $this->app         = $app;
-        $this->controllers = $controllers;
+        $this->app                        = $app;
+        $this->controllers                = $controllers;
+        $this->notificationMailController = $notificationMailController;
     }
 
     protected function configure()
@@ -79,7 +91,7 @@ class SendEmailsCronCommand extends Command
             foreach($allEmailsToProcess as $email){
 
                 try{
-                    $notifier = $this->controllers->getMailAccountController()->getDefaultNotifierForSendingMailNotifications();
+                    $notifier = $this->notificationMailController->getDefaultNotifierForSendingMailNotifications();
                     $this->controllers->getMailingController()->sendSingleEmailViaNotifier($email, $notifier);
                     $this->controllers->getMailingController()->updateStatus($email, Mail::STATUS_SENT);
                 }catch(Exception|TypeError $e){

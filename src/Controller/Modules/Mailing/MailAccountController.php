@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Controller\Modules\Mailing;
-
 
 use App\Controller\Application;
 use App\Entity\Modules\Mailing\MailAccount;
@@ -10,33 +8,24 @@ use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcher;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Mailer\Transport;
-use Symfony\Component\Notifier\Channel\EmailChannel;
-use Symfony\Component\Notifier\Notifier;
-use Symfony\Component\Stopwatch\Stopwatch;
 
+/**
+ * Handles general data related to mail accounts
+ */
 class MailAccountController extends AbstractController
 {
-    const MAIL_CHANNEL_NAME      = "email";
-    const LOCALHOST_SENDMAIL_DSN = "sendmail://default";
-
     /**
      * @var Application $app
      */
     private Application $app;
 
     /**
-     * @var EventDispatcherInterface $eventDispatcher
+     * @param Application $app
      */
-    private EventDispatcherInterface $eventDispatcher;
-
-    public function __construct(Application $app, EventDispatcherInterface $eventDispatcher)
+    public function __construct(Application $app)
     {
-        $this->eventDispatcher = $eventDispatcher;
-        $this->app             = $app;
+        $this->app = $app;
     }
 
     /**
@@ -112,75 +101,6 @@ class MailAccountController extends AbstractController
     public function save(MailAccount $mailAccount): MailAccount
     {
         return $this->app->getRepositories()->getMailAccountRepository()->save($mailAccount);
-    }
-
-    /**
-     * Will return texter instance which uses the default mail account for sending messages
-     *
-     * @throws Exception
-     * @return Notifier
-     */
-    public function getDefaultNotifierForSendingMailNotifications(): Notifier
-    {
-        $defaultMailAccount = $this->getDefaultMailAccount();
-        $notifier           = $this->getNotifierForSendingMailNotifications($defaultMailAccount);
-
-        return $notifier;
-    }
-
-    /**
-     * Will return notifier instance for sending mail messages, uses MailAccount configuration
-     *
-     * @param MailAccount $mailAccount
-     * @return Notifier
-     */
-    public function getNotifierForSendingMailNotifications(MailAccount $mailAccount): Notifier
-    {
-        $dsnConnectionString = $this->buildSymfonyMailerDsnConnectionString($mailAccount);
-        $notifier            = $this->buildNotifierForDsnString($dsnConnectionString);
-        return $notifier;
-    }
-
-    /**
-     * Will return notifier instance for sending mail messages by using local sendmail package
-     *
-     * @return Notifier
-     */
-    public function getNotifierForSendingMailNotificationsByUsingLocalSendmail(): Notifier
-    {
-        $notifier = $this->buildNotifierForDsnString(self::LOCALHOST_SENDMAIL_DSN);
-        return $notifier;
-    }
-
-    /**
-     * Will build the mailer (MAILER_DSN) connection string used internally by symfony
-     *
-     * @param MailAccount $mailAccount
-     * @return string
-     */
-    private function buildSymfonyMailerDsnConnectionString(MailAccount $mailAccount): string
-    {
-        $dsnConnectionString = "{$mailAccount->getClient()}://{$mailAccount->getLogin()}:{$mailAccount->getPassword()}@localhost";
-        return $dsnConnectionString;
-    }
-
-    /**
-     * Will build the mailer (MAILER_DSN) connection string used internally by symfony
-     *
-     * @param string $dsnString
-     * @return Notifier
-     */
-    private function buildNotifierForDsnString(string $dsnString): Notifier
-    {
-        $fromMail = $this->app->getConfigLoaders()->getSystemDataConfigLoader()->getFromMail();
-
-        $stopWatch   = new Stopwatch(true);
-        $dispatcher  = new TraceableEventDispatcher($this->eventDispatcher, $stopWatch);
-        $transport   = Transport::fromDsn($dsnString, $dispatcher);
-        $mailChannel = new EmailChannel($transport, null, $fromMail);
-        $notifier    = new Notifier([self::MAIL_CHANNEL_NAME => $mailChannel]);
-
-        return $notifier;
     }
 
 }

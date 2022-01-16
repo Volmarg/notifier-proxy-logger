@@ -9,6 +9,9 @@ use App\Controller\Modules\Mailing\MailController;
 use App\Controller\System\SecurityController;
 use App\Controller\UserController;
 
+/**
+ * @deprecated
+ */
 class Controllers
 {
     /**
