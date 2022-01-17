@@ -95,7 +95,7 @@ class MailAttachmentController
     {
         $allFilesSizeMb = 0;
        foreach($mailEntity->getAttachments() as $attachment){
-           $attachmentAbsolutePath = $this->kernel->getProjectDir() . $attachment->getPath();
+           $attachmentAbsolutePath = $this->kernel->getProjectDir() . $attachment->getPath() . DIRECTORY_SEPARATOR . $attachment->getFileName();
            if( !file_exists($attachmentAbsolutePath) ){
                throw new NotFoundHttpException("E-Mail Attachment does not exists: {$attachmentAbsolutePath}, E-mail id: {$mailEntity->getId()}");
            }

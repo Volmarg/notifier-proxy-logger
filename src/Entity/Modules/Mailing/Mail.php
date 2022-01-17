@@ -95,7 +95,7 @@ class Mail implements EntityInterface
     private $toEmails = [];
 
     /**
-     * @ORM\OneToMany(targetEntity=MailAttachment::class, mappedBy="email", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=MailAttachment::class, mappedBy="email", orphanRemoval=true, cascade={"PERSIST", "REMOVE"})
      */
     private $attachments;
 

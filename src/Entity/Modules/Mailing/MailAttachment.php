@@ -51,6 +51,19 @@ class MailAttachment
      */
     private string $fileType;
 
+    /**
+     * @param string $path
+     * @param string $fileName
+     * @param string $fileType
+     */
+    public function __construct(string $path, string $fileName, string $fileType)
+    {
+        $this->created  = new DateTime();
+        $this->path     = $path;
+        $this->fileName = $fileName;
+        $this->fileType = $fileType;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

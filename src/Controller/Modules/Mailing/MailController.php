@@ -35,13 +35,16 @@ class MailController extends AbstractController
      */
     private NotifierInterface $notifier;
 
+    /**
+     * @var MailAttachmentController $attachmentController
+     */
     private MailAttachmentController $attachmentController;
 
     public function __construct(Application $app, NotifierInterface $notifier, MailAttachmentController $attachmentController)
     {
         $this->attachmentController = $attachmentController;
-        $this->notifier = $notifier;
-        $this->app      = $app;
+        $this->notifier             = $notifier;
+        $this->app                  = $app;
     }
 
     /**
@@ -80,6 +83,7 @@ class MailController extends AbstractController
         $mail->setFromEmail($mailDto->getFromEmail());
         $mail->setSubject($mailDto->getSubject());
         $mail->setBody($mailDto->getBody());
+        $mail->setType($mailDto->getEmailType());
 
         return $mail;
     }
