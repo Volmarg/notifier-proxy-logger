@@ -31,7 +31,7 @@ class MailAttachment
     private ?DateTime $created;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Mail::class, inversedBy="attachments")
+     * @ORM\ManyToOne(targetEntity=Mail::class, inversedBy="Modules")
      * @ORM\JoinColumn(nullable=false)
      */
     private Mail $email;

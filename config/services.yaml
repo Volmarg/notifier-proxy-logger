@@ -5,6 +5,9 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     mail.sender: 'volmarg@localhost'
+    mail.folder.path.attachments.relative: "/data/Modules/Mailing/Attachments"
+    mail.folder.path.attachments.absolute: "%kernel.project_dir%%/data/Modules/Mailing/Attachments"
+    mail.attachment.size.max.all: "5" #mb
 
 services:
     # default configuration for services in *this* file
@@ -134,6 +137,9 @@ services:
         public: true
         calls:
             - setFromMail: ['%mail.sender%']
+            - setRelativeMailAttachmentsFolder: ['%mail.folder.path.attachments.relative%']
+            - setAbsoluteMailAttachmentsFolder: ['%mail.folder.path.attachments.absolute%']
+            - setGetAllAttachmentsMaxSizeMb: ['%mail.attachment.size.max.all%']
 
     config_loader.system_data:
         alias: App\Services\Internal\ConfigLoaders\SystemDataConfigLoader

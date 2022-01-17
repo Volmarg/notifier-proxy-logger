@@ -65,6 +65,11 @@ class Mail implements EntityInterface
     private $body;
 
     /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $parsedBody;
+
+    /**
      * @ORM\Column(type="string", length=100)
      */
     private $status;
@@ -287,6 +292,18 @@ class Mail implements EntityInterface
                 $attachment->setEmail(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getParsedBody(): ?string
+    {
+        return $this->parsedBody;
+    }
+
+    public function setParsedBody(?string $parsedBody): self
+    {
+        $this->parsedBody = $parsedBody;
 
         return $this;
     }

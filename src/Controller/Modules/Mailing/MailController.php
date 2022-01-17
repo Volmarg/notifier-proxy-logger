@@ -146,11 +146,12 @@ class MailController extends AbstractController
      *
      * @param Mail   $mail
      * @param Mailer $mailer
+     * @throws ORMException
+     * @throws OptimisticLockException
      * @throws TransportExceptionInterface
      */
     public function sendSingleEmailViaMailer(Mail $mail, Mailer $mailer): void
     {
-
         $txt   = strip_tags($mail->getBody());
         $email = (new Email())
             ->from($mail->getFromEmail())
@@ -160,8 +161,13 @@ class MailController extends AbstractController
             ->text($txt)
             ->html($mail->getBody());
 
-        $email = $this->attachmentController->base64HtmlIntoCidWithAttachment($email, MailAttachmentController::CONTENT_TYPE_HTML);
-        $email = $this->attachmentController->base64HtmlIntoCidWithAttachment($email, MailAttachmentController::CONTENT_TYPE_TEXT);
+        $email = $this->attachmentController->base64HtmlIntoEmbeddedImage($email, MailAttachmentController::CONTENT_TYPE_HTML);
+        $email = $this->attachmentController->base64HtmlIntoEmbeddedImage($email, MailAttachmentController::CONTENT_TYPE_TEXT);
+        $email = $this->attachmentController->attachFiles($mail, $email);
+
+        $mail->setParsedBody($email->getHtmlBody());
+        $this->saveEntity($mail);
+
         $mailer->send($email);
     }
 
