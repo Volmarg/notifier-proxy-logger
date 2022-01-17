@@ -6,6 +6,8 @@ use App\Entity\EntityInterface;
 use App\Repository\Modules\Mailing\MailRepository;
 use App\Validation\Constraint\ArrayOfEmailsConstraint;
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Notifier\Notification\Notification;
 use Symfony\Component\Validator\Constraints\Choice;
@@ -87,10 +89,16 @@ class Mail implements EntityInterface
      */
     private $toEmails = [];
 
+    /**
+     * @ORM\OneToMany(targetEntity=MailAttachment::class, mappedBy="email", orphanRemoval=true)
+     */
+    private $attachments;
+
     public function __construct()
     {
         $this->created = new DateTime();
         $this->status  = self::STATUS_PENDING;
+        $this->attachments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -251,5 +259,35 @@ class Mail implements EntityInterface
         $metadata->addPropertyConstraint('toEmails', new NotBlank());
         $metadata->addPropertyConstraint('toEmails', new ArrayOfEmailsConstraint());
 
+    }
+
+    /**
+     * @return Collection|MailAttachment[]
+     */
+    public function getAttachments(): Collection
+    {
+        return $this->attachments;
+    }
+
+    public function addAttachment(MailAttachment $attachment): self
+    {
+        if (!$this->attachments->contains($attachment)) {
+            $this->attachments[] = $attachment;
+            $attachment->setEmail($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAttachment(MailAttachment $attachment): self
+    {
+        if ($this->attachments->removeElement($attachment)) {
+            // set the owning side to null (unless already changed)
+            if ($attachment->getEmail() === $this) {
+                $attachment->setEmail(null);
+            }
+        }
+
+        return $this;
     }
 }

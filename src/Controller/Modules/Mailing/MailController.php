@@ -35,8 +35,11 @@ class MailController extends AbstractController
      */
     private NotifierInterface $notifier;
 
-    public function __construct(Application $app, NotifierInterface $notifier)
+    private MailAttachmentController $attachmentController;
+
+    public function __construct(Application $app, NotifierInterface $notifier, MailAttachmentController $attachmentController)
     {
+        $this->attachmentController = $attachmentController;
         $this->notifier = $notifier;
         $this->app      = $app;
     }
@@ -157,6 +160,8 @@ class MailController extends AbstractController
             ->text($txt)
             ->html($mail->getBody());
 
+        $email = $this->attachmentController->base64HtmlIntoCidWithAttachment($email, MailAttachmentController::CONTENT_TYPE_HTML);
+        $email = $this->attachmentController->base64HtmlIntoCidWithAttachment($email, MailAttachmentController::CONTENT_TYPE_TEXT);
         $mailer->send($email);
     }
 
