@@ -18,8 +18,8 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
  */
 class Mail implements EntityInterface
 {
-    private const TYPE_NOTIFICATION = "NOTIFICATION";
-    private const TYPE_PLAIN        = "PLAIN";
+    public const TYPE_NOTIFICATION = "NOTIFICATION";
+    public const TYPE_PLAIN        = "PLAIN";
 
     const FIELD_NAME_STATUS = "status";
 

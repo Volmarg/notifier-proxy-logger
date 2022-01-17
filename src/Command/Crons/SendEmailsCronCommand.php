@@ -5,12 +5,14 @@ namespace App\Command\Crons;
 use App\Controller\Application;
 use App\Controller\Core\Controllers;
 use App\Controller\Modules\Mailing\Type\NotificationMailController;
+use App\Controller\Modules\Mailing\Type\PlainMailController;
 use App\Entity\Modules\Mailing\Mail;
 use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use TypeError;
 
 /**
@@ -44,15 +46,28 @@ class SendEmailsCronCommand extends Command
     private NotificationMailController $notificationMailController;
 
     /**
+     * @var PlainMailController $plainMailController
+     */
+    private PlainMailController $plainMailController;
+
+    /**
      * @param Application                $app
      * @param Controllers                $controllers
      * @param NotificationMailController $notificationMailController
+     * @param PlainMailController        $plainMailController
      * @param string|null                $name
      */
-    public function __construct(Application $app, Controllers $controllers, NotificationMailController $notificationMailController, string $name = null) {
+    public function __construct(
+        Application $app,
+        Controllers $controllers,
+        NotificationMailController $notificationMailController,
+        PlainMailController        $plainMailController,
+        string $name = null
+    ) {
         parent::__construct($name);
         $this->app                        = $app;
         $this->controllers                = $controllers;
+        $this->plainMailController        = $plainMailController;
         $this->notificationMailController = $notificationMailController;
     }
 
@@ -91,8 +106,7 @@ class SendEmailsCronCommand extends Command
             foreach($allEmailsToProcess as $email){
 
                 try{
-                    $notifier = $this->notificationMailController->getDefaultNotifierForSendingMailNotifications();
-                    $this->controllers->getMailingController()->sendSingleEmailViaNotifier($email, $notifier);
+                    $this->sendEmail($email);
                     $this->controllers->getMailingController()->updateStatus($email, Mail::STATUS_SENT);
                 }catch(Exception|TypeError $e){
                     $this->controllers->getMailingController()->updateStatus($email, Mail::STATUS_ERROR);
@@ -109,6 +123,39 @@ class SendEmailsCronCommand extends Command
         $this->app->getLoggerService()->getLogger()->info(self::COMMAND_LOGGER_PREFIX . "Finished processing emails to send");
 
         return 1;
+    }
+
+    /**
+     * Will handle sending E-Mail
+     *
+     * @param Mail $email
+     *
+     * @throws TransportExceptionInterface
+     * @throws Exception
+     */
+    private function sendEmail(Mail $email): void
+    {
+       switch($email->getType())
+       {
+           case Mail::TYPE_NOTIFICATION:
+           {
+               $notifier = $this->notificationMailController->getDefaultNotifierForSendingMailNotifications();
+               $this->controllers->getMailingController()->sendSingleEmailViaNotifier($email, $notifier);
+           }
+           break;
+
+           case Mail::TYPE_PLAIN:
+           {
+               $mailer = $this->plainMailController->getMailerClientForDefaultAccount();
+               $this->controllers->getMailingController()->sendSingleEmailViaMailer($email, $mailer);
+           }
+           break;
+
+           default:
+           {
+               throw new \LogicException("This Mail type is not supported: {$email->getType()}");
+           }
+       }
     }
 
 }

@@ -10,6 +10,10 @@ use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Notifier\Notification\Notification;
 use Symfony\Component\Notifier\Notifier;
 use Symfony\Component\Notifier\NotifierInterface;
@@ -115,7 +119,7 @@ class MailController extends AbstractController
     }
 
     /**
-     * Will send single email
+     * Will send single email via {@see NotifierInterface}, which means it add some extra styling etc.
      *
      * @param Mail $mail
      * @param Notifier $notifier
@@ -132,6 +136,28 @@ class MailController extends AbstractController
             $notifier->send($notification, $notificationRecipient);
         }
 
+    }
+
+    /**
+     * Will send single email via {@see MailerInterface}, no extra formatting from symfony etc.,
+     *
+     * @param Mail   $mail
+     * @param Mailer $mailer
+     * @throws TransportExceptionInterface
+     */
+    public function sendSingleEmailViaMailer(Mail $mail, Mailer $mailer): void
+    {
+
+        $txt   = strip_tags($mail->getBody());
+        $email = (new Email())
+            ->from($mail->getFromEmail())
+            ->replyTo($mail->getFromEmail())
+            ->to(...$mail->getToEmails())
+            ->subject($mail->getSubject())
+            ->text($txt)
+            ->html($mail->getBody());
+
+        $mailer->send($email);
     }
 
     /**

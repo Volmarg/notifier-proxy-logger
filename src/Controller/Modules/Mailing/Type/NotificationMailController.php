@@ -18,7 +18,7 @@ use Symfony\Component\Stopwatch\Stopwatch;
 /**
  * Handles logic related to the {@see Notification} and thus {@see Mail::TYPE_NOTIFICATION}
  */
-class NotificationMailController
+class NotificationMailController extends MailTypeController
 {
     public const MAIL_CHANNEL_NAME = "email";
 
@@ -87,18 +87,6 @@ class NotificationMailController
         $notifier           = $this->getNotifierForSendingMailNotifications($defaultMailAccount);
 
         return $notifier;
-    }
-
-    /**
-     * Will build the mailer (MAILER_DSN) connection string used internally by symfony
-     *
-     * @param MailAccount $mailAccount
-     * @return string
-     */
-    private function buildSymfonyMailerDsnConnectionString(MailAccount $mailAccount): string
-    {
-        $dsnConnectionString = "{$mailAccount->getClient()}://{$mailAccount->getLogin()}:{$mailAccount->getPassword()}@localhost";
-        return $dsnConnectionString;
     }
 
     /**
