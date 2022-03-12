@@ -1,5 +1,5 @@
 **{{ 'discord.defaultMessagesTemplate.subject' | trans }}:**
-*{{ discordMessage.messageTitle }}*
+*{{ discordMessage.messageTitle | raw }}*
 
 **{{ 'discord.defaultMessagesTemplate.content' | trans }}:**
-*{{ discordMessage.messageContent }}*
+*{{ discordMessage.messageContent | raw }}*

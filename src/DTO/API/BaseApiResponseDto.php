@@ -211,7 +211,7 @@ class BaseApiResponseDto extends AbstractDTO
         $message = self::checkAndGetKey($dataArray, self::KEY_MESSAGE, self::DEFAULT_MESSAGE);
         $code    = self::checkAndGetKey($dataArray, self::KEY_CODE, self:: DEFAULT_CODE);
 
-        $dto = new BaseApiResponseDto();
+        $dto = new static();
         $dto->setMessage($message);
         $dto->setCode($code);
 

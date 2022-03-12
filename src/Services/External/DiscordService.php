@@ -3,13 +3,11 @@
 namespace App\Services\External;
 
 use App\Controller\Application;
-use App\DTO\API\BaseApiResponseDto;
 use App\DTO\API\External\DiscordWebhookResponseDto;
 use App\Entity\Modules\Discord\DiscordMessage;
 use App\Entity\Modules\Discord\DiscordWebhook;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\ResponseEvent;
 
 class DiscordService extends AbstractController
 {
@@ -128,6 +126,12 @@ class DiscordService extends AbstractController
 
         $dto = DiscordWebhookResponseDto::fromJson($response);
         $dto->setCode($httpCode);
+
+        if ($httpCode >= 300) {
+            $this->app->getLoggerService()->getLogger()->critical("Got error response from discord server", [
+                "response" => $response,
+            ]);
+        }
 
         return $dto;
     }
